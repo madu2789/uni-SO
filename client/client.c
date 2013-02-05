@@ -3,53 +3,29 @@
  * Albert Hilazo Aguilera (se19467)
  */
 
-#include <unistd.h>
-#include <stdio.h>
-#include <string.h>
-#include <dirent.h>
+#include <unistd.h>			// write i read
+#include <stdio.h>			// sprintf
+#include <stdlib.h>
+#include <string.h>			// strlen, bzero
+#include <dirent.h>			// opendir, readdir...
+#include <sys/types.h>
+#include <fcntl.h>
+#include <time.h>
+#include <signal.h>
 
 #define ERROR -1
 #define OK 0
 #define MAX 64
 
+char sServer[8];
+char sDirPath[5MAX];
 
 
-
-void leerString (int nFichero, char **ppsString, int *pnError){
-	int i = 0;
-	char cAux = '0';
+void loginUser () {
 	char sAux[MAX];
+	char sLogin[MAX];
+	char sPswd[MAX];
 	
-	//Leemos caracter a caracter mientras no haya salto de linea
-	while (cAux != '\n'){
-		read (nFichero,&cAux,1);
-		if (cAux != '\n'){
-			sAux[i] = cAux;
-		}else{
-			sAux[i] = '\0';
-		}
-		i++;
-	}
-	//Pedimos memoria para la cadena
-	*ppsString = malloc ((strlen (sAux)+1)*sizeof (char));
-	//Si no se puede pedir memoria
-	if (NULL == *ppsString){
-		(*pnError) = ERROR; 
-	}else{
-		strcpy ((*ppsString),sAux);
-		(*pnError) = OK;
-	}
-}
-
-
-
-
-void loginUser (char sLogin[MAX], char sPswd[MAX]) {
-	int nAuthOK = 0;
-	char sAux[MAX];
-	
-	//Demana autenticació mentre no sigui correcta
-	do{
 		//Inicialitzacions
 		bzero (sLogin, MAX);
 		bzero (sPswd, MAX);
@@ -65,23 +41,14 @@ void loginUser (char sLogin[MAX], char sPswd[MAX]) {
 		write (1, sAux, strlen(sAux));
 		read (0, sPswd, MAX);
 		sPswd[strlen(sPswd)-1] = '\0';
-		nAuthOK = 1;
-		//Verifica dades
-		//WIP: Crida a la verificació
-		/*if (ERROR == flagAuth) {
-			sprintf (sAux, "Authentication failed!\n");
-			write (1, sAux, strlen (sAux));
-		}else{
-			//Autenticació correcta
-			nAuthOK = 1;
-		}*/
-	}while (!nAuthOK);
+		
+		//Comprovacio al servidor
+		
+		//sprintf (sFrase,"Error al fer login!\n");
+		//write (1,sFrase,strlen (sFrase));		
 }
 
-
-
-
-int getConfigInfo(char sServer[MAX], char sDirPath[MAX]) {
+int getConfigInfo() {
 	int nFdIn;
 	int nPort = 0;
 	
@@ -91,70 +58,41 @@ int getConfigInfo(char sServer[MAX], char sDirPath[MAX]) {
 		exit(ERROR);
 	} else {
 		
-		read(nFdIn, sServer, <numbytes>);
-		read(nFdIn, nPort, <numbytes>);
-		read(nFdIn, sDirPath, <numbytes>);
+		read(nFdIn, sServer, 8);
+		read(nFdIn, nPort, 8);
+		read(nFdIn, sDirPath, 8);
 		close(nFdIn);
+		
+		//Comprovacio de fitxer ben llegit
+		printf("%s", &sServer);
+		printf("%s", &nPort);
+		printf("%s", &sDirPath);
+		
 	}
-	
 	return nPort;
 }
 
+int initLinkedList(){
 
-
-
-//Funcio per filtrar entrades a scandir
-int filterScandir (const struct dirent *arg) {
-	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0)
-		return 0;
-	return 1;
-}
-
-
-
-
-void checkRootDirFiles(char sDirPath[MAX]) {
-	//DIR *dirp;
-	struct dirent **files;
-	int nNumFiles;
 	
-	//Potser no cal opendir
-	/*if ((dirp = opendir(sDirPath)) == NULL)
-	{
-		perror ("opendir");
-	}*/
-
-	nNumFiles = scandir (sDirPath, &files, filterScandir, alphasort);
-	if (files == NULL) perror ("scandir");
 }
 
-
-
+int checkRootFiles() {
+	
+}
 
 int main() {
-	int nError = OK;
 	char sFrase[MAX];
-	char sLogin[MAX];
-	char sPswd[MAX];
-	char sServer[MAX];
-	int nPort;
-	char sDirPath[MAX];
+	int nPort = 0;
 
 	//Autenticacio d'usuari
-	loginUser(sLogin, sPswd, &nError);
-	if (ERROR == nError){
-		//Terminamos el programa
-		sprintf (sFrase,"Error al fer login!\n");
-		write (1,sFrase,strlen (sFrase));
-		liberarMemoria (datos);
-		return ERROR;
-	}
-	
+	loginUser();
 	//Obtenim les dades contingudes a config.dat
-	nPort = getConfigInfo(sServer, sDirPath);
-	
-	//Analitzem el directori root
-	checkRootDirFiles(sDirPath);
+	nPort = getConfigInfo();
+	//Inicialitzem Linked List
+	initLinkedList();
+	//Analitzem el directori root cada 2 segons 
+	checkRootFiles();
 	
 	return 0;
 }
