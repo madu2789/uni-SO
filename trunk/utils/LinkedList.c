@@ -1,38 +1,29 @@
-  /*Single linked list inplementation using different functions
-
+  /*
+   * Single linked list inplementation
 1.INSERT A NUMBER AT THE BEGINNING;
-
 2.INSERT A NUMBER AT LAST
-
 3.INSERT A NUMBER AT A PARTICULAR LOCATION IN LIST
-
 4.PRINT THE ELEMENTS IN THE LIST
-
 5.PRINT THE TOTAL NUMBER OF ELEMENTS IN THE LIST
-
 6.DELETE A NODE IN THE LINKED LIST:
-
 7.REVERSE A LINKED LIST :
+8.Exit:
+* */
 
-8.GET OUT OF LINKED LIST (BYEE BYEE):*/
-  
-  
-  /* PROGRAM IMPLEMENTATION OF SINGLE LINKED LIST */
-
-  #include"stdio.h"
+#include <stdio.h>	
   //#define NULL 0
+  
+  
   /* STRUCTURE CONTANING A DATA PART AND A LINK PART */
-
    struct node
  {
    int data;
    struct node *next;
  }*p;
-
   /* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE IN LIST*/
 
- /*THIS FUNCTION DELETES A NODE */
 
+ /*THIS FUNCTION DELETES A NODE */
      void delnode(int num)
  {
      struct node *temp, *m;
@@ -61,12 +52,11 @@
         }
 
 	}
-    printf(" ELEMENT %d NOT FOUND ", num);
+    printf(" ELEMENT %d NOT FOUND!\n", num);
     
 }
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */
-
    void append( int num )
  {
      struct node *temp,*r;
@@ -93,7 +83,6 @@
   }
   
   /* ADD A NEW NODE AT BEGINNING  */
-
    void addbeg( int num )
    {
         /*  CREATING A NODE AND INSERTING VALUE TO IT  */
@@ -117,7 +106,6 @@
    }
 
  /*  ADD A NEW NODE AFTER A SPECIFIED NO OF NODES */
-
  void addafter(int num, int loc)
   {
      int i;
@@ -125,7 +113,7 @@
      r=p;       /* here r stores the first location */
       if(loc > count()+1 || loc <= 0)
    {
-         printf("insertion is not possible :");
+         printf("insertion is not possible :\n");
             return;
    }
         if (loc == 1)/* if list is null then add at beginning */
@@ -147,14 +135,15 @@
          t->next=r;
         return;
        }
-}/* THIS FUNCTION DISPLAYS THE CONTENTS OF THE LINKED LIST */
+}
 
+/* THIS FUNCTION DISPLAYS THE CONTENTS OF THE LINKED LIST */
   void display(struct node *r)
   {
       r=p;
       if(r==NULL)
      {
-       printf("NO ELEMENT IN THE LIST :");
+       printf("NO ELEMENT IN THE LIST :\n");
        return;
      }
        /* traverse the entire linked list */
@@ -163,8 +152,9 @@
       printf(" -> %d ",r->data);
       r=r->next;
     }
-     printf("");
+     printf(" ");
   }
+  
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
 int count(void)
  {
@@ -182,7 +172,7 @@ int count(void)
 //THIS FUNCTION REVERSES A LINKED LIST
 void reverse(struct node *q)
 {
-   struct node *m, *n,*l,*s;
+   struct node *m,*n,*s;
    m=q;
    n=NULL;
   while(m!=NULL)
@@ -195,29 +185,27 @@ void reverse(struct node *q)
    p=n;
 }
 
-
 /* THIS IS THE MAIN PROGRAM  */
-
-  void main()
+  int main()
  {
-        int i;
-   p=NULL;
-   while(1) /* this is an indefinite loop */
- {
-    printf("1.INSERT A NUMBER AT BEGINNING;\n");
-    printf("2.INSERT A NUMBER AT LAST:\n");
-    printf("3.INSERT A NUMBER AT A PARTICULAR LOCATION INlIST:\n");
-    printf("4.PRINT THE ELEMENTS IN THE LIST :\n");
-    printf("5.PRINT THE NUMBER OF ELEMENTS IN THE LIST:\n");
-    printf("6.DELETE A NODE IN THE LINKED LIST:\n");
-    printf("7.REVERSE A LINKED LIST :\n");
-    printf("8.GET OUT OF LINKED LIST (BYEE BYEE):\n");
-    printf("PLEASE, ENTER THE NUMBER:\n");
+	int i;
+	p=NULL;
+	while(1)
+	{
+		printf("1.INSERT AT BEGINNING;\n");
+		printf("2.INSERT AT LAST:\n");
+		printf("3.INSERT AT A PARTICULAR LOCATION:\n");
+		printf("4.PRINT THE ELEMENTS:\n");
+		printf("5.STRLENGTH:\n");
+		printf("6.DELETE A NODE:\n");
+		printf("7.REVERSE:\n");
+		printf("8.Exit:\n");
+		printf("PLEASE, ENTER THE NUMBER:\n");
 
-    scanf("%d",&i); /* ENTER A VALUE FOR SWITCH  */
+		scanf("%d",&i); /* ENTER A VALUE FOR SWITCH  */
 
       switch(i)
-    {
+		{
          case 1:
       {
         int num;
@@ -246,21 +234,19 @@ void reverse(struct node *q)
       break;
     }  case 4:
       {
-         struct node *n;
          printf("THE  ELEMENTS IN THE LIST ARE :");
-         display(n);
+         display(p);
+         printf("\n");
          break;
       }
 
       case 5:
    {
-      struct node *n;
-      display(n);
-      printf(" TOTAL NO OF ELEMENTS IN THE LSIT ARE %d",count());
+      printf(" TOTAL NO OF ELEMENTS IN THE LIST ARE %d \n",count());
       break;
    } case 6:
     {
-            int    num;
+      int num;
       printf("PLEASE ENTER A NUMBER FROM THE LIST :");
       scanf("%d",&num);
       delnode(num);
@@ -269,14 +255,15 @@ void reverse(struct node *q)
    case 7:
     {
       reverse(p);
-        display(p);
-        break;
+      display(p);
+      printf("\n");
+      break;
     }
   case 8:
  {
-  exit(1);
+  return 0;
  }
-    }/* end if switch */
- }/* end of while */
-}/* end of main */
+    }
+ }
+}
 
