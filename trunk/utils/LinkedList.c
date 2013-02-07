@@ -14,6 +14,8 @@
 /* STRUCTURE : DATA PART AND A LINK PART */
 struct node {
   int data;
+  char sName[50];
+  int nSize;
   struct node *next;
 } *p;
   /* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
