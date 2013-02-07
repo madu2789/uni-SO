@@ -1,4 +1,4 @@
-  /*
+/*
   Single linked list inplementation
 1.INSERT A NUMBER AT THE BEGINNING;
 2.INSERT A NUMBER AT LAST
@@ -10,17 +10,16 @@
 8.Exit:
 */
 #include <stdio.h>
-#define NULL 0
 
-/* STRUCTURE CONTANING A DATA PART AND A LINK PART */
+/* STRUCTURE : DATA PART AND A LINK PART */
 struct node {
   int data;
   struct node *next;
 } *p;
-  /* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE IN LIST*/
+  /* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
 
  /*THIS FUNCTION DELETES A NODE */
-void delnode (int num){
+void delnode (int num) {
   struct node *temp, *m;
 	temp=p;
 
@@ -28,11 +27,11 @@ void delnode (int num){
     if(temp->data == num){
       if(temp == p){
         p=temp->next;
-        free(temp);
+        //free(temp); diria k no cal alliberar pk no arribes a demanar memoria (HIL?)
         return;
       }else{
         m->next=temp->next;
-        free(temp);
+        //free(temp);
         return;
       }
     }else{
@@ -44,14 +43,13 @@ void delnode (int num){
 }
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */
-void append( int num ) {
-
+void append (int num) {
   struct node *temp,*r;
   temp= (struct node *)malloc(sizeof(struct node));
   temp->data=num;
   r=(struct node *)p;
 
-  if (p == NULL){
+  if (p == NULL) {
     p=temp;
     p->next =NULL;
   }else{
@@ -64,8 +62,7 @@ void append( int num ) {
   }
 
 /* ADD A NEW NODE AT BEGINNING  */
-void addbeg( int num ){
-
+void addbeg (int num) {
   struct node *temp;
   temp=(struct node *)malloc(sizeof(struct node));
   temp->data=num;
@@ -79,8 +76,8 @@ void addbeg( int num ){
   }
 }
 
- /*  ADD A NEW NODE AFTER A SPECIFIED NO OF NODES */
-void addafter(int num, int loc){
+/*  ADD A NEW NODE AFTER A SPECIFIED NO OF NODES */
+void addafter (int num, int loc) {
   int i;
   struct node *temp,*t,*r;
   r=p;       /* here r stores the first location */
@@ -107,7 +104,7 @@ void addafter(int num, int loc){
 }
 
 /* THIS FUNCTION DISPLAYS THE CONTENTS OF THE LINKED LIST */
-void display(struct node *r){
+void display (struct node *r) {
   r=p;
   if(r == NULL) {
     printf("NO ELEMENT IN THE LIST :\n");
@@ -119,10 +116,12 @@ void display(struct node *r){
   }
     printf(" ");
 }
+
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
-int count(void){
+int count (void) {
   struct node *n;
   int c=0;
+
   n=p;
   while(n!=NULL){
     n=n->next;
@@ -132,8 +131,9 @@ int count(void){
 }
 
 //THIS FUNCTION REVERSES A LINKED LIST
-void reverse(struct node *q){
+void reverse (struct node *q) {
   struct node *m,*n,*s;
+
   m=q;
   n=NULL;
   while(m != NULL){
@@ -146,8 +146,9 @@ void reverse(struct node *q){
 }
 
 /* THIS IS THE MAIN PROGRAM  */
-int main() {
+int main () {
   int i;
+
 	p=NULL;
 	while(1) {
 		printf("1.INSERT AT BEGINNING;\n");
