@@ -17,82 +17,114 @@
 #define OK 0
 #define MAX 64
 
-char sServer[8];
-char sDirPath[5MAX];
-
+char sServer[11];
+char nPort[3];
+char sDirPath[MAX];
+char sLogin[MAX];
+char sPswd[MAX];
+int nLastTotalFiles;
 
 void loginUser () {
 	char sAux[MAX];
-	char sLogin[MAX];
-	char sPswd[MAX];
-	
-		//Inicialitzacions
-		bzero (sLogin, MAX);
-		bzero (sPswd, MAX);
-		
-		//Demana nom d'usuari
-		sprintf (sAux, "Username: ");
-		write (1, sAux, strlen(sAux));
-		read (0, sLogin, MAX);
-		sLogin[strlen(sLogin)-1] = '\0';
-		
-		//Demana contrasenya
-		sprintf (sAux, "Password: ");
-		write (1, sAux, strlen(sAux));
-		read (0, sPswd, MAX);
-		sPswd[strlen(sPswd)-1] = '\0';
-		
-		//Comprovacio al servidor
-		
-		//sprintf (sFrase,"Error al fer login!\n");
-		//write (1,sFrase,strlen (sFrase));		
+
+	//Inicialitzacions
+	bzero (sLogin, MAX);
+	bzero (sPswd, MAX);
+	//Demana nom d'usuari
+	sprintf (sAux, "Username: ");
+	write (1, sAux, strlen(sAux));
+	read (0, sLogin, MAX);
+	sLogin[strlen(sLogin)-1] = '\0';
+
+	//Demana contrasenya
+	sprintf (sAux, "Password: ");
+	write (1, sAux, strlen(sAux));
+	read (0, sPswd, MAX);
+	sPswd[strlen(sPswd)-1] = '\0';
 }
 
-int getConfigInfo() {
+void getConfigInfo () {
 	int nFdIn;
-	int nPort = 0;
-	
+	char sServer1[MAX];
+
 	nFdIn = open("config.dat", O_RDONLY);
 	if (-1 == nFdIn){
 		write(2,"[Error] Error al obrir el fitxer 'config.dat'.\n",47);
 		exit(ERROR);
 	} else {
-		
-		read(nFdIn, sServer, 8);
-		read(nFdIn, nPort, 8);
-		read(nFdIn, sDirPath, 8);
+		read(nFdIn, sServer, 12);
+		read(nFdIn, nPort, 3);
+		read(nFdIn, sDirPath, MAX);
 		close(nFdIn);
-		
-		//Comprovacio de fitxer ben llegit
-		printf("%s", &sServer);
-		printf("%s", &nPort);
-		printf("%s", &sDirPath);
-		
+
+		sServer[strlen(sServer)] = '\0';
+		nPort[strlen(nPort)] = '\0';
+		sDirPath[strlen(sDirPath)] = '\0';
 	}
-	return nPort;
+	return;
 }
 
-int initLinkedList(){
-
-	
+static int triar (const struct dirent *arg) {
+	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0) return 0;
+	return 1;
 }
 
-int checkRootFiles() {
-	
+int initLinkedList () {
+	struct dirent **arxius;
+
+	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	if (arxius == NULL) {
+		perror ("scandir");
+	}
+
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+	nLastTotalFiles = nTotalFiles;
+
+	while (nTotalFiles--) {
+		printf ("[%d] %s\n", nTotalFiles, arxius[nTotalFiles]->d_name);
+		//append(arxius[i]->d_name)
+		free (arxius[nTotalFiles]);
+	}
+	free (arxius);
+}
+
+int checkRootFiles () {
+	int i = 0;
+	struct dirent **arxius;
+
+	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	if (arxius == NULL) {
+		perror ("scandir");
+	}
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+
+	i = nTotalFiles;
+	if (nTotalFiles == nLastTotalFiles) {
+		while (i--) {
+			printf ("[%d] %s\n", i, arxius[i]->d_name);
+			free (arxius[i]);
+		}
+	}else{
+			//haure de recorrer els arxius i copiar el k em falti a la LL
+	}
+
+	free (arxius);
+	return nTotalFiles;
 }
 
 int main() {
-	char sFrase[MAX];
-	int nPort = 0;
 
-	//Autenticacio d'usuari
 	loginUser();
 	//Obtenim les dades contingudes a config.dat
-	nPort = getConfigInfo();
-	//Inicialitzem Linked List
+	getConfigInfo();
 	initLinkedList();
-	//Analitzem el directori root cada 2 segons 
-	checkRootFiles();
-	
+
+/*comprovacions
+	printf("hey server: %s len %d \n", sServer, (int)strlen(sServer));
+	printf("hey port: %s len %d \n", nPort, (int)strlen(nPort));
+	printf("hey path: %s len %d \n", sDirPath, (int)strlen(sDirPath));
+*/
+	//checkRootFiles(); //cada dos segons??
+
 	return 0;
 }
