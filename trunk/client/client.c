@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>			// strlen, bzero
 #include <dirent.h>			// opendir, readdir...
+#include <sys/stat.h>		//stat, obtenir data modificacio
 #include <sys/types.h>
 #include <fcntl.h>
 #include <time.h>
@@ -71,18 +72,57 @@ static int triar (const struct dirent *arg) {
 
 int initLinkedList () {
 	struct dirent **arxius;
+	struct stat status;
+	char *sTipus, *sDate;
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
+		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 		perror ("scandir");
+		return -1;
 	}
 
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 	nLastTotalFiles = nTotalFiles;
 
 	while (nTotalFiles--) {
-		printf ("[%d] %s\n", nTotalFiles, arxius[nTotalFiles]->d_name);
+		//Agafem la hora de modificacio del arxiu -> sDate
+		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
+            sDate = ((char *)ctime(&status.st_mtime));
+        }
+        //Mirem quin tipus d'arxiu és -> sType
+		switch (arxius[nTotalFiles]->d_type) {
+			case DT_FIFO:
+				sTipus = "Fifo";
+			break;
+			case DT_CHR:
+				sTipus = "Character device";
+			break;
+			case DT_BLK:
+				sTipus = "Block device";
+			break;
+			case DT_REG:
+				sTipus = "Regular file";
+			break;
+			case DT_LNK:
+				sTipus = "Link";
+			break;
+			case DT_SOCK:
+				sTipus = "Socket";
+			break;
+			case DT_DIR:
+				sTipus = "Directory";
+			break;
+			case DT_UNKNOWN:
+				sTipus = "UNKNOWN";
+			break;
+		}
+
+		//comprovació de dades llegides del directori
+		printf ("[%d] %s -- %s -- %s \n", nTotalFiles, arxius[nTotalFiles]->d_name, sTipus, sDate);
+		//aqui afegiria a la cua el nou element: ->LinkedList
 		//append(arxius[i]->d_name)
+
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
@@ -114,17 +154,20 @@ int checkRootFiles () {
 
 int main() {
 
+	//Guardem -> sLogin, sPswd
 	loginUser();
-	//Obtenim les dades contingudes a config.dat
+	//Llegir "config.dat"
 	getConfigInfo();
+	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList();
+	//Check al directori si hi ha hagut algun canvi cada 2''
+	//checkRootFiles();
 
-/*comprovacions
+/*comprovacions fitxer "config.dat" ben llegit
 	printf("hey server: %s len %d \n", sServer, (int)strlen(sServer));
 	printf("hey port: %s len %d \n", nPort, (int)strlen(nPort));
 	printf("hey path: %s len %d \n", sDirPath, (int)strlen(sDirPath));
 */
-	//checkRootFiles(); //cada dos segons??
 
 	return 0;
 }
