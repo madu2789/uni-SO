@@ -1,5 +1,4 @@
-/*
-  Single linked list inplementation
+/*Single linked list inplementation
 1.INSERT A NUMBER AT THE BEGINNING;
 2.INSERT A NUMBER AT LAST
 3.INSERT A NUMBER AT A PARTICULAR LOCATION IN LIST
@@ -7,26 +6,27 @@
 5.PRINT THE TOTAL NUMBER OF ELEMENTS IN THE LIST
 6.DELETE A NODE IN THE LINKED LIST:
 7.REVERSE A LINKED LIST :
-8.Exit:
-*/
+8.Exit:*/
 #include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 
 /* STRUCTURE : DATA PART AND A LINK PART */
 struct node {
-  int data;
-  char sName[50];
-  int nSize;
+  char sName[30];
+  char sTipus[30];
+  char sDate[64];
   struct node *next;
 } *p;
-  /* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
+/* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
 
- /*THIS FUNCTION DELETES A NODE */
-void delnode (int num) {
+/*THIS FUNCTION DELETES A NODE */
+void delnode (char sName[30]) {
   struct node *temp, *m;
 	temp=p;
 
   while(temp != NULL){
-    if(temp->data == num){
+    if(strcmp(temp->sName, sName) == 0){
       if(temp == p){
         p=temp->next;
         //free(temp); diria k no cal alliberar pk no arribes a demanar memoria (HIL?)
@@ -41,14 +41,17 @@ void delnode (int num) {
       temp= temp->next;
     }
 	}
-    printf(" ELEMENT %d NOT FOUND!\n", num);
+    printf(" ELEMENT %s NOT FOUND!\n", sName);
 }
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */
-void append (int num) {
+void append (char sName[30], char sTipus[30], char sDate[64]) {
   struct node *temp,*r;
   temp= (struct node *)malloc(sizeof(struct node));
-  temp->data=num;
+
+  strcpy(temp->sName, sName);
+  strcpy(temp->sTipus, sTipus);
+  strcpy(temp->sDate, sDate);
   r=(struct node *)p;
 
   if (p == NULL) {
@@ -64,10 +67,13 @@ void append (int num) {
   }
 
 /* ADD A NEW NODE AT BEGINNING  */
-void addbeg (int num) {
+void addbeg (char sName[30], char sTipus[30], char sDate[64]) {
   struct node *temp;
   temp=(struct node *)malloc(sizeof(struct node));
-  temp->data=num;
+
+  strcpy(temp->sName, sName);
+  strcpy(temp->sTipus, sTipus);
+  strcpy(temp->sDate, sDate);
 
   if (p == NULL) {
     p=temp;
@@ -79,25 +85,28 @@ void addbeg (int num) {
 }
 
 /*  ADD A NEW NODE AFTER A SPECIFIED NO OF NODES */
-void addafter (int num, int loc) {
+void addafter (int loc , char sName[30], char sTipus[30], char sDate[64]) {
   int i;
   struct node *temp,*t,*r;
-  r=p;       /* here r stores the first location */
+  r=p;       // here r stores the first location
 
   if(loc > count()+1 || loc <= 0) {
     printf("insertion is not possible :\n");
     return;
   }
   if (loc == 1){
-    addbeg(num);
+    addbeg(sName, sTipus, sDate);
     return;
   }else{
     for(i=1;i<loc;i++){
-      t=r;   /* t will be holding previous value */
+      t=r;   // t will be holding previous value
       r=r->next;
     }
     temp=(struct node *)malloc(sizeof(struct node));
-    temp->data=num;
+
+    strcpy(temp->sName, sName);
+    strcpy(temp->sTipus, sTipus);
+    strcpy(temp->sDate, sDate);
     t->next=temp;
     t=temp;
     t->next=r;
@@ -113,7 +122,7 @@ void display (struct node *r) {
     return;
   }
   while(r != NULL) {
-    printf(" -> %d ",r->data);
+    printf(" -> %s \t %s \t %s \n", r->sName, r->sTipus, r->sDate );
     r=r->next;
   }
     printf(" ");
@@ -123,7 +132,6 @@ void display (struct node *r) {
 int count (void) {
   struct node *n;
   int c=0;
-
   n=p;
   while(n!=NULL){
     n=n->next;
@@ -135,7 +143,6 @@ int count (void) {
 //THIS FUNCTION REVERSES A LINKED LIST
 void reverse (struct node *q) {
   struct node *m,*n,*s;
-
   m=q;
   n=NULL;
   while(m != NULL){
@@ -151,7 +158,7 @@ void reverse (struct node *q) {
 int main () {
   int i;
 
-	p=NULL;
+	p = NULL;
 	while(1) {
 		printf("1.INSERT AT BEGINNING;\n");
 		printf("2.INSERT AT LAST:\n");
@@ -166,26 +173,34 @@ int main () {
 		scanf("%d",&i);
     switch(i){
       case 1: {
-        int num;
-        printf(" PLEASE ENTER THE NUMBER :-");
-        scanf("%d",&num);
-        addbeg(num);
+        char sName[30], sTipus[30], sDate[64];
+        printf(" PLEASE ENTER sName, sType, sDate :-");
+        scanf("%s",&sName);
+        scanf("%s",&sTipus);
+        scanf("%s",&sDate);
+        addbeg(sName, sTipus, sDate);
         break;
       }
       case 2: {
         int num;
-        printf(" PLEASE ENTER THE NUMBER :-");
-        scanf("%d",&num);
-        append(num);
+        char sName[30], sTipus[30], sDate[64];
+        printf(" PLEASE ENTER THE sName, sType, sDate :-");
+        scanf("%s",&sName);
+        scanf("%s",&sTipus);
+        scanf("%s",&sDate);
+        append(sName, sTipus, sDate);
         break;
        }
       case 3: {
-        int num, loc;
-        printf(" PLEASE ENTER THE NUMBER :-");
-        scanf("%d",&num);
+        int loc;
+        char sName[30], sTipus[30], sDate[64];
+        printf(" PLEASE ENTER THE sName, sType, sDate :-");
+        scanf("%s",&sName);
+        scanf("%s",&sTipus);
+        scanf("%s",&sDate);
         printf("PLEASE ENTER THE LOCATION NUMBER :-");
         scanf("%d",&loc);
-        addafter(num,loc);
+        addafter(loc, sName, sTipus, sDate);
         break;
       }
       case 4: {
@@ -199,10 +214,10 @@ int main () {
         break;
       }
       case 6: {
-        int num;
-        printf("PLEASE ENTER A NUMBER FROM THE LIST :");
-        scanf("%d",&num);
-        delnode(num);
+        char sName[30];
+        printf("PLEASE ENTER A sName FROM THE LIST :");
+        scanf("%s",&sName);
+        delnode(sName);
       break;
       }
       case 7: {
