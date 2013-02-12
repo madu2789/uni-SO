@@ -11,6 +11,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+//aixo ha danar fora
 char sProvaName[30];
 char sProvaDate[64];
 
@@ -137,18 +138,44 @@ void showNode (int nLocation) {
   int i = 0, bTrobat = 0;
   temp=p;
 
-  while(temp != NULL && bTrobat == 0){
-    if(i == nLocation-1){
-      bTrobat = 1;
-    } else {
-      temp= temp->next;
+  if (nLocation-1 < count() ) {
+    while(temp != NULL && bTrobat == 0){
+        if(i == nLocation-1){
+          bTrobat = 1;
+        } else {
+          temp= temp->next;
+        }
+        i++;
+        strcpy(sProvaName ,temp->sName);
+        strcpy(sProvaDate, temp->sDate);
+        printf(" ELEMENT %s FOUND!\n", temp->sName);
     }
-    i++;
+  } else {
+         printf(" ELEMENT DOESN'T EXISTS!\n");
   }
-  strcpy(sProvaName ,temp->sName);
-  strcpy(sProvaDate, temp->sDate);
-  printf(" ELEMENT %s FOUND!\n", temp->sName);
   return;
+}
+
+/*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
+int getDateByName (char sName[30]) {
+  struct node *temp;
+  int bTrobat = 0;
+  temp=p;
+
+    while(temp != NULL && bTrobat == 0){
+        if(strcmp(sName, temp->sName) == 0){
+          bTrobat = 1;
+        } else {
+          temp= temp->next;
+        }
+        strcpy(sProvaDate, temp->sDate);
+        //printf(" ELEMENT %s FOUND!\n", temp->sName);
+    }
+    if(bTrobat == 0){
+      printf(" ELEMENT DOESN'T EXISTS!\n");
+      return -1;
+    }
+  return 0;
 }
 
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
@@ -190,7 +217,7 @@ int main () {
 		printf("5.STRLENGTH:\n");
 		printf("6.DELETE A NODE:\n");
 		printf("7.REVERSE:\n");
-    printf("8.showNode:\n");
+    printf("8.getDateByName:\n");
 		printf("9.Exit:\n");
 		printf("PLEASE, ENTER THE NUMBER:\n");
 
@@ -251,11 +278,11 @@ int main () {
         break;
       }
       case 8: {
-        int nLocation;
-        printf("PLEASE ENTER A Location FROM THE LIST :");
-        scanf("%d",&nLocation);
-        showNode(nLocation);
-        printf("%s\n", sProvaName);
+        char sName[30];
+        printf("PLEASE ENTER A sName FROM THE LIST :");
+        scanf("%s",&sName);
+        getDateByName(sName);
+        printf("%s\n", sProvaDate);
         break;
       }
       case 9: {

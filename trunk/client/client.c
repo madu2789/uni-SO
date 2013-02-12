@@ -29,6 +29,8 @@ int nLastTotalFiles;
 
 //prova per incloure la LL
 //BORRAR
+char sProvaName[30];
+char sProvaDate[64];
 //
 /* STRUCTURE : DATA PART AND A LINK PART */
 struct node {
@@ -39,7 +41,17 @@ struct node {
 } *p;
 /* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
 
-
+//THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
+int count (void) {
+  struct node *n;
+  int c=0;
+  n=p;
+  while(n!=NULL){
+    n=n->next;
+    c++;
+  }
+  return(c);
+}
 /*THIS FUNCTION DELETES A NODE */
 void delnode (char sName[30]) {
   struct node *temp, *m;
@@ -49,21 +61,63 @@ void delnode (char sName[30]) {
     if(strcmp(temp->sName, sName) == 0){
       if(temp == p){
         p=temp->next;
-        //free(temp); diria k no cal alliberar pk no arribes a demanar memoria (HIL?)
         return;
       }else{
         m->next=temp->next;
-        //free(temp);
         return;
       }
     }else{
       m=temp;
       temp= temp->next;
-    }
-	}
+   }
+}
     printf(" ELEMENT %s NOT FOUND!\n", sName);
 }
 
+/*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
+int showNode (int nLocation) {
+  struct node *temp;
+  int i = 0, bTrobat = 0;
+  temp=p;
+
+  if (nLocation-1 < count() ) {
+    while(temp != NULL && bTrobat == 0){
+        if(i == nLocation-1){
+          bTrobat = 1;
+        } else {
+          temp= temp->next;
+        }
+        i++;
+        printf(" ELEMENT %s FOUND!\n", temp->sName);
+    }
+  } else {
+    printf(" ELEMENT DOESN'T EXISTS!\n");
+    return -1;
+  }
+  return 0;
+}
+
+/*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
+int getDateByName (char sName[30]) {
+  struct node *temp;
+  int bTrobat = 0;
+  temp=p;
+
+    while(temp != NULL && bTrobat == 0){
+        if(strcmp(sName, temp->sName) == 0){
+          bTrobat = 1;
+        } else {
+          temp= temp->next;
+        }
+        strcpy(sProvaDate, temp->sDate);
+        //printf(" ELEMENT %s FOUND!\n", temp->sName);
+    }
+    if(bTrobat == 0){
+      printf(" ELEMENT DOESN'T EXISTS!\n");
+      return -1;
+    }
+  return 0;
+}
 
 /* ADD A NEW NODE AT BEGINNING  */
 void addbeg (char sName[30], char sTipus[30], char sDate[64]) {
@@ -173,9 +227,9 @@ int initLinkedList () {
 	while (nTotalFiles--) {
 		//Agafem la hora de modificacio del arxiu -> sDate
 		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
-            sDate = ((char *)ctime(&status.st_mtime));
-        }
-        //Mirem quin tipus d'arxiu és -> sTipus
+      sDate = ((char *)ctime(&status.st_mtime));
+    }
+    //Mirem quin tipus d'arxiu és -> sTipus
 		switch (arxius[nTotalFiles]->d_type) {
 			case DT_FIFO:
 				sTipus = "Fifo";
@@ -212,12 +266,11 @@ int initLinkedList () {
 	}
 	free (arxius);
 }
-
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
 int checkRootFiles () {
-	int i = 0;
+	int i = 0, bUpdate = 0;
 	struct dirent **arxius;
 	struct stat status;
 	char *sName;
@@ -229,22 +282,67 @@ int checkRootFiles () {
 		perror ("scandir");
 	}
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-
 	i = nTotalFiles;
-	if (nTotalFiles == nLastTotalFiles) {
-		//update
-		while (i--) {
-			//nomes em cal mirar les dates
-			//Agafem la hora de modificacio del arxiu -> sDate
-			if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
-	            sDate = ((char *)ctime(&status.st_mtime));
-	        }
-			printf ("[%d] %s\n", i, arxius[i]->d_name);
-			free (arxius[i]);
-		}
-	} else {
-		//add or remove
 
+	while (i--) {
+		//miro la data de la LL
+		bUpdate = getDateByName(arxius[i]->d_name);
+		if(bUpdate == 0){
+			//Agafem la hora de modificacio del arxiu -> sDate
+			if (stat(arxius[i]->d_name, &status) == 0) {
+			  sDate = ((char *)ctime(&status.st_mtime));
+		  }
+	    //comprobo si son iguals
+	    if(strcmp(sProvaDate, sDate) == 0){
+				printf("iguals no cal fer res\n");
+	    }else{
+		   	printf("diferents hi ha que actualitzar\n");
+		   	//update
+	    }
+		}else{
+			//cal afegir
+			//Mirem quin tipus d'arxiu és -> sTipus
+			switch (arxius[nTotalFiles]->d_type) {
+				case DT_FIFO:
+					sTipus = "Fifo";
+				break;
+				case DT_CHR:
+					sTipus = "Character device";
+				break;
+				case DT_BLK:
+					sTipus = "Block device";
+				break;
+				case DT_REG:
+					sTipus = "Regular file";
+				break;
+				case DT_LNK:
+					sTipus = "Link";
+				break;
+				case DT_SOCK:
+					sTipus = "Socket";
+				break;
+				case DT_DIR:
+					sTipus = "Directory";
+				break;
+				case DT_UNKNOWN:
+					sTipus = "UNKNOWN";
+				break;
+			}
+			addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
+		}
+
+		free (arxius[i]);
+	}
+
+	if (nTotalFiles < nLastTotalFiles) {
+		//remove
+		int i, bExists= 0, nTotal = count();
+		for(i = 0; i < nTotal; i++){
+			bExists = showNode(i);
+			if(bExists == -1){
+				//delnode();
+			}
+		}
 	}
 
 	free (arxius);
