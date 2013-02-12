@@ -11,6 +11,9 @@
 #include <string.h>
 #include <stdlib.h>
 
+char sProvaName[30];
+char sProvaDate[64];
+
 /* STRUCTURE : DATA PART AND A LINK PART */
 struct node {
   char sName[30];
@@ -128,6 +131,26 @@ void display (struct node *r) {
     printf(" ");
 }
 
+/*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
+void showNode (int nLocation) {
+  struct node *temp;
+  int i = 0, bTrobat = 0;
+  temp=p;
+
+  while(temp != NULL && bTrobat == 0){
+    if(i == nLocation-1){
+      bTrobat = 1;
+    } else {
+      temp= temp->next;
+    }
+    i++;
+  }
+  strcpy(sProvaName ,temp->sName);
+  strcpy(sProvaDate, temp->sDate);
+  printf(" ELEMENT %s FOUND!\n", temp->sName);
+  return;
+}
+
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
 int count (void) {
   struct node *n;
@@ -167,7 +190,8 @@ int main () {
 		printf("5.STRLENGTH:\n");
 		printf("6.DELETE A NODE:\n");
 		printf("7.REVERSE:\n");
-		printf("8.Exit:\n");
+    printf("8.showNode:\n");
+		printf("9.Exit:\n");
 		printf("PLEASE, ENTER THE NUMBER:\n");
 
 		scanf("%d",&i);
@@ -227,6 +251,14 @@ int main () {
         break;
       }
       case 8: {
+        int nLocation;
+        printf("PLEASE ENTER A Location FROM THE LIST :");
+        scanf("%d",&nLocation);
+        showNode(nLocation);
+        printf("%s\n", sProvaName);
+        break;
+      }
+      case 9: {
         return 0;
       }
     }
