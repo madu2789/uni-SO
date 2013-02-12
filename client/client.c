@@ -25,6 +25,9 @@ char sLogin[MAX];
 char sPswd[MAX];
 int nLastTotalFiles;
 
+/**
+ * Demana al usuari sLogin i sPswd
+ */
 void loginUser () {
 	char sAux[MAX];
 
@@ -43,10 +46,11 @@ void loginUser () {
 	read (0, sPswd, MAX);
 	sPswd[strlen(sPswd)-1] = '\0';
 }
-
+/**
+ * Carrega el fitxer config.dat
+ */
 void getConfigInfo () {
 	int nFdIn;
-	char sServer1[MAX];
 
 	nFdIn = open("config.dat", O_RDONLY);
 	if (-1 == nFdIn){
@@ -64,12 +68,17 @@ void getConfigInfo () {
 	}
 	return;
 }
-
+/**
+ * Fp necessaria per llegir el directori
+ * @param  arg ,path al directori
+ */
 static int triar (const struct dirent *arg) {
 	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0) return 0;
 	return 1;
 }
-
+/**
+ * Inicialitza la LinkedList posant tos els elements del directori a la LL
+ */
 int initLinkedList () {
 	struct dirent **arxius;
 	struct stat status;
@@ -127,7 +136,9 @@ int initLinkedList () {
 	}
 	free (arxius);
 }
-
+/**
+ * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
+ */
 int checkRootFiles () {
 	int i = 0;
 	struct dirent **arxius;
@@ -152,8 +163,10 @@ int checkRootFiles () {
 	return nTotalFiles;
 }
 
+/**
+ * main general
+ */
 int main() {
-
 	//Guardem -> sLogin, sPswd
 	loginUser();
 	//Llegir "config.dat"
