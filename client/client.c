@@ -25,6 +25,81 @@ char sLogin[MAX];
 char sPswd[MAX];
 int nLastTotalFiles;
 
+
+
+//prova per incloure la LL
+//BORRAR
+//
+/* STRUCTURE : DATA PART AND A LINK PART */
+struct node {
+  char sName[30];
+  char sTipus[30];
+  char sDate[64];
+  struct node *next;
+} *p;
+/* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
+
+
+/*THIS FUNCTION DELETES A NODE */
+void delnode (char sName[30]) {
+  struct node *temp, *m;
+	temp=p;
+
+  while(temp != NULL){
+    if(strcmp(temp->sName, sName) == 0){
+      if(temp == p){
+        p=temp->next;
+        //free(temp); diria k no cal alliberar pk no arribes a demanar memoria (HIL?)
+        return;
+      }else{
+        m->next=temp->next;
+        //free(temp);
+        return;
+      }
+    }else{
+      m=temp;
+      temp= temp->next;
+    }
+	}
+    printf(" ELEMENT %s NOT FOUND!\n", sName);
+}
+
+
+/* ADD A NEW NODE AT BEGINNING  */
+void addbeg (char sName[30], char sTipus[30], char sDate[64]) {
+  struct node *temp;
+  temp=(struct node *)malloc(sizeof(struct node));
+
+  strcpy(temp->sName, sName);
+  strcpy(temp->sTipus, sTipus);
+  strcpy(temp->sDate, sDate);
+
+  if (p == NULL) {
+    p=temp;
+    p->next=NULL;
+  }else{
+    temp->next=p;
+    p=temp;
+  }
+}
+
+
+/* THIS FUNCTION DISPLAYS THE CONTENTS OF THE LINKED LIST */
+void display (struct node *r) {
+  r=p;
+  if(r == NULL) {
+    printf("NO ELEMENT IN THE LIST :\n");
+    return;
+  }
+  while(r != NULL) {
+    printf(" -> %s \t %s \t %s \n", r->sName, r->sTipus, r->sDate );
+    r=r->next;
+  }
+    printf(" ");
+}
+
+//FINS AQUI
+
 /**
  * Demana al usuari sLogin i sPswd
  */
@@ -82,7 +157,8 @@ static int triar (const struct dirent *arg) {
 int initLinkedList () {
 	struct dirent **arxius;
 	struct stat status;
-	char *sTipus, *sDate;
+	char *sTipus;
+	char *sDate;
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
@@ -99,7 +175,7 @@ int initLinkedList () {
 		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
             sDate = ((char *)ctime(&status.st_mtime));
         }
-        //Mirem quin tipus d'arxiu és -> sType
+        //Mirem quin tipus d'arxiu és -> sTipus
 		switch (arxius[nTotalFiles]->d_type) {
 			case DT_FIFO:
 				sTipus = "Fifo";
@@ -128,20 +204,25 @@ int initLinkedList () {
 		}
 
 		//comprovació de dades llegides del directori
-		printf ("[%d] %s -- %s -- %s \n", nTotalFiles, arxius[nTotalFiles]->d_name, sTipus, sDate);
-		//aqui afegiria a la cua el nou element: ->LinkedList
-		//append(arxius[i]->d_name)
-
+		//printf ("[%d] %s -- %s -- %s \n", nTotalFiles, arxius[nTotalFiles]->d_name, sTipus, sDate);
+		//afegir a la cua el nou element: ->LinkedList
+		addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
+		//Allibero aquest arxiu
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
 }
+
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
 int checkRootFiles () {
 	int i = 0;
 	struct dirent **arxius;
+	struct stat status;
+	char *sName;
+	char *sTipus;
+	char *sDate;
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
@@ -151,12 +232,19 @@ int checkRootFiles () {
 
 	i = nTotalFiles;
 	if (nTotalFiles == nLastTotalFiles) {
+		//update
 		while (i--) {
+			//nomes em cal mirar les dates
+			//Agafem la hora de modificacio del arxiu -> sDate
+			if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
+	            sDate = ((char *)ctime(&status.st_mtime));
+	        }
 			printf ("[%d] %s\n", i, arxius[i]->d_name);
 			free (arxius[i]);
 		}
-	}else{
-			//haure de recorrer els arxius i copiar el k em falti a la LL
+	} else {
+		//add or remove
+
 	}
 
 	free (arxius);
@@ -174,7 +262,9 @@ int main() {
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList();
 	//Check al directori si hi ha hagut algun canvi cada 2''
-	//checkRootFiles();
+	checkRootFiles();
+
+	//display(p);
 
 /*comprovacions fitxer "config.dat" ben llegit
 	printf("hey server: %s len %d \n", sServer, (int)strlen(sServer));
