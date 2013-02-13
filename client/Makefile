@@ -2,6 +2,9 @@
 *
 * Client Makefile
 *
+* Daniel Madurell Blanes (is19445)
+* Albert Hilazo Aguilera (se19467)
+*
 * ********************************************** */
 CC = gcc
 CFLAGS = -Wall -Wextra
