@@ -178,6 +178,28 @@ int getDateByName (char sName[30]) {
   return 0;
 }
 
+/*Canvia la sDate segons el sName*/
+int setDateByName (char sName[30], char sDate[64]) {
+  struct node *temp;
+  int bTrobat = 0;
+  temp=p;
+
+    while(temp != NULL && bTrobat == 0){
+        if(strcmp(sName, temp->sName) == 0){
+          bTrobat = 1;
+          strcpy(temp->sDate, sDate);
+        } else {
+          temp= temp->next;
+        }
+        //printf(" ELEMENT %s FOUND!\n", temp->sName);
+    }
+    if(bTrobat == 0){
+      printf(" ELEMENT DOESN'T EXISTS!\n");
+      return -1;
+    }
+  return 0;
+}
+
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
 int count (void) {
   struct node *n;
