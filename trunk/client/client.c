@@ -119,6 +119,28 @@ int getDateByName (char sName[30]) {
   return 0;
 }
 
+/*Canvia la sDate segons el sName*/
+int setDateByName (char sName[30], char sDate[64]) {
+  struct node *temp;
+  int bTrobat = 0;
+  temp=p;
+
+    while(temp != NULL && bTrobat == 0){
+        if(strcmp(sName, temp->sName) == 0){
+          bTrobat = 1;
+          strcpy(temp->sDate, sDate);
+        } else {
+          temp= temp->next;
+        }
+        //printf(" ELEMENT %s FOUND!\n", temp->sName);
+    }
+    if(bTrobat == 0){
+      printf(" ELEMENT DOESN'T EXISTS!\n");
+      return -1;
+    }
+  return 0;
+}
+
 /* ADD A NEW NODE AT BEGINNING  */
 void addbeg (char sName[30], char sTipus[30], char sDate[64]) {
   struct node *temp;
@@ -175,6 +197,7 @@ void loginUser () {
 	read (0, sPswd, MAX);
 	sPswd[strlen(sPswd)-1] = '\0';
 }
+
 /**
  * Carrega el fitxer config.dat
  */
@@ -197,40 +220,23 @@ void getConfigInfo () {
 	}
 	return;
 }
+
 /**
  * Fp necessaria per llegir el directori
- * @param  arg ,path al directori
+ * @param  arg {struct dirent} path al directori
  */
 static int triar (const struct dirent *arg) {
 	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0) return 0;
 	return 1;
 }
+
 /**
- * Inicialitza la LinkedList posant tos els elements del directori a la LL
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
  */
-int initLinkedList () {
-	struct dirent **arxius;
-	struct stat status;
-	char *sTipus;
-	char *sDate;
-
-	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
-	if (arxius == NULL) {
-		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-		perror ("scandir");
-		return -1;
-	}
-
-	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-	nLastTotalFiles = nTotalFiles;
-
-	while (nTotalFiles--) {
-		//Agafem la hora de modificacio del arxiu -> sDate
-		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
-      sDate = ((char *)ctime(&status.st_mtime));
-    }
-    //Mirem quin tipus d'arxiu és -> sTipus
-		switch (arxius[nTotalFiles]->d_type) {
+void conversorTipus (char sTipus[30], int nToConvert) {
+		switch (nToConvert) {
 			case DT_FIFO:
 				sTipus = "Fifo";
 			break;
@@ -256,26 +262,50 @@ int initLinkedList () {
 				sTipus = "UNKNOWN";
 			break;
 		}
+}
 
-		//comprovació de dades llegides del directori
-		//printf ("[%d] %s -- %s -- %s \n", nTotalFiles, arxius[nTotalFiles]->d_name, sTipus, sDate);
+/**
+ * Inicialitza la LinkedList posant tos els elements del directori a la LL
+ */
+int initLinkedList () {
+	struct dirent **arxius;
+	struct stat status;
+	char sTipus[30];
+	char *sDate;
+
+	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	if (arxius == NULL) {
+		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+		perror ("scandir");
+		return -1;
+	}
+
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+	nLastTotalFiles = nTotalFiles;
+
+	while (nTotalFiles--) {
+		//Agafem la hora de modificacio del arxiu -> sDate
+		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
+      sDate = ((char *)ctime(&status.st_mtime));
+    }
+    conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
+
 		//afegir a la cua el nou element: ->LinkedList
 		addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
-		//Allibero aquest arxiu
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
 }
+
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-int checkRootFiles () {
+void checkRootFiles () {
 	int i = 0, bUpdate = 0;
 	struct dirent **arxius;
 	struct stat status;
-	char *sName;
-	char *sTipus;
-	char *sDate;
+	char *sName, *sDate;
+	char sTipus[30];
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
@@ -285,68 +315,38 @@ int checkRootFiles () {
 	i = nTotalFiles;
 
 	while (i--) {
-		//miro la data de la LL
+		//date de LL -> sProvaDate
 		bUpdate = getDateByName(arxius[i]->d_name);
 		if(bUpdate == 0){
-			//Agafem la hora de modificacio del arxiu -> sDate
+			//date del arxiu -> sDate
 			if (stat(arxius[i]->d_name, &status) == 0) {
 			  sDate = ((char *)ctime(&status.st_mtime));
 		  }
-	    //comprobo si son iguals
 	    if(strcmp(sProvaDate, sDate) == 0){
+	    	//igual
 				printf("iguals no cal fer res\n");
 	    }else{
+	    	//update
 		   	printf("diferents hi ha que actualitzar\n");
-		   	//update
+		   	setDateByName(arxius[nTotalFiles]->d_name, sDate);
 	    }
 		}else{
-			//cal afegir
-			//Mirem quin tipus d'arxiu és -> sTipus
-			switch (arxius[nTotalFiles]->d_type) {
-				case DT_FIFO:
-					sTipus = "Fifo";
-				break;
-				case DT_CHR:
-					sTipus = "Character device";
-				break;
-				case DT_BLK:
-					sTipus = "Block device";
-				break;
-				case DT_REG:
-					sTipus = "Regular file";
-				break;
-				case DT_LNK:
-					sTipus = "Link";
-				break;
-				case DT_SOCK:
-					sTipus = "Socket";
-				break;
-				case DT_DIR:
-					sTipus = "Directory";
-				break;
-				case DT_UNKNOWN:
-					sTipus = "UNKNOWN";
-				break;
-			}
+			//afegir
+			conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
 			addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
 		}
-
 		free (arxius[i]);
 	}
+	free (arxius);
 
+	//remove
 	if (nTotalFiles < nLastTotalFiles) {
-		//remove
 		int i, bExists= 0, nTotal = count();
-		for(i = 0; i < nTotal; i++){
-			bExists = showNode(i);
-			if(bExists == -1){
-				//delnode();
-			}
-		}
+		//la idea es fero amb getbyname
+		i = nTotalFiles;
 	}
 
-	free (arxius);
-	return nTotalFiles;
+	return;
 }
 
 /**
@@ -363,12 +363,6 @@ int main() {
 	checkRootFiles();
 
 	//display(p);
-
-/*comprovacions fitxer "config.dat" ben llegit
-	printf("hey server: %s len %d \n", sServer, (int)strlen(sServer));
-	printf("hey port: %s len %d \n", nPort, (int)strlen(nPort));
-	printf("hey path: %s len %d \n", sDirPath, (int)strlen(sDirPath));
-*/
 
 	return 0;
 }
