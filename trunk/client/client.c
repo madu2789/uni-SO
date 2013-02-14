@@ -71,29 +71,25 @@ void delnode (char sName[30]) {
       temp= temp->next;
    }
 }
-    printf(" ELEMENT %s NOT FOUND!\n", sName);
+    //printf(" ELEMENT %s NOT FOUND!\n", sName);
 }
 
 /*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
-int showNode (int nLocation) {
+int showNode (char sName[30], int nLocation) {
   struct node *temp;
   int i = 0, bTrobat = 0;
   temp=p;
 
-  if (nLocation-1 < count() ) {
     while(temp != NULL && bTrobat == 0){
         if(i == nLocation-1){
           bTrobat = 1;
+          printf(" ELEMENT %s FOUND!\n", temp->sName);
+          strcpy(sName, temp->sName);
         } else {
           temp= temp->next;
         }
         i++;
-        printf(" ELEMENT %s FOUND!\n", temp->sName);
     }
-  } else {
-    printf(" ELEMENT DOESN'T EXISTS!\n");
-    return -1;
-  }
   return 0;
 }
 
@@ -176,6 +172,7 @@ void display (struct node *r) {
 
 //FINS AQUI
 
+
 /**
  * Demana al usuari sLogin i sPswd
  */
@@ -198,6 +195,7 @@ void loginUser () {
 	sPswd[strlen(sPswd)-1] = '\0';
 }
 
+
 /**
  * Carrega el fitxer config.dat
  */
@@ -205,7 +203,7 @@ void getConfigInfo () {
 	int nFdIn;
 
 	nFdIn = open("config.dat", O_RDONLY);
-	if (-1 == nFdIn){
+	if (-1 == nFdIn) {
 		write(2,"[Error] Error al obrir el fitxer 'config.dat'.\n",47);
 		exit(ERROR);
 	} else {
@@ -221,14 +219,16 @@ void getConfigInfo () {
 	return;
 }
 
+
 /**
  * Fp necessaria per llegir el directori
  * @param  arg {struct dirent} path al directori
  */
 static int triar (const struct dirent *arg) {
-	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0) return 0;
+	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0 ) return 0;
 	return 1;
 }
+
 
 /**
  * Fp que passa de codi a string el tipus de fitxer
@@ -264,6 +264,7 @@ void conversorTipus (char sTipus[30], int nToConvert) {
 		}
 }
 
+
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
@@ -279,9 +280,7 @@ int initLinkedList () {
 		perror ("scandir");
 		return -1;
 	}
-
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-	nLastTotalFiles = nTotalFiles;
 
 	while (nTotalFiles--) {
 		//Agafem la hora de modificacio del arxiu -> sDate
@@ -289,13 +288,13 @@ int initLinkedList () {
       sDate = ((char *)ctime(&status.st_mtime));
     }
     conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
-
 		//afegir a la cua el nou element: ->LinkedList
 		addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
 }
+
 
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
@@ -306,8 +305,9 @@ void checkRootFiles () {
 	struct stat status;
 	char *sName, *sDate;
 	char sTipus[30];
+	int nTotalFiles;
 
-	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
 		perror ("scandir");
 	}
@@ -317,21 +317,23 @@ void checkRootFiles () {
 	while (i--) {
 		//date de LL -> sProvaDate
 		bUpdate = getDateByName(arxius[i]->d_name);
-		if(bUpdate == 0){
+		printf("%s\n", sProvaDate);
+		if( bUpdate == 0 ) {
 			//date del arxiu -> sDate
 			if (stat(arxius[i]->d_name, &status) == 0) {
 			  sDate = ((char *)ctime(&status.st_mtime));
 		  }
-	    if(strcmp(sProvaDate, sDate) == 0){
+	    if(strcmp(sProvaDate, sDate) == 0) {
 	    	//igual
-				printf("iguals no cal fer res\n");
+				printf("iguals no cal fer res %s \n", arxius[i]->d_name);
 	    }else{
 	    	//update
 		   	printf("diferents hi ha que actualitzar\n");
 		   	setDateByName(arxius[nTotalFiles]->d_name, sDate);
 	    }
-		}else{
+		} else {
 			//afegir
+			printf("cal afegir el nou arxiu\n");
 			conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
 			addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
 		}
@@ -340,19 +342,46 @@ void checkRootFiles () {
 	free (arxius);
 
 	//remove
+
+	nLastTotalFiles = count();
 	if (nTotalFiles < nLastTotalFiles) {
-		int i, bExists= 0, nTotal = count();
-		//la idea es fero amb getbyname
-		i = nTotalFiles;
+		int i,j, bToRemove= 1, nTotal = count();
+		char sNameToRemove[30];
+
+		nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+		if (arxius == NULL) {
+			perror ("scandir");
+		}
+
+		for (i = 1; i < nLastTotalFiles; i++) {
+			showNode(sNameToRemove, i);
+			printf("mirem: %s\n",sNameToRemove );
+			for (j = 1; j < nTotalFiles; j++){
+				if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
+					printf("NO hem de borrar : %s\n", arxius[j]->d_name);
+					bToRemove = 0;
+				}
+			}
+			if (bToRemove == 1) {
+				printf("hem de borrar : %s\n", sNameToRemove);
+				delnode(sNameToRemove);
+				nLastTotalFiles--;
+				printf("BORRAT : %s\n", sNameToRemove);
+				display(p);
+			}
+			bToRemove = 1;
+		}
+		//hi ha que alliberar memoria per aqui...
 	}
 
 	return;
 }
 
+
 /**
  * main general
  */
-int main() {
+int main () {
 	//Guardem -> sLogin, sPswd
 	loginUser();
 	//Llegir "config.dat"
@@ -360,7 +389,10 @@ int main() {
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList();
 	//Check al directori si hi ha hagut algun canvi cada 2''
-	checkRootFiles();
+	while (1) {
+		checkRootFiles();
+		sleep(5);
+	}
 
 	//display(p);
 
