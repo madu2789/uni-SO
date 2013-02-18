@@ -23,8 +23,7 @@ char nPort[3];
 char sDirPath[MAX];
 char sLogin[MAX];
 char sPswd[MAX];
-int nLastTotalFiles;
-
+int nLLTotalFiles;
 
 
 //prova per incloure la LL
@@ -94,7 +93,7 @@ int showNode (char sName[30], int nLocation) {
 }
 
 /*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
-int getDateByName (char sName[30]) {
+int getDateByName (char sDate[30], char sName[30]) {
   struct node *temp;
   int bTrobat = 0;
   temp=p;
@@ -102,17 +101,13 @@ int getDateByName (char sName[30]) {
     while(temp != NULL && bTrobat == 0){
         if(strcmp(sName, temp->sName) == 0){
           bTrobat = 1;
+          strcpy(sDate, temp->sDate);
         } else {
           temp= temp->next;
         }
-        strcpy(sProvaDate, temp->sDate);
         //printf(" ELEMENT %s FOUND!\n", temp->sName);
     }
-    if(bTrobat == 0){
-      printf(" ELEMENT DOESN'T EXISTS!\n");
-      return -1;
-    }
-  return 0;
+  return bTrobat;
 }
 
 /*Canvia la sDate segons el sName*/
@@ -283,7 +278,7 @@ int initLinkedList () {
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 
 	while (nTotalFiles--) {
-		//Agafem la hora de modificacio del arxiu -> sDate
+		//hora de modificacio del arxiu -> sDate
 		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
       sDate = ((char *)ctime(&status.st_mtime));
     }
@@ -304,6 +299,7 @@ void checkRootFiles () {
 	struct dirent **arxius;
 	struct stat status;
 	char *sName, *sDate;
+	char sLLDate[30];
 	char sTipus[30];
 	int nTotalFiles;
 
@@ -314,7 +310,69 @@ void checkRootFiles () {
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 	i = nTotalFiles;
 
-	while (i--) {
+	nLLTotalFiles = count();
+
+	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
+
+	if (nTotalFiles == nLLTotalFiles) {
+
+	} else if (nTotalFiles > nLLTotalFiles) {
+	 		//afegir
+	 		printf("cal afegir el nou arxiu\n");
+
+		 	while (i--) {
+		 		printf("%s \n",arxius[i]->d_name);
+		 		//peta aqui sota si no troba lo k busca
+		 		bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+		 		printf("%d\n",bUpdate);
+				if( bUpdate == 1 ) {
+					if (stat(arxius[i]->d_name, &status) == 0) {
+					  sDate = ((char *)ctime(&status.st_mtime));
+				  }
+					conversorTipus(sTipus, arxius[i]->d_type);
+					addbeg(arxius[i]->d_name, sTipus, sDate);
+					printf("afegit\n");
+					free (arxius[i]);
+				}
+			}
+			free (arxius);
+		} else if (nTotalFiles < nLLTotalFiles) {
+			//remove
+			int i,j, bToRemove= 1, nTotal = count();
+			char sNameToRemove[30];
+
+			nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+			if (arxius == NULL) {
+				perror ("scandir");
+			}
+
+			for (i = 1; i < nLLTotalFiles; i++) {
+				showNode(sNameToRemove, i);
+				printf("mirem: %s\n",sNameToRemove );
+				for (j = 1; j < nTotalFiles; j++){
+					if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
+						printf("NO hem de borrar : %s\n", arxius[j]->d_name);
+						bToRemove = 0;
+					}
+				}
+				if (bToRemove == 1) {
+					printf("hem de borrar : %s\n", sNameToRemove);
+					delnode(sNameToRemove);
+					nLLTotalFiles--;
+					printf("BORRAT : %s\n", sNameToRemove);
+					display(p);
+				}
+				bToRemove = 1;
+			}
+		//hi ha que alliberar memoria per aqui...
+		}
+	return;
+	}
+
+
+	/*
+
+ 	while (i--) {
 		//date de LL -> sProvaDate
 		bUpdate = getDateByName(arxius[i]->d_name);
 		printf("%s\n", sProvaDate);
@@ -334,48 +392,13 @@ void checkRootFiles () {
 		} else {
 			//afegir
 			printf("cal afegir el nou arxiu\n");
-			conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
-			addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
+			//conversorTipus(sTipus, arxius[i]->d_type);
+			//addbeg(arxius[i]->d_name, sTipus, sDate);
 		}
 		free (arxius[i]);
 	}
 	free (arxius);
-
-	//remove
-
-	nLastTotalFiles = count();
-	if (nTotalFiles < nLastTotalFiles) {
-		int i,j, bToRemove= 1, nTotal = count();
-		char sNameToRemove[30];
-
-		nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
-		if (arxius == NULL) {
-			perror ("scandir");
-		}
-
-		for (i = 1; i < nLastTotalFiles; i++) {
-			showNode(sNameToRemove, i);
-			printf("mirem: %s\n",sNameToRemove );
-			for (j = 1; j < nTotalFiles; j++){
-				if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
-					printf("NO hem de borrar : %s\n", arxius[j]->d_name);
-					bToRemove = 0;
-				}
-			}
-			if (bToRemove == 1) {
-				printf("hem de borrar : %s\n", sNameToRemove);
-				delnode(sNameToRemove);
-				nLastTotalFiles--;
-				printf("BORRAT : %s\n", sNameToRemove);
-				display(p);
-			}
-			bToRemove = 1;
-		}
-		//hi ha que alliberar memoria per aqui...
-	}
-
-	return;
-}
+*/
 
 
 /**
