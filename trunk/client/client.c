@@ -116,19 +116,14 @@ int setDateByName (char sName[30], char sDate[64]) {
   int bTrobat = 0;
   temp=p;
 
-    while(temp != NULL && bTrobat == 0){
-        if(strcmp(sName, temp->sName) == 0){
-          bTrobat = 1;
-          strcpy(temp->sDate, sDate);
-        } else {
-          temp= temp->next;
-        }
-        //printf(" ELEMENT %s FOUND!\n", temp->sName);
+  while(temp != NULL && bTrobat == 0){
+    if(strcmp(sName, temp->sName) == 0){
+      bTrobat = 1;
+      strcpy(temp->sDate, sDate);
+    } else {
+      temp= temp->next;
     }
-    if(bTrobat == 0){
-      printf(" ELEMENT DOESN'T EXISTS!\n");
-      return -1;
-    }
+  }
   return 0;
 }
 
@@ -164,6 +159,7 @@ void display (struct node *r) {
   }
     printf(" ");
 }
+
 
 //FINS AQUI
 
@@ -315,6 +311,26 @@ void checkRootFiles () {
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
 
 	if (nTotalFiles == nLLTotalFiles) {
+		//update o res
+		while (i--) {
+		 	printf("%s \n", arxius[i]->d_name);
+
+		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+
+			if( bUpdate == 1 ) {
+				if (stat(arxius[i]->d_name, &status) == 0) {
+				  sDate = ((char *)ctime(&status.st_mtime));
+				}
+				//printf("%s -- %s\n", sLLDate, sDate);
+
+				if (strcmp(sLLDate, sDate) != 0 ){
+					setDateByName(arxius[i]->d_name, sDate);
+				 	printf("updated\n");
+				}
+				free (arxius[i]);
+			}
+		}
+		free (arxius);
 
 	} else if (nTotalFiles > nLLTotalFiles) {
 	 		//afegir
@@ -322,9 +338,9 @@ void checkRootFiles () {
 
 		 	while (i--) {
 		 		printf("%s \n",arxius[i]->d_name);
-		 		//peta aqui sota si no troba lo k busca
+
 		 		bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
-		 		printf("%d\n",bUpdate);
+
 				if( bUpdate == 1 ) {
 					if (stat(arxius[i]->d_name, &status) == 0) {
 					  sDate = ((char *)ctime(&status.st_mtime));
@@ -336,15 +352,11 @@ void checkRootFiles () {
 				}
 			}
 			free (arxius);
+
 		} else if (nTotalFiles < nLLTotalFiles) {
 			//remove
 			int i,j, bToRemove= 1, nTotal = count();
 			char sNameToRemove[30];
-
-			nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
-			if (arxius == NULL) {
-				perror ("scandir");
-			}
 
 			for (i = 1; i < nLLTotalFiles; i++) {
 				showNode(sNameToRemove, i);
@@ -368,37 +380,6 @@ void checkRootFiles () {
 		}
 	return;
 	}
-
-
-	/*
-
- 	while (i--) {
-		//date de LL -> sProvaDate
-		bUpdate = getDateByName(arxius[i]->d_name);
-		printf("%s\n", sProvaDate);
-		if( bUpdate == 0 ) {
-			//date del arxiu -> sDate
-			if (stat(arxius[i]->d_name, &status) == 0) {
-			  sDate = ((char *)ctime(&status.st_mtime));
-		  }
-	    if(strcmp(sProvaDate, sDate) == 0) {
-	    	//igual
-				printf("iguals no cal fer res %s \n", arxius[i]->d_name);
-	    }else{
-	    	//update
-		   	printf("diferents hi ha que actualitzar\n");
-		   	setDateByName(arxius[nTotalFiles]->d_name, sDate);
-	    }
-		} else {
-			//afegir
-			printf("cal afegir el nou arxiu\n");
-			//conversorTipus(sTipus, arxius[i]->d_type);
-			//addbeg(arxius[i]->d_name, sTipus, sDate);
-		}
-		free (arxius[i]);
-	}
-	free (arxius);
-*/
 
 
 /**
