@@ -2,21 +2,7 @@
  * Daniel Madurell Blanes (is19445)
  * Albert Hilazo Aguilera (se19467)
  */
-
-#include <unistd.h>			// write i read
-#include <stdio.h>			// sprintf
-#include <stdlib.h>
-#include <string.h>			// strlen, bzero
-#include <dirent.h>			// opendir, readdir...
-#include <sys/stat.h>		//stat, obtenir data modificacio
-#include <sys/types.h>
-#include <fcntl.h>
-#include <time.h>
-#include <signal.h>
-
-#define ERROR -1
-#define OK 0
-#define MAX 64
+#include "client.h"
 
 char sServer[11];
 char nPort[3];

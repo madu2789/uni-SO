@@ -16,14 +16,14 @@
 #include <stdlib.h>
 #include <string.h>			// strlen, bzero
 #include <dirent.h>			// opendir, readdir...
-#include <sys/stat.h>		// stat, obtenir data modificacio
+#include <sys/stat.h>		//stat, obtenir data modificacio
 #include <sys/types.h>
 #include <fcntl.h>
 #include <time.h>
 #include <signal.h>
 
 // Includes propios
-//#include <LinkedList.h>
+#include "../utils/LinkedList.h"
 
 // Definicion de constantes
 #define ERROR -1
@@ -37,5 +37,13 @@
 
 //Funciones
 int main();
+void loginUser ();
+void getConfigInfo ();
+static int triar (const struct dirent *arg);
+void conversorTipus (char sTipus[30], int nToConvert);
+int initLinkedList ();
+void checkRootFiles ();
+
+
 
 #endif
