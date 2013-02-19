@@ -132,6 +132,7 @@ int initLinkedList () {
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
+	return 0;
 }
 
 
@@ -142,7 +143,7 @@ void checkRootFiles () {
 	int i = 0, bUpdate = 0;
 	struct dirent **arxius;
 	struct stat status;
-	char *sName, *sDate;
+	char *sDate;
 	char sLLDate[30];
 	char sTipus[30];
 	int nTotalFiles;
@@ -189,7 +190,7 @@ void checkRootFiles () {
 
 		 		bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
 
-				if( bUpdate == 1 ) {
+				if( bUpdate != 1 ) {
 					if (stat(arxius[i]->d_name, &status) == 0) {
 					  sDate = ((char *)ctime(&status.st_mtime));
 				  }
@@ -203,7 +204,7 @@ void checkRootFiles () {
 
 		} else if (nTotalFiles < nLLTotalFiles) {
 			//remove
-			int i,j, bToRemove= 1, nTotal = count();
+			int i,j, bToRemove= 1;
 			char sNameToRemove[30];
 
 			for (i = 1; i < nLLTotalFiles; i++) {
@@ -220,11 +221,11 @@ void checkRootFiles () {
 					delnode(sNameToRemove);
 					nLLTotalFiles--;
 					printf("BORRAT : %s\n", sNameToRemove);
-					//display(p); //test
+					display(p); //test
 				}
 				bToRemove = 1;
 			}
-		//hi ha que alliberar memoria per aqui...
+		//hi ha que alliberar memoria per aqui... i per alla
 		}
 	return;
 	}
