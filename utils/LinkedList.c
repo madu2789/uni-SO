@@ -7,18 +7,8 @@
 6.DELETE A NODE IN THE LINKED LIST:
 7.REVERSE A LINKED LIST :
 8.Exit:*/
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include "LinkedList.h"
 
-/* STRUCTURE : DATA PART AND A LINK PART */
-struct node {
-  char sName[30];
-  char sTipus[30];
-  char sDate[64];
-  struct node *next;
-} *p;
-/* P IS A GLOBAL POINTER CONTAINS THE ADRESS OF THE FIRST NODE*/
 
 /*THIS FUNCTION DELETES A NODE */
 void delnode (char sName[30]) {
@@ -209,7 +199,7 @@ void reverse (struct node *q) {
 }
 
 /* THIS IS THE MAIN PROGRAM  */
-int main () {
+/*int main () {
   int i;
 
 	p = NULL;
@@ -296,3 +286,4 @@ int main () {
   }
 }
 
+*/
