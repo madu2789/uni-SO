@@ -10,7 +10,7 @@ char sDirPath[MAX];
 char sLogin[MAX];
 char sPswd[MAX];
 int nLLTotalFiles;
-
+struct dirent **arxius;
 
 /**
  * Demana al usuari sLogin i sPswd
@@ -103,33 +103,100 @@ void conversorTipus (char sTipus[30], int nToConvert) {
 		}
 }
 
+/**
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
+ */
+int ReadDir () {
+
+	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	if (arxius == NULL) {
+		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+		printf("Prova amb un path correcte el proxim cop!\n");
+		perror ("scandir");
+		exit(0);
+		return -1;
+	}
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+	return nTotalFiles;
+}
+
+/**
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
+ */
+void addToLL (int nTotalFiles) {
+	struct stat status;
+	char sTipus[30];
+	char *sDate;
+
+	//hora de modificacio del arxiu -> sDate
+	if (stat(arxius[nTotalFiles]->d_name, &status) == 0) {
+    sDate = ((char *)ctime(&status.st_mtime));
+  }
+  conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
+	//afegir a la cua el nou element: ->LinkedList
+	addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
+	free (arxius[nTotalFiles]);
+}
+
+/**
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
+ */
+void updateToLL (int i, char sLLDate[30]) {
+	struct stat status;
+	char *sDate;
+
+	if (stat(arxius[i]->d_name, &status) == 0) {
+		sDate = ((char *)ctime(&status.st_mtime));
+	}
+	if (strcmp(sLLDate, sDate) != 0 ){
+		setDateByName(arxius[i]->d_name, sDate);
+	 	printf("updated\n");
+	}
+	free (arxius[i]);
+}
+
+void removeToLL ( int nTotalFiles, int nLLTotalFiles) {
+	int i,j, bToRemove= 1;
+	char sNameToRemove[30];
+
+	for (i = 1; i < nLLTotalFiles; i++) {
+		showNode(sNameToRemove, i);
+		printf("mirem: %s\n",sNameToRemove );
+		for (j = 1; j < nTotalFiles; j++){
+			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
+				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
+				bToRemove = 0;
+			}
+		}
+		if (bToRemove == 1) {
+			printf("hem de borrar : %s\n", sNameToRemove);
+			delnode(sNameToRemove);
+			printf("BORRAT : %s\n", sNameToRemove);
+			display(p); //test
+		}
+		bToRemove = 1;
+	}
+	for (j = 1; j < nTotalFiles; j++){
+		free(arxius[j]);
+	}
+	free(arxius);
+}
+
 
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
 int initLinkedList () {
-	struct dirent **arxius;
-	struct stat status;
-	char sTipus[30];
-	char *sDate;
 
-	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
-	if (arxius == NULL) {
-		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-		perror ("scandir");
-		return -1;
-	}
-	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-
+	int nTotalFiles = ReadDir();
 	while (nTotalFiles--) {
-		//hora de modificacio del arxiu -> sDate
-		if (stat(arxius[nTotalFiles]->d_name,&status) == 0) {
-      sDate = ((char *)ctime(&status.st_mtime));
-    }
-    conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
-		//afegir a la cua el nou element: ->LinkedList
-		addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
-		free (arxius[nTotalFiles]);
+		addToLL(nTotalFiles);
 	}
 	free (arxius);
 	return 0;
@@ -141,91 +208,39 @@ int initLinkedList () {
  */
 void checkRootFiles () {
 	int i = 0, bUpdate = 0;
-	struct dirent **arxius;
-	struct stat status;
-	char *sDate;
-	char sLLDate[30];
-	char sTipus[30];
 	int nTotalFiles;
+	char sLLDate[30];
 
-	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
-	if (arxius == NULL) {
-		perror ("scandir");
-	}
-	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-	i = nTotalFiles;
-
+	nTotalFiles = ReadDir();
 	nLLTotalFiles = count();
+	i = nTotalFiles;
 
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
 
 	if (nTotalFiles == nLLTotalFiles) {
 		//update o res
 		while (i--) {
-		 	printf("%s \n", arxius[i]->d_name);
-
 		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
-
 			if( bUpdate == 1 ) {
-				if (stat(arxius[i]->d_name, &status) == 0) {
-				  sDate = ((char *)ctime(&status.st_mtime));
-				}
-				//printf("%s -- %s\n", sLLDate, sDate);
-
-				if (strcmp(sLLDate, sDate) != 0 ){
-					setDateByName(arxius[i]->d_name, sDate);
-				 	printf("updated\n");
-				}
-				free (arxius[i]);
+				updateToLL(i, sLLDate);
 			}
 		}
 		free (arxius);
 
 	} else if (nTotalFiles > nLLTotalFiles) {
-	 		//afegir
-	 		printf("cal afegir el nou arxiu\n");
 
-		 	while (i--) {
-		 		printf("%s \n",arxius[i]->d_name);
+	 	printf("cal afegir el nou arxiu\n");
 
-		 		bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
-
-				if( bUpdate != 1 ) {
-					if (stat(arxius[i]->d_name, &status) == 0) {
-					  sDate = ((char *)ctime(&status.st_mtime));
-				  }
-					conversorTipus(sTipus, arxius[i]->d_type);
-					addbeg(arxius[i]->d_name, sTipus, sDate);
-					printf("afegit\n");
-					free (arxius[i]);
-				}
+		while (i--) {
+			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+			if( bUpdate != 1 ) {
+				addToLL(i);
 			}
-			free (arxius);
+		}
+		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			//remove
-			int i,j, bToRemove= 1;
-			char sNameToRemove[30];
-
-			for (i = 1; i < nLLTotalFiles; i++) {
-				showNode(sNameToRemove, i);
-				printf("mirem: %s\n",sNameToRemove );
-				for (j = 1; j < nTotalFiles; j++){
-					if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
-						printf("NO hem de borrar : %s\n", arxius[j]->d_name);
-						bToRemove = 0;
-					}
-				}
-				if (bToRemove == 1) {
-					printf("hem de borrar : %s\n", sNameToRemove);
-					delnode(sNameToRemove);
-					nLLTotalFiles--;
-					printf("BORRAT : %s\n", sNameToRemove);
-					display(p); //test
-				}
-				bToRemove = 1;
-			}
-		//hi ha que alliberar memoria per aqui... i per alla
+			removeToLL(nTotalFiles, nLLTotalFiles);
 		}
 	return;
 	}
