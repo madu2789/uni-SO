@@ -74,40 +74,6 @@ static int triar (const struct dirent *arg) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void conversorTipus (char sTipus[30], int nToConvert) {
-		switch (nToConvert) {
-			case DT_FIFO:
-				sTipus = "Fifo";
-			break;
-			case DT_CHR:
-				sTipus = "Character device";
-			break;
-			case DT_BLK:
-				sTipus = "Block device";
-			break;
-			case DT_REG:
-				sTipus = "Regular file";
-			break;
-			case DT_LNK:
-				sTipus = "Link";
-			break;
-			case DT_SOCK:
-				sTipus = "Socket";
-			break;
-			case DT_DIR:
-				sTipus = "Directory";
-			break;
-			case DT_UNKNOWN:
-				sTipus = "UNKNOWN";
-			break;
-		}
-}
-
-/**
- * Fp que passa de codi a string el tipus de fitxer
- * @param  sTipus {String} on es guardara el resultat,(ref)
- * @param  nToConvert {Integer} Codi
- */
 int ReadDir () {
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
@@ -130,7 +96,8 @@ int initLinkedList () {
 
 	int nTotalFiles = ReadDir();
 	while (nTotalFiles--) {
-		addToLL(nTotalFiles);
+		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type);
+		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
 	return 0;
@@ -156,8 +123,9 @@ void checkRootFiles () {
 		while (i--) {
 		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
 			if( bUpdate == 1 ) {
-				updateToLL(i, sLLDate);
+				updateToLL(sLLDate, arxius[i]->d_name);
 			}
+			free (arxius[i]);
 		}
 		free (arxius);
 
@@ -168,13 +136,14 @@ void checkRootFiles () {
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
 			if( bUpdate != 1 ) {
-				addToLL(i);
+				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type);
 			}
+			free (arxius[i]);
 		}
 		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			removeToLL(nTotalFiles, nLLTotalFiles);
+			//removeToLL(nTotalFiles, nLLTotalFiles, &arxius);
 		}
 	return;
 	}

@@ -3,24 +3,62 @@
  * Albert Hilazo Aguilera (se19467)
  */
 
+#include "facadeLL.h"
+
+
 /**
  * Fp que passa de codi a string el tipus de fitxer
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLL (int nTotalFiles) {
+void conversorTipus (char sTipus[30], int nToConvert) {
+		bzero(sTipus, 30);
+		switch (nToConvert) {
+			case DT_FIFO:
+				sTipus = "Fifo";
+			break;
+			case DT_CHR:
+				sTipus = "Character device";
+			break;
+			case DT_BLK:
+				sTipus = "Block device";
+			break;
+			case DT_REG:
+				sTipus = "Regular file";
+			break;
+			case DT_LNK:
+				sTipus = "Link";
+			break;
+			case DT_SOCK:
+				sTipus = "Socket";
+			break;
+			case DT_DIR:
+				sTipus = "Directory";
+			break;
+			case DT_UNKNOWN:
+				sTipus = "UNKNOWN";
+			break;
+		}
+}
+
+
+/**
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
+ */
+void addToLL (char sName[30], int nTipus) {
 	struct stat status;
-	char sTipus[30];
+	char sAdaptedTipus[30];
 	char *sDate;
 
 	//hora de modificacio del arxiu -> sDate
-	if (stat(arxius[nTotalFiles]->d_name, &status) == 0) {
+	if (stat(sName, &status) == 0) {
     sDate = ((char *)ctime(&status.st_mtime));
   }
-  conversorTipus(sTipus, arxius[nTotalFiles]->d_type);
+  conversorTipus(sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
-	addbeg(arxius[nTotalFiles]->d_name, sTipus, sDate);
-	free (arxius[nTotalFiles]);
+	addbeg(sName, sAdaptedTipus, sDate);
 }
 
 
@@ -29,18 +67,17 @@ void addToLL (int nTotalFiles) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void updateToLL (int i, char sLLDate[30]) {
+void updateToLL (char sLLDate[30], char sName[30]) {
 	struct stat status;
 	char *sDate;
 
-	if (stat(arxius[i]->d_name, &status) == 0) {
+	if (stat(sName, &status) == 0) {
 		sDate = ((char *)ctime(&status.st_mtime));
 	}
 	if (strcmp(sLLDate, sDate) != 0 ){
-		setDateByName(arxius[i]->d_name, sDate);
+		setDateByName(sName, sDate);
 	 	printf("updated\n");
 	}
-	free (arxius[i]);
 }
 
 
@@ -49,7 +86,7 @@ void updateToLL (int i, char sLLDate[30]) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void removeToLL ( int nTotalFiles, int nLLTotalFiles) {
+/*void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent ***arxius) {
 	int i,j, bToRemove= 1;
 	char sNameToRemove[30];
 
@@ -66,7 +103,6 @@ void removeToLL ( int nTotalFiles, int nLLTotalFiles) {
 			printf("hem de borrar : %s\n", sNameToRemove);
 			delnode(sNameToRemove);
 			printf("BORRAT : %s\n", sNameToRemove);
-			display(p); //test
 		}
 		bToRemove = 1;
 	}
@@ -74,4 +110,4 @@ void removeToLL ( int nTotalFiles, int nLLTotalFiles) {
 		free(arxius[j]);
 	}
 	free(arxius);
-}
+}*/
