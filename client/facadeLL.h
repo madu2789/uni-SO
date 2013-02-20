@@ -21,16 +21,18 @@
 #include <fcntl.h>
 #include <time.h>
 
-
 // Includes propios
+
+#include "../utils/LinkedList.h"
 
 // Definicion de constantes
 
 // Definicion de tipos propios
 
 //Funciones
-void addToLL (int nTotalFiles);
-void updateToLL (int i, char sLLDate[30]);
-void removeToLL ( int nTotalFiles, int nLLTotalFiles);
+void conversorTipus (char sTipus[30], int nToConvert);
+void addToLL (char sName[30], int nTipus);
+void updateToLL (char sLLDate[30], char sName[30]);
+void removeToLL ( int nTotalFiles, int nLLTotalFiles, struct dirent ***arxius);
 
 #endif
