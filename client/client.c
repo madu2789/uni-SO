@@ -143,7 +143,7 @@ void checkRootFiles () {
 		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			//removeToLL(nTotalFiles, nLLTotalFiles, &arxius);
+			removeToLL(nTotalFiles, nLLTotalFiles, &arxius);
 		}
 	return;
 	}
