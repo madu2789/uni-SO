@@ -36,5 +36,6 @@ char *MD5End (MD5_CTX *, char *);
 char *MD5File (const char *, char *);
 char *MD5FileChunk (const char *, char *, off_t, off_t);
 char *MD5Data (const void *, unsigned int, char *);
+void stringToMd5 (const char* string , char md5string[33]);
 
 #endif
