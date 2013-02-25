@@ -17,6 +17,7 @@ struct dirent **arxius;
  */
 void loginUser () {
 	char sAux[MAX];
+	char sPswdMd5[MAX];
 
 	//Inicialitzacions
 	bzero (sLogin, MAX);
@@ -32,6 +33,11 @@ void loginUser () {
 	write (1, sAux, strlen(sAux));
 	read (0, sPswd, MAX);
 	sPswd[strlen(sPswd)-1] = '\0';
+	//Md5
+	stringToMd5(sPswd, sPswdMd5);
+	printf("%s\n", sPswdMd5);
+	//Socket
+
 }
 
 
