@@ -118,7 +118,7 @@ MD5Init (context)
   context->state[3] = 0x10325476;
 }
 
-/* 
+/*
  * MD5 block update operation. Continues an MD5 message-digest
  * operation, processing another message block, and updating the
  * context.
@@ -392,4 +392,26 @@ MD5Data (const void *data, unsigned int len, char *buf)
   MD5Init (&ctx);
   MD5Update (&ctx, data, len);
   return (MD5End (&ctx, buf));
+}
+
+/**
+ * @Authors:
+ * Albert Hilazo
+ * Daniel Madurell
+ */
+
+void stringToMd5 (const char* string , char md5string[MD5_BLOCK_LENGTH]) {
+
+  int i;
+  unsigned char digest[16];
+  struct MD5Context context;
+
+  MD5Init(&context);
+  MD5Update(&context, string, strlen(string));
+  MD5Final(digest, &context);
+  //printf("%s\n", digest);
+
+  for(i = 0; i < 16; ++i) {
+    sprintf(&md5string[i*2], "%02x", (unsigned int)digest[i]);
+  }
 }
