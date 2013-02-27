@@ -4,18 +4,12 @@
  */
 #include "client.h"
 
-char sServer[11];
-char nPort[3];
-char sDirPath[MAX];
-char sLogin[MAX];
-char sPswd[MAX];
-int nLLTotalFiles;
 struct dirent **arxius;
 
 /**
  * Demana al usuari sLogin i sPswd
  */
-void loginUser () {
+void loginUser (char sLogin[MAX], char sPswd[MAX]) {
 	char sAux[MAX];
 	char sPswdMd5[MAX];
 
@@ -44,7 +38,7 @@ void loginUser () {
 /**
  * Carrega el fitxer config.dat
  */
-void getConfigInfo () {
+void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]) {
 	int nFdIn;
 
 	nFdIn = open("config.dat", O_RDONLY);
@@ -52,6 +46,7 @@ void getConfigInfo () {
 		write(2,"[Error] Error al obrir el fitxer 'config.dat'.\n",47);
 		exit(ERROR);
 	} else {
+		bzero(sDirPath, MAX);
 		read(nFdIn, sServer, 12);
 		read(nFdIn, nPort, 3);
 		read(nFdIn, sDirPath, MAX);
@@ -80,7 +75,7 @@ static int triar (const struct dirent *arg) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-int ReadDir () {
+int ReadDir (char sDirPath[MAX]) {
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
@@ -98,9 +93,9 @@ int ReadDir () {
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
-int initLinkedList () {
+int initLinkedList (char sDirPath[MAX]) {
 
-	int nTotalFiles = ReadDir();
+	int nTotalFiles = ReadDir(sDirPath);
 	while (nTotalFiles--) {
 		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type);
 		free (arxius[nTotalFiles]);
@@ -113,12 +108,14 @@ int initLinkedList () {
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-void checkRootFiles () {
-	int i = 0, bUpdate = 0;
+void checkRootFiles (char sDirPath[MAX]) {
+	int i = 0;
+	int bUpdate = 0;
+	int nLLTotalFiles;
 	int nTotalFiles;
 	char sLLDate[30];
 
-	nTotalFiles = ReadDir();
+	nTotalFiles = ReadDir(sDirPath);
 	nLLTotalFiles = count();
 	i = nTotalFiles;
 
@@ -159,15 +156,21 @@ void checkRootFiles () {
  * main general
  */
 int main () {
+	char sServer[11];
+	char nPort[3];
+	char sDirPath[MAX];
+	char sLogin[MAX];
+	char sPswd[MAX];
+
 	//Guardem -> sLogin, sPswd
-	loginUser();
+	loginUser(sLogin, sPswd);
 	//Llegir "config.dat"
-	getConfigInfo();
+	getConfigInfo(sServer, nPort, sDirPath);
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList();
+	initLinkedList(sDirPath);
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
-		checkRootFiles();
+		checkRootFiles(sDirPath);
 		sleep(5);
 	}
 
