@@ -80,7 +80,7 @@ int ReadDir (char sDirPath[MAX]) {
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
 		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-		printf("Prova amb un path correcte el proxim cop!\n");
+		write(2,"[Error] Prova amb un path correcte el proxim cop!\n",51);
 		perror ("scandir");
 		exit(0);
 		return -1;
@@ -134,7 +134,7 @@ void checkRootFiles (char sDirPath[MAX]) {
 
 	} else if (nTotalFiles > nLLTotalFiles) {
 
-	 	printf("cal afegir el nou arxiu\n");
+	 	write(2, "cal afegir el nou arxiu\n", 25);
 
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
@@ -150,6 +150,8 @@ void checkRootFiles (char sDirPath[MAX]) {
 		}
 	return;
 	}
+
+
 
 
 /**
