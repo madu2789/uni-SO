@@ -21,7 +21,7 @@
 #include <unistd.h>
 
 //Defines
-#define MAX_TRAMA 11
+#define MAX_TRAMA 115
 #define MAX 64
 #define ERROR -1
 
@@ -34,5 +34,6 @@
 
 //Funciones
 int clientConnect (int nPort);
+void TramaConnection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]);
 
 #endif

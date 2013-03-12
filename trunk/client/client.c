@@ -27,10 +27,13 @@ void loginUser (char sLogin[MAX], char sPswd[MAX]) {
 	write (1, sAux, strlen(sAux));
 	read (0, sPswd, MAX);
 	sPswd[strlen(sPswd)-1] = '\0';
+
 	//Md5
 	stringToMd5(sPswd, sPswdMd5);
 	printf("%s\n", sPswdMd5);
-	//Socket
+
+	//Socket peticio connexio
+	clientConnect(5454);
 
 }
 

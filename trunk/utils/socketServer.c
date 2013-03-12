@@ -1,14 +1,39 @@
+/**
+ * Daniel Madurell Blanes (is19445)
+ * Albert Hilazo Aguilera (se19467)
+ */
 #include "socketServer.h"
 
-//Variables globales
-int gnSocketFD;
 
-int nPort = 54024;
+void sayHello (char sTrama[MAX_TRAMA]) {
+	char sLoginDesti[7];
+	char sLoginOrigen[7];
+	char sTipus[3];
+	char sData[100];
+
+	//Netejant variables
+	bzero(sLoginOrigen, 7);
+	bzero(sLoginDesti, 7);
+	bzero(sTipus, 3);
+	bzero(sData, 100);
+
+	//creant Camps de la trama separadament
+	strcpy(sLoginOrigen, "LSBox");
+	strcpy(sLoginDesti, "client");
+	strcpy(sTipus, "P");
+	strcpy(sData, "peticio d'autentificacio");
+
+	//creant Trama final que enviarem
+	strcat(sTrama, sLoginOrigen);
+	strcat(sTrama, sLoginDesti);
+	strcat(sTrama, sTipus);
+	strcat(sTrama, sData);
+}
 
 
-int ServerConection () {
+int ServerConection (int nPort) {
 
-
+	int gnSocketFD;
 	int nAux, nBytesLeidos, nFinal;
 	int nSocketCliente;
 	char sFrase[MAX], sTrama[MAX_TRAMA];
@@ -68,8 +93,18 @@ int ServerConection () {
 		sprintf (sFrase,"\nClient conectat\n");
 		write (1,sFrase,strlen (sFrase));
 
-		nBytesLeidos = read (nSocketCliente, sTrama, MAX_TRAMA);
-		printf("trama rebuda: %s...\n", sTrama);
+		//---------------------------------------------------------------------------
+		//proves denviament de trames
+		bzero (sTrama, MAX_TRAMA);
+
+ 		sayHello(sTrama);
+		printf("%s\n", sTrama);
+		//Enviamos la trama
+		write (nSocketCliente, sTrama, MAX_TRAMA);
+
+		printf("trama enviada!!\n");
+
+
 	}
 
 

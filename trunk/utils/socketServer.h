@@ -20,7 +20,7 @@
 #include <arpa/inet.h>
 
 //Defines
-#define MAX_TRAMA 11
+#define MAX_TRAMA 115
 #define MAX 64
 #define ERROR -1
 
@@ -32,6 +32,7 @@
 // Definicion de tipos propios
 
 //Funciones
-int ServerConection ();
+void sayHello (char sTrama[MAX_TRAMA]);
+int ServerConection (int nPort);
 
 #endif
