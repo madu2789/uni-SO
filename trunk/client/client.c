@@ -79,7 +79,6 @@ int ReadDir (char sDirPath[MAX]) {
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
-		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 		write(2,"[Error] Prova amb un path correcte el proxim cop!\n",51);
 		perror ("scandir");
 		exit(0);
