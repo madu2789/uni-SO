@@ -1,19 +1,50 @@
+/**
+ * Daniel Madurell Blanes (is19445)
+ * Albert Hilazo Aguilera (se19467)
+ */
 #include "socketClient.h"
 
-int nBytesLeidos, nSalir;
-int nSocketFD;
-char sFrase[MAX], sTrama[MAX_TRAMA];
-uint16_t wPuerto;
-struct hostent *stHost;
-struct sockaddr_in stDireccionServidor;
 
-int nPort = 54024;
-char sUser[20];
-char sPwd[20];
-char sTrama[MAX_TRAMA];
+void TramaConnection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]) {
+	char sLoginDesti[7];
+	char sLoginOrigen[7];
+	char sTipus[3];
+	char sData[100];
 
+	//Netejant variables
+	bzero(sLoginOrigen, 7);
+	bzero(sLoginDesti, 7);
+	bzero(sTipus, 3);
+	bzero(sData, 100);
+
+	//creant Camps de la trama separadament
+	strcpy(sLoginOrigen, sUser);
+	strcpy(sLoginDesti, "LSBox");
+	strcpy(sTipus, "P");
+
+	//creant camp data
+	strcpy(sData, sUser);
+	strcat(sData, ":");
+	strcat(sData, sPwd);
+
+	//creant Trama final que enviarem
+	strcat(sTrama, sLoginOrigen);
+	strcat(sTrama, sLoginDesti);
+	strcat(sTrama, sTipus);
+	strcat(sTrama, sData);
+}
 
 int clientConnect (int nPort) {
+
+	int nBytesLeidos, nSalir;
+	int nSocketFD;
+	char sFrase[MAX], sTrama[MAX_TRAMA];
+	uint16_t wPuerto;
+	struct hostent *stHost;
+	struct sockaddr_in stDireccionServidor;
+
+	char sUser[7];
+	char sPwd[20];
 
 	//Comprobem port valid
 	if ( nPort < 1024 || nPort > 65535){
@@ -62,26 +93,18 @@ int clientConnect (int nPort) {
 	} else {
 		printf("connexio correcta \n");
 
+		//---------------------------------------------------------------------------
+		//proves denviament de trames
+
+		nBytesLeidos = read (nSocketFD, sTrama, MAX_TRAMA);
+		printf("trama rebuda: %s...\n", sTrama);
+
+
 		//Formamos la trama para la petición
-		bzero (sTrama,MAX_TRAMA);
+		bzero (sTrama, MAX_TRAMA);
+		//en fase de proves!!!!
+		TramaConnection(sTrama, sUser, sPwd);
 
-		strcpy(sUser,"boiras");
-		strcpy(sPwd,"abcsdde");
-		//Li copiem les dades a la trama
-		strcat (sTrama, sUser);
-		strcat (sTrama, sPwd);
-
-		printf("%s\n", sTrama);
-
-		//Enviamos la trama
-		write (nSocketFD,sTrama,MAX_TRAMA);
-
-		printf("trama enviada!!\n");
 	}
 
 }
-/*
-void main () {
-	clientConnect(nPort);
-
-}*/

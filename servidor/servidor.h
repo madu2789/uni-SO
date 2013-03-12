@@ -24,6 +24,7 @@
 
 // Includes propios
 #include "../utils/facadeLL.h"
+#include "../utils/socketServer.h"
 
 // Definicion de constantes
 #define ERROR -1
