@@ -104,7 +104,7 @@ int clientConnect (int nPort) {
 		bzero (sTrama, MAX_TRAMA);
 		//en fase de proves!!!!
 		TramaConnection(sTrama, sUser, sPwd);
-
+		write (nSocketFD, sTrama, MAX_TRAMA);
 	}
 
 }
