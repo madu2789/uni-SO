@@ -30,6 +30,12 @@ void sayHello (char sTrama[MAX_TRAMA]) {
 	strcat(sTrama, sData);
 }
 
+int CheckAuthentication (char sTrama) {
+	int bCorrect = 0;
+
+
+	return bCorrect;
+}
 
 int ServerConection (int nPort) {
 
@@ -97,12 +103,22 @@ int ServerConection (int nPort) {
 		//proves denviament de trames
 		bzero (sTrama, MAX_TRAMA);
 
+		//Creem la primera trama de peticio d'autentificacio
  		sayHello(sTrama);
-		printf("%s\n", sTrama);
-		//Enviamos la trama
+		//Enviem la trama de peticio d'autentificacio
 		write (nSocketCliente, sTrama, MAX_TRAMA);
+		printf("trama enviada: %s...\n", sTrama);
 
-		printf("trama enviada!!\n");
+		//Rebem Trama amb les dades del client
+		read(nSocketCliente, sTrama, MAX_TRAMA);
+		printf("trama rebuda: %s...\n", sTrama);
+
+		//Comprovem que la trama rebuda es correcte
+		if ( CheckAuthentication (sTrama) ) {
+			printf("OOOOKKK\n");
+		} else {
+			printf("KKKOOOO\n" );
+		}
 
 
 	}

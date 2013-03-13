@@ -189,17 +189,14 @@ int main () {
 	//Llegir "config.dat"
 	getConfigInfo( sServer, nPort, sDirPath);
 
-	//prova simulant llegit del socket
-	strcpy(sSckUser, "boiras");
-	strcpy(sSckPswd, "nooo"); 															//incorrecte
-	strcpy(sSckPswd, "0cabc558f4d02a1bcaeaeb280d41a6ed");		//correcte
+	ServerConection(5454);
 
 	//Comprobar sSckUser i sSckPwd
-	if( !checkUser(sSckUser, sSckPswd) ) {
+/*	if( !checkUser(sSckUser, sSckPswd) ) {
 		write(2, "[Error] Autentificacio fallida.\n", 33);
 		exit(ERROR);
 	}
-
+*/
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList(sDirPath);
 
