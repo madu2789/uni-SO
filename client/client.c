@@ -9,7 +9,7 @@ struct dirent **arxius;
 /**
  * Demana al usuari sLogin i sPswd
  */
-void loginUser (char sLogin[MAX], char sPswd[MAX]) {
+void loginUser (char sLogin[7], char sPswd[32]) {
 	char sAux[MAX];
 	char sPswdMd5[MAX];
 
@@ -32,17 +32,16 @@ void loginUser (char sLogin[MAX], char sPswd[MAX]) {
 	stringToMd5(sPswd, sPswdMd5);
 	printf("%s\n", sPswdMd5);
 
-	//Socket peticio connexio
-	clientConnect(5454);
-
 }
 
 
 /**
  * Carrega el fitxer config.dat
  */
-void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]) {
-	int nFdIn;
+int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
+	int nFdIn = 0;
+	int nPort = 0;
+	char sPort[5];
 
 	nFdIn = open("config.dat", O_RDONLY);
 	if (-1 == nFdIn) {
@@ -51,15 +50,18 @@ void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]) {
 	} else {
 		bzero(sDirPath, MAX);
 		read(nFdIn, sServer, 12);
-		read(nFdIn, nPort, 3);
-		read(nFdIn, sDirPath, MAX);
+		read(nFdIn, sPort, 5);
+		read(nFdIn, sDirPath, MAX-1);
 		close(nFdIn);
 
 		sServer[strlen(sServer)] = '\0';
-		nPort[strlen(nPort)] = '\0';
+		sPort[strlen(sPort)] = '\0';
 		sDirPath[strlen(sDirPath)] = '\0';
+
+		//Convertim el nombre del port a Integer
+		nPort = atoi(sPort);
 	}
-	return;
+	return nPort;
 }
 
 
@@ -160,18 +162,24 @@ void checkRootFiles (char sDirPath[MAX]) {
  * main general
  */
 int main () {
+	int nPort = 0;
 	char sServer[11];
-	char nPort[3];
 	char sDirPath[MAX];
-	char sLogin[MAX];
-	char sPswd[MAX];
+	char sLogin[7];
+	char sPswd[32];
 
 	//Guardem -> sLogin, sPswd
 	loginUser(sLogin, sPswd);
+
 	//Llegir "config.dat"
-	getConfigInfo(sServer, nPort, sDirPath);
+	nPort = getConfigInfo(sServer, sDirPath);
+
+	//Socket peticio connexio
+	clientConnect(nPort, sLogin, sPswd);
+
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList(sDirPath);
+
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		checkRootFiles(sDirPath);

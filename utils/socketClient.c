@@ -4,8 +4,14 @@
  */
 #include "socketClient.h"
 
-
-void TramaConnection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]) {
+/**
+ * Crea la Trama de peticio de coneccio per al servidor
+ * @param  sTrama {String}	Cadena on posarem la trama que enviarem
+ * @param  sUser {String}	Login d'usuari que inclourem
+ * @param  sPwd {String}	Password amb md5 que inclourem
+ * @return
+ */
+void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]) {
 	char sLoginDesti[7];
 	char sLoginOrigen[7];
 	char sTipus[3];
@@ -20,7 +26,7 @@ void TramaConnection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]) {
 	//creant Camps de la trama separadament
 	strcpy(sLoginOrigen, sUser);
 	strcpy(sLoginDesti, "LSBox");
-	strcpy(sTipus, "P");
+	strcpy(sTipus, "A");
 
 	//creant camp data
 	strcpy(sData, sUser);
@@ -34,7 +40,24 @@ void TramaConnection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]) {
 	strcat(sTrama, sData);
 }
 
-int clientConnect (int nPort) {
+
+/**
+ * Revisa que la Trama rebuda sigui del fotmat i correcte en si
+ * @param  sTrama {String}	Trama rebuda que analitzarem
+ * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int checkTrama (char sTrama[MAX_TRAMA]) {
+	int bTramaOk = 0;
+
+	return bTramaOk;
+}
+
+/**
+ * Connecta el socket Inicial amb el servidor i Autentica el Usuari
+ * @param  nPort {Integer}	Number of Port al que ens conectarem
+ * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
 	int nBytesLeidos, nSalir;
 	int nSocketFD;
@@ -43,8 +66,7 @@ int clientConnect (int nPort) {
 	struct hostent *stHost;
 	struct sockaddr_in stDireccionServidor;
 
-	char sUser[7];
-	char sPwd[20];
+	int bTramaOk = 0;
 
 	//Comprobem port valid
 	if ( nPort < 1024 || nPort > 65535){
@@ -62,14 +84,10 @@ int clientConnect (int nPort) {
 		return ERROR;
 	}
 
-	printf("socket creat\n");
-
 	//Creamos la estructura para conectarnos
 	memset (&stDireccionServidor, 0, sizeof(stDireccionServidor));
 	stDireccionServidor.sin_family = AF_INET;
 	stDireccionServidor.sin_port = htons (wPuerto);
-
-	printf("estructura x connect\n");
 
 	//Extraemos el host
 	stHost = gethostbyname ("cygnus.salle.url.edu");
@@ -79,11 +97,8 @@ int clientConnect (int nPort) {
 		return ERROR;
 	}
 
-	printf("extreiem host\n");
-
+	//Copiem les dades a la estructura
 	bcopy (stHost->h_addr, &stDireccionServidor.sin_addr.s_addr, stHost->h_length);
-
-	printf("bcopy i ara intentem connectar\n");
 
 	//Ens conectamem al servidor
 	if (connect (nSocketFD, &stDireccionServidor, sizeof (stDireccionServidor)) < 0){
@@ -91,20 +106,37 @@ int clientConnect (int nPort) {
 		write (1,sFrase,strlen (sFrase));
 		return ERROR;
 	} else {
-		printf("connexio correcta \n");
 
-		//---------------------------------------------------------------------------
 		//proves denviament de trames
 
+		//Llegim la primera trama del servidor de P
 		nBytesLeidos = read (nSocketFD, sTrama, MAX_TRAMA);
+
+		//Comprovem si la Trama es correcte
+		bTramaOk = checkTrama(sTrama);
+		if (nBytesLeidos < MAX_TRAMA && bTramaOk == 0) {
+			printf("error trama incorrecte\n");
+			//peticio again??
+		}
+
 		printf("trama rebuda: %s...\n", sTrama);
 
-
-		//Formamos la trama para la petición
+		//Formem trama per la petició
 		bzero (sTrama, MAX_TRAMA);
-		//en fase de proves!!!!
-		TramaConnection(sTrama, sUser, sPwd);
+		petitionConection(sTrama, sUser, sPwd);
+
+		//Enviem la trama de peticio
 		write (nSocketFD, sTrama, MAX_TRAMA);
+
+		//Llegim la Trama d'autoritzacio del
+		nBytesLeidos = read (nSocketFD, sTrama, MAX_TRAMA);
+
+		//Comprovem si la Trama es correcte
+		bTramaOk = checkTrama(sTrama);
+		if (nBytesLeidos < MAX_TRAMA && bTramaOk == 0) {
+			printf("error trama incorrecte\n");
+		}
+		printf("2a trama rebuda: %s...\n", sTrama);
 	}
 
 }

@@ -4,40 +4,117 @@
  */
 #include "socketServer.h"
 
+/**
+ * Crea les diferents possibles Trames segons nType
+ * @param  sTrama {String}	Cadena on posarem la trama que enviarem
+ * @param  sLoginDesti {String}	Login desti de la trama
+ * @param  sLoginOrigen {String}	Login origen de la trama
+ * @param  nType {Integer}	Tipus de trama que enviarem
+ * @return sTrama Ja formada
+ */
+void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType){
 
-void sayHello (char sTrama[MAX_TRAMA]) {
-	char sLoginDesti[7];
-	char sLoginOrigen[7];
-	char sTipus[3];
+	char sTipus;
 	char sData[100];
 
 	//Netejant variables
-	bzero(sLoginOrigen, 7);
-	bzero(sLoginDesti, 7);
-	bzero(sTipus, 3);
-	bzero(sData, 100);
+	bzero (sTrama, MAX_TRAMA);
+	bzero (sData, 100);
 
-	//creant Camps de la trama separadament
-	strcpy(sLoginOrigen, "LSBox");
-	strcpy(sLoginDesti, "client");
-	strcpy(sTipus, "P");
-	strcpy(sData, "peticio d'autentificacio");
+	//Detectem quin tipus es i podem el sTipus i Data necessaries
+	switch (nType) {
+		case 1:
+			sprintf (sData,"peticio d'autentificacio");
+			sTipus = 'P';
+		break;
+		case 2:
+			sprintf (sData,"Error en el procediment d'autentificació. Procedim a desconnexio");
+			sTipus = 'E';
+		break;
+		case 3:
+			sprintf (sData,"Autentificacio realitzada satisfactoriament");
+			sTipus = 'O';
+		break;
+	}
 
 	//creant Trama final que enviarem
 	strcat(sTrama, sLoginOrigen);
 	strcat(sTrama, sLoginDesti);
-	strcat(sTrama, sTipus);
+	sTrama[strlen(sTrama)] = sTipus;
 	strcat(sTrama, sData);
 }
 
-int CheckAuthentication (char sTrama) {
-	int bCorrect = 0;
 
+/**FUNCIO QUE HA DE TOCAR L'HILAZO, EII ! #AMBILUSIO! #NOTENIMPRESSA
+ * Comprova que el usuari que ha enviat la trama estigui registrat al sistema (shadows.dat)
+ * @param  sTrama {String}	Trama rebuda que analitzarem
+ * @param  sUser {String}	Login de la trama
+ * @param  sPswd {String}	Password de la trama
+ * @return bValid {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[32], char sPswd[32]) {
+	int nFdIn = 0;
+	int i = 0;
+	int bValid = 0;
+	char sFileUser[32];
+	char sFilePswd[32];
+	char sAux[MAX];
+	char cAux = '0';
 
-	return bCorrect;
+	nFdIn = open("shadows.dat", O_RDONLY);
+	if (-1 == nFdIn) {
+		write(2,"[Error] Error al obrir el fitxer 'shadows.dat'.\n",47);
+		exit(ERROR);
+	} else {
+
+		//Llegim char a char fins a ':'
+		while (cAux != ':'){
+			read (nFdIn, &cAux, 1);
+			if (cAux != ':'){
+				sAux[i] = cAux;
+			}else{
+				sAux[i] = '\0';
+			}
+			i++;
+		}
+		strcpy (sFileUser, sAux);
+
+		read (nFdIn, &sFilePswd, 32);
+		sFilePswd[strlen(sFilePswd)] = '\0';
+
+		//Test
+		//printf("sUser: %s\n", sFileUser);
+		//printf("sPswd: %s -- %s \n", sFilePswd, sPswd);
+
+		close(nFdIn);
+
+		//s'ha de fer per tothom for(){...}
+		if (strcmp(sUser, sFileUser) == 0) {
+			if (strcmp(sPswd, sFilePswd) == 0) {
+				bValid = 1;
+			}
+		}
+	}
+	return bValid;
 }
 
-int ServerConection (int nPort) {
+/**
+ * Revisa que la Trama rebuda sigui del fotmat i correcte en si
+ * @param  sTrama {String}	Trama rebuda que analitzarem
+ * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int checkTrama (char sTrama[MAX_TRAMA]) {
+	int bTramaOk = 0;
+
+	return bTramaOk;
+}
+
+/**
+ * Connecta el socket Inicial amb el client i Autentica el Usuari
+ * @param  nPort {Integer}	Number of Port al que ens conectarem
+ * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 
 	int gnSocketFD;
 	int nAux, nBytesLeidos, nFinal;
@@ -46,15 +123,18 @@ int ServerConection (int nPort) {
 	uint16_t wPuerto;
 	struct sockaddr_in stDireccionSocket, stDireccionCliente;
 
+	char sLoginDesti[7];
+	char sLoginOrigen[7];
+
+	//Comprovem que el port estigui en el marge correcte
 	if ( nPort < 1024 || nPort > 65535){
-		sprintf (sFrase,"Puerto invalido!\n");
+		sprintf (sFrase,"Port invalid!\n");
 		write (1,sFrase,strlen (sFrase));
 		return ERROR;
 	}
 	wPuerto = nPort;
 
-
-//Creamos el socket
+	//Creamos el socket
 	gnSocketFD = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (gnSocketFD < 0){
 		sprintf (sFrase,"Error al crear el socket!\n");
@@ -78,33 +158,40 @@ int ServerConection (int nPort) {
 	}
 
 	//Escuchamos peticiones (1 a la vez)
-	listen (gnSocketFD, 15);
+	listen (gnSocketFD, 1);
 
-	sprintf (sFrase,"Servidor connectat!\n");
-	write (1,sFrase,strlen (sFrase));
+	sprintf (sFrase, "Servidor connectat!\n");
+	write (1, sFrase, strlen (sFrase));
 
-	while (1){
+
+	while (1) {
 
 		printf("esperant client...\n");
-		//Obtenemos un socket al cliente que se conecte
+		//Obtenim un socket al client que es conecti
 		socklen_t c_len = sizeof (stDireccionCliente);
 		nSocketCliente = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
 		if (nSocketCliente < 0){
 			sprintf (sFrase,"Error al aceptar la peticion del cliente!\n");
 			write (1,sFrase,strlen (sFrase));
-			//Cerramos el socket
+			//Tanquem socket
 			close (gnSocketFD);
 			return ERROR;
 		}
+
 		sprintf (sFrase,"\nClient conectat\n");
 		write (1,sFrase,strlen (sFrase));
 
+
 		//---------------------------------------------------------------------------
 		//proves denviament de trames
-		bzero (sTrama, MAX_TRAMA);
+		//---------------------------------------------------------------------------
+
+		sprintf (sLoginOrigen, "LSBox");
+		sprintf (sLoginDesti, "client");
 
 		//Creem la primera trama de peticio d'autentificacio
- 		sayHello(sTrama);
+ 		creaTrama(sTrama, sLoginOrigen, sLoginDesti, 1);
+
 		//Enviem la trama de peticio d'autentificacio
 		write (nSocketCliente, sTrama, MAX_TRAMA);
 		printf("trama enviada: %s...\n", sTrama);
@@ -114,12 +201,15 @@ int ServerConection (int nPort) {
 		printf("trama rebuda: %s...\n", sTrama);
 
 		//Comprovem que la trama rebuda es correcte
-		if ( CheckAuthentication (sTrama) ) {
-			printf("OOOOKKK\n");
+		if ( checkAuthentication (sTrama, sUser, sPswd) ) {
+			//Creem la trama de resposta OK peticio d'autentificacio
+ 			creaTrama(sTrama, sLoginOrigen, sLoginDesti, 2);
 		} else {
-			printf("KKKOOOO\n" );
+			//Creem la trama de resposta KO peticio d'autentificacio
+ 			creaTrama(sTrama, sLoginOrigen, sLoginDesti, 3);
+ 			//hem de desconectar...
 		}
-
+		write (nSocketCliente, sTrama, MAX_TRAMA);
 
 	}
 
