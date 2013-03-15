@@ -24,15 +24,15 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 	//Detectem quin tipus es i podem el sTipus i Data necessaries
 	switch (nType) {
 		case 1:
-			sprintf (sData,"peticio d'autentificacio");
+			sprintf (sData,"'peticio d'autentificacio'");
 			sTipus = 'P';
 		break;
 		case 2:
-			sprintf (sData,"Error en el procediment d'autentificació. Procedim a desconnexio");
+			sprintf (sData,"'Error en el procediment d'autentificació. Procedim a desconnexio'");
 			sTipus = 'E';
 		break;
 		case 3:
-			sprintf (sData,"Autentificacio realitzada satisfactoriament");
+			sprintf (sData,"'Autentificacio realitzada satisfactoriament'");
 			sTipus = 'O';
 		break;
 	}
@@ -52,7 +52,7 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
  * @param  sPswd {String}	Password de la trama
  * @return bValid {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[32], char sPswd[32]) {
+int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) {
 	int nFdIn = 0;
 	int i = 0;
 	int bValid = 0;
@@ -106,6 +106,13 @@ int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[32], char sPswd[32])
 int checkTrama (char sTrama[MAX_TRAMA]) {
 	int bTramaOk = 0;
 
+//tres heuristikes : trama tipus E || trama incorrecte
+
+	while (sTrama != '\0') {
+
+	}
+
+
 	return bTramaOk;
 }
 
@@ -125,6 +132,7 @@ int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 
 	char sLoginDesti[7];
 	char sLoginOrigen[7];
+	int nBytesLlegits = 0;
 
 	//Comprovem que el port estigui en el marge correcte
 	if ( nPort < 1024 || nPort > 65535){
@@ -183,25 +191,22 @@ int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 
 
 		//---------------------------------------------------------------------------
-		//proves denviament de trames
+		//Protocol de trames d'establiment de connexio
 		//---------------------------------------------------------------------------
 
-		sprintf (sLoginOrigen, "LSBox");
-		sprintf (sLoginDesti, "client");
-
 		//Creem la primera trama de peticio d'autentificacio
- 		creaTrama(sTrama, sLoginOrigen, sLoginDesti, 1);
+ 		creaTrama(sTrama, "LSBox", "client", 1);
 
 		//Enviem la trama de peticio d'autentificacio
 		write (nSocketCliente, sTrama, MAX_TRAMA);
 		printf("trama enviada: %s...\n", sTrama);
 
 		//Rebem Trama amb les dades del client
-		read(nSocketCliente, sTrama, MAX_TRAMA);
+		nBytesLlegits = read(nSocketCliente, sTrama, MAX_TRAMA);
 		printf("trama rebuda: %s...\n", sTrama);
 
 		//Comprovem que la trama rebuda es correcte
-		if ( checkAuthentication (sTrama, sUser, sPswd) ) {
+		if ( nBytesLlegits <= MAX_TRAMA && checkAuthentication (sTrama, sUser, sPswd) && checkTrama(sTrama) ) {
 			//Creem la trama de resposta OK peticio d'autentificacio
  			creaTrama(sTrama, sLoginOrigen, sLoginDesti, 2);
 		} else {
