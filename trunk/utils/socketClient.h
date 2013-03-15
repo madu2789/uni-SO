@@ -33,7 +33,8 @@
 // Definicion de tipos propios
 
 //Funciones
-int clientConnect (int nPort);
-void TramaConnection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]);
+int clientConnect (int nPort, char sUser[7], char sPwd[32]);
+int checkTrama (char sTrama[MAX_TRAMA]);
+void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20]);
 
 #endif

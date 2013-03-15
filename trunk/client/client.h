@@ -39,7 +39,7 @@
 //Funciones
 int main();
 void loginUser (char sLogin[MAX], char sPswd[MAX]);
-void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]);
+int getConfigInfo (char sServer[11], char sDirPath[MAX]);
 int ReadDir (char sDirPath[MAX]);
 static int triar (const struct dirent *arg);
 void conversorTipus (char sTipus[30], int nToConvert);

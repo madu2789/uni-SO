@@ -59,59 +59,6 @@ int ReadDir (char sDirPath[MAX]) {
 }
 
 
-
-/**
- * Check al sPswd del sUser per veure si te permís per iniciar la app
- * FALTA QUE CARREGUI TOOOT EL FITXER, ARA PER ARA NOMES CARREGA LA PRIMERA FILA!!!!!!
- */
-int checkUser (char sSckUser[32], char sSckPswd[32]) {
-
-	int nFdIn;
-	int i = 0;
-	int bValid = 0;
-	char sFileUser[32];
-	char sFilePswd[32];
-	char cAux = '0';
-	char sAux[MAX];
-
-	nFdIn = open("shadows.dat", O_RDONLY);
-	if (-1 == nFdIn) {
-		write(2,"[Error] Error al obrir el fitxer 'shadows.dat'.\n",47);
-		exit(ERROR);
-	} else {
-
-		//Llegim char a char fins a ':'
-		while (cAux != ':'){
-			read (nFdIn, &cAux, 1);
-			if (cAux != ':'){
-				sAux[i] = cAux;
-			}else{
-				sAux[i] = '\0';
-			}
-			i++;
-		}
-		strcpy (sFileUser, sAux);
-
-		read (nFdIn, &sFilePswd, 32);
-		sFilePswd[strlen(sFilePswd)] = '\0';
-
-		//Test
-		//printf("sUser: %s\n", sFileUser);
-		//printf("sPswd: %s -- %s \n", sFilePswd, sSckPswd);
-
-		close(nFdIn);
-
-		//s'ha de fer per tothom for(){...}
-		if (strcmp(sSckUser, sFileUser) == 0) {
-			if (strcmp(sSckPswd, sFilePswd) == 0) {
-				bValid = 1;
-			}
-		}
-	}
-	return bValid;
-}
-
-
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
@@ -182,21 +129,15 @@ int main () {
 	char sServer[11];
 	char nPort[3];
 	char sDirPath[MAX];
-	char sSckUser[32];
-	char sSckPswd[32];
+	char sUser[7];
+	char sPswd[32];
 
 
 	//Llegir "config.dat"
 	getConfigInfo( sServer, nPort, sDirPath);
 
-	ServerConection(5454);
+	ServerConection(5454, sUser, sPswd);
 
-	//Comprobar sSckUser i sSckPwd
-/*	if( !checkUser(sSckUser, sSckPswd) ) {
-		write(2, "[Error] Autentificacio fallida.\n", 33);
-		exit(ERROR);
-	}
-*/
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList(sDirPath);
 
