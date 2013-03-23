@@ -33,6 +33,8 @@
 
 //Funciones
 void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType);
+int getNumUsers(int nFdIn);
+int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]);
 int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[32], char sPswd[32]);
 int checkTrama (char sTrama[MAX_TRAMA]);
 int ServerConection (int nPort, char sUser[7], char sPswd[32]);
