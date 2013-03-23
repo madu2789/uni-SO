@@ -45,7 +45,67 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 }
 
 
-/**FUNCIO QUE HA DE TOCAR L'HILAZO, EII ! #AMBILUSIO! #NOTENIMPRESSA
+/**
+ * Retorna el nombre d'entrades al fitxer 
+ * @param  nFdIn {Integer}	Fitxer a llegir
+ * @return nNum {Integer} Nombre d'entrades
+ */
+int getNumUsers(int nFdIn) {
+	int nNum = 0;
+	char cAux = '0';
+	
+	//AtoI fins final de linia
+	while (cAux != '\n') {
+		read (nFdIn, &cAux, 1);
+		if (cAux != '\n') {
+			nNum = nNum*10 + cAux - '0';
+		}
+	}
+
+	return nNum;
+}
+
+
+/**
+ * Comprova si les dades del usuari es corresponen amb la línia actual del fitxer (shadows.dat)
+ * @param  nFdIn {Integer}	Fitxer a llegir
+ * @param  sUser {String}	Login del usuari
+ * @param  sPswd {String}	Password del usuari
+ * @return {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]) {
+	int i = 0;
+	char cAux = '0';
+	char sAux[MAX];
+	char sFileUser[32];
+	char sFilePswd[32];
+
+	// Llegim char a char fins a ':'
+	while (cAux != ':') {
+		read (nFdIn, &cAux, 1);
+		if (cAux != ':') {
+			sAux[i] = cAux;
+		} else {
+			sAux[i] = '\0';
+		}
+		i++;
+	}
+
+	strcpy (sFileUser, sAux);
+	
+	// Llegim contrasenya
+	read (nFdIn, &sFilePswd, 32);
+	sFilePswd[strlen(sFilePswd)] = '\0';
+	
+	if (strcmp(sUser, sFileUser) == 0 && strcmp(sPswd, sFilePswd) == 0) {
+			return 1;
+	}
+
+	return 0;
+}
+
+
+/**
  * Comprova que el usuari que ha enviat la trama estigui registrat al sistema (shadows.dat)
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @param  sUser {String}	Login de la trama
@@ -55,10 +115,7 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) {
 	int nFdIn = 0;
 	int i = 0;
-	int bValid = 0;
-	char sFileUser[32];
-	char sFilePswd[32];
-	char sAux[MAX];
+	int nNumUsers = 0;
 	char cAux = '0';
 
 	nFdIn = open("shadows.dat", O_RDONLY);
@@ -66,36 +123,19 @@ int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) 
 		write(2,"[Error] Error al obrir el fitxer 'shadows.dat'.\n",47);
 		exit(ERROR);
 	} else {
+		nNumUsers = getNumUsers(nFdIn);
 
-		//Llegim char a char fins a ':'
-		while (cAux != ':'){
-			read (nFdIn, &cAux, 1);
-			if (cAux != ':'){
-				sAux[i] = cAux;
-			}else{
-				sAux[i] = '\0';
+		for (i=0; i<nNumUsers; i++) {
+			if ( checkUserInfo(nFdIn, sUser, sPswd) == 1 ) {
+				return 1;
 			}
-			i++;
+			// Llegim el \n
+			read (nFdIn, &cAux, 1);
 		}
-		strcpy (sFileUser, sAux);
-
-		read (nFdIn, &sFilePswd, 32);
-		sFilePswd[strlen(sFilePswd)] = '\0';
-
-		//Test
-		//printf("sUser: %s\n", sFileUser);
-		//printf("sPswd: %s -- %s \n", sFilePswd, sPswd);
 
 		close(nFdIn);
-
-		//s'ha de fer per tothom for(){...}
-		if (strcmp(sUser, sFileUser) == 0) {
-			if (strcmp(sPswd, sFilePswd) == 0) {
-				bValid = 1;
-			}
-		}
+		return 0;
 	}
-	return bValid;
 }
 
 /**
