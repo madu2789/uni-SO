@@ -129,14 +129,11 @@ int main () {
 	char sServer[11];
 	char nPort[3];
 	char sDirPath[MAX];
-	char sUser[7];
-	char sPswd[32];
-
 
 	//Llegir "config.dat"
 	getConfigInfo( sServer, nPort, sDirPath);
 
-	ServerConection(5454, sUser, sPswd);
+	ServerConection(5454);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList(sDirPath);

@@ -14,12 +14,12 @@
  */
 void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType){
 
-	char sTipus;
+	char sTipus = '0';
 	char sData[100];
 
 	//Netejant variables
-	bzero (sTrama, MAX_TRAMA);
-	bzero (sData, 100);
+	memset (sTrama, '\0', MAX_TRAMA);
+	memset (sData, '\0', 100);
 
 	//Detectem quin tipus es i podem el sTipus i Data necessaries
 	switch (nType) {
@@ -46,14 +46,14 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 
 
 /**
- * Retorna el nombre d'entrades al fitxer 
+ * Retorna el nombre d'entrades al fitxer
  * @param  nFdIn {Integer}	Fitxer a llegir
  * @return nNum {Integer} Nombre d'entrades
  */
 int getNumUsers(int nFdIn) {
 	int nNum = 0;
 	char cAux = '0';
-	
+
 	//AtoI fins final de linia
 	while (cAux != '\n') {
 		read (nFdIn, &cAux, 1);
@@ -92,11 +92,11 @@ int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]) {
 	}
 
 	strcpy (sFileUser, sAux);
-	
+
 	// Llegim contrasenya
 	read (nFdIn, &sFilePswd, 32);
 	sFilePswd[strlen(sFilePswd)] = '\0';
-	
+
 	if (strcmp(sUser, sFileUser) == 0 && strcmp(sPswd, sFilePswd) == 0) {
 			return 1;
 	}
@@ -143,14 +143,54 @@ int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) 
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTrama (char sTrama[MAX_TRAMA]) {
+int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sPwd[8], int nType) {
 	int bTramaOk = 0;
 
-//tres heuristikes : trama tipus E || trama incorrecte
+	//Separacio de camps de la trama:
+	char sLoginDTrama[8];
+	char sTypeTrama;
+	char sDataTrama[100];
 
-	while (sTrama != '\0') {
+	memset(sLoginOrigen, '\0', 7);
+	memset(sLoginDTrama, '\0', 7);
+	memset(sDataTrama, '\0', 100);
 
+
+	memcpy( sLoginOrigen, &sTrama[0], 7 );
+	sLoginOrigen[7] = '\0';
+
+	memcpy( sLoginDTrama, &sTrama[7], 14 );
+	sLoginDTrama[7] = '\0';
+
+  sTypeTrama = sTrama[14];
+
+  strncpy(sDataTrama, sTrama+15, 100);
+  sDataTrama[strlen(sDataTrama)] = '\0';
+
+  memcpy( sPwd, &sDataTrama[8], 7 );
+	sPwd[7] = '\0';
+
+/* // Comprovacio que parseja be la trama:
+  printf("camp login origen parsejat:  %s\n", sLoginOrigen);
+  printf("camp login desti parsejat:  %s\n", sLoginDTrama);
+  printf("camp trama parsejat:  %c\n", sTypeTrama);
+  printf("camp data parsejat:  %s\n", sDataTrama);
+  printf("password parsejat:  %s\n", sPwd);
+*/
+
+
+	switch (nType) {
+		//cas autentificacio
+		case 1:
+
+			if (sTypeTrama == 'A' ){
+				if (strcmp (sLoginDTrama, "LSBox  ") == 0) {
+					bTramaOk = 1;
+				}
+			}
+		break;
 	}
+
 
 
 	return bTramaOk;
@@ -161,7 +201,7 @@ int checkTrama (char sTrama[MAX_TRAMA]) {
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
+int ServerConection (int nPort) {
 
 	int gnSocketFD;
 	int nAux, nBytesLeidos, nFinal;
@@ -170,14 +210,17 @@ int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 	uint16_t wPuerto;
 	struct sockaddr_in stDireccionSocket, stDireccionCliente;
 
-	char sLoginDesti[7];
-	char sLoginOrigen[7];
+	char sLoginOrigen[8];
+	char sPwd[8];
+
 	int nBytesLlegits = 0;
+	int bValidTrama = 0;
 
 	//Comprovem que el port estigui en el marge correcte
 	if ( nPort < 1024 || nPort > 65535){
 		sprintf (sFrase,"Port invalid!\n");
 		write (1,sFrase,strlen (sFrase));
+		exit();
 		return ERROR;
 	}
 	wPuerto = nPort;
@@ -187,6 +230,7 @@ int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 	if (gnSocketFD < 0){
 		sprintf (sFrase,"Error al crear el socket!\n");
 		write (1,sFrase,strlen (sFrase));
+		exit();
 		return ERROR;
 	}
 
@@ -202,6 +246,7 @@ int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 		write (1,sFrase,strlen (sFrase));
 		//Cerramos el socket
 		close (gnSocketFD);
+		exit();
 		return ERROR;
 	}
 
@@ -245,16 +290,21 @@ int ServerConection (int nPort, char sUser[7], char sPswd[32]) {
 		nBytesLlegits = read(nSocketCliente, sTrama, MAX_TRAMA);
 		printf("trama rebuda: %s...\n", sTrama);
 
+
+		bValidTrama = checkTrama(sTrama, sLoginOrigen, sPwd, 1);
+
 		//Comprovem que la trama rebuda es correcte
-		if ( nBytesLlegits <= MAX_TRAMA && checkAuthentication (sTrama, sUser, sPswd) && checkTrama(sTrama) ) {
+		if ( nBytesLlegits <= MAX_TRAMA && checkAuthentication (sTrama, sLoginOrigen, sPwd) && bValidTrama ) {
 			//Creem la trama de resposta OK peticio d'autentificacio
- 			creaTrama(sTrama, sLoginOrigen, sLoginDesti, 2);
+ 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 2);
 		} else {
 			//Creem la trama de resposta KO peticio d'autentificacio
- 			creaTrama(sTrama, sLoginOrigen, sLoginDesti, 3);
+ 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 3);
  			//hem de desconectar...
 		}
+		//Enviem la trama de de connexio correcta
 		write (nSocketCliente, sTrama, MAX_TRAMA);
+		printf("trama enviada: %s...\n", sTrama);
 
 	}
 
