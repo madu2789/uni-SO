@@ -12,21 +12,43 @@ struct dirent **arxius;
 void loginUser (char sLogin[7], char sPswd[32]) {
 	char sAux[MAX];
 	char sPswdMd5[MAX];
+	int nValid = 0;
 
 	//Inicialitzacions
 	bzero (sLogin, MAX);
 	bzero (sPswd, MAX);
+
 	//Demana nom d'usuari
-	sprintf (sAux, "Username: ");
-	write (1, sAux, strlen(sAux));
-	read (0, sLogin, MAX);
-	sLogin[strlen(sLogin)-1] = '\0';
+	while (!nValid) {
+		sprintf (sAux, "\n Username: ");
+		write (1, sAux, strlen(sAux));
+		read (0, sLogin, 7);
+		if (strlen(sLogin) == 7) {
+			nValid = 1;
+		} else {
+			sprintf (sAux, "\n Username  ha de ser de 7 caracters: ");
+			write (1, sAux, strlen(sAux));
+		}
+	}
+	//sLogin[strlen(sLogin)-1] = '\0';
+
+	//Reiniciem variable
+	nValid = 0;
 
 	//Demana contrasenya
-	sprintf (sAux, "Password: ");
-	write (1, sAux, strlen(sAux));
-	read (0, sPswd, MAX);
-	sPswd[strlen(sPswd)-1] = '\0';
+	while (!nValid) {
+		sprintf (sAux, "\n Password: ");
+		write (1, sAux, strlen(sAux));
+		getchar();
+		read (0, sPswd, 7);
+		if (strlen(sPswd) == 7) {
+			nValid = 1;
+		} else {
+			sprintf (sAux, "\n Password ha de ser de 7 caracters: ");
+			write (1, sAux, strlen(sAux));
+		}
+	}
+	//sPswd[strlen(sPswd)-1] = '\0';
 
 	//Md5
 	stringToMd5(sPswd, sPswdMd5);
