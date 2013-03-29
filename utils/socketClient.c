@@ -60,6 +60,8 @@ void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], in
 }
 
 
+
+
 /**
  * Revisa que la Trama rebuda sigui del fotmat i correcte en si
  * @param  sTrama {String}	Trama rebuda que analitzarem
@@ -95,22 +97,20 @@ int checkTrama (char sTrama[MAX_TRAMA], int nType) {
 	return bTramaOk;
 }
 
+
+
+
 /**
- * Connecta el socket Inicial amb el servidor i Autentica el Usuari
+ * Connecta el socket inicial amb el servidor
  * @param  nPort {Integer}	Number of Port al que ens conectarem
- * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ * @return nSocketFD {Integer} Id del socket associat
  */
-int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
-
-	int nBytesLlegits, nSalir;
-	int nSocketFD;
-	char sFrase[MAX], sTrama[MAX_TRAMA];
-	uint16_t wPuerto;
-	struct hostent *stHost;
+int socketConnection (int nPort) {
 	struct sockaddr_in stDireccionServidor;
-
-	int bTramaOk = 0;
-	int nTipusTrama = 0;
+	struct hostent *stHost;
+	uint16_t wPuerto;
+	char sFrase[MAX];
+	int nSocketFD;
 
 	//Comprobem port valid
 	if ( nPort < 1024 || nPort > 65535){
@@ -144,49 +144,68 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 	//Copiem les dades a la estructura
 	bcopy (stHost->h_addr, &stDireccionServidor.sin_addr.s_addr, stHost->h_length);
 
-	//Ens conectamem al servidor
 	if (connect (nSocketFD, &stDireccionServidor, sizeof (stDireccionServidor)) < 0){
 		sprintf (sFrase, "Error al intentarnos conectar al servidor!\n");
 		write (1, sFrase, strlen(sFrase));
+		//tancar el programa
+		exit(0);
 		return ERROR;
+	}
+
+	return nSocketFD;
+}
+
+
+
+
+/**
+ * Connecta el client amb el servidor i Autentica el Usuari mitjançant el protocol
+ * @param  nPort {Integer}	Number of Port al que ens conectarem
+ * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
+
+	int nBytesLlegits;
+	int nSocketFD;
+	char sFrase[MAX], sTrama[MAX_TRAMA];
+	int bTramaOk = 0;
+	int nTipusTrama = 0;
+
+	//Ens conectamem al servidor
+	nSocketFD = socketConnection (nPort);
+
+
+	//Protocol d'establiment de connexio
+	//Llegim la primera trama del servidor de P
+	nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
+
+	//Comprovem si la Trama es correcte
+	if (nBytesLlegits < MAX_TRAMA && checkTrama(sTrama, 1)) {
+		printf("error trama incorrecte\n");
+		nTipusTrama = 2;
+		//peticio again??
 	} else {
-
-		//---------------------------------------------------------------------------
-		//Protocol de trames d'establiment de connexio
-		//---------------------------------------------------------------------------
-
-		//Llegim la primera trama del servidor de P
-		nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
-
-		//Comprovem si la Trama es correcte
-		if (nBytesLlegits < MAX_TRAMA && checkTrama(sTrama, 1)) {
-			printf("error trama incorrecte\n");
-			nTipusTrama = 2;
-			//peticio again??
-		} else {
-			printf("trama rebuda: %s...\n", sTrama);
-			nTipusTrama = 3;
-		}
+		printf("trama rebuda: %s\n", sTrama);
+		nTipusTrama = 3;
+	}
 
 
-		//Formem trama per la petició
-		bzero (sTrama, MAX_TRAMA);
-		petitionConection(sTrama, sUser, sPwd, nTipusTrama);
+	//Formem trama per la petició
+	petitionConection(sTrama, sUser, sPwd, nTipusTrama);
 
-		//Enviem la trama de peticio
-		write (nSocketFD, sTrama, MAX_TRAMA);
+	//Enviem la trama de peticio
+	write (nSocketFD, sTrama, MAX_TRAMA);
 
-		//Llegim la Trama d'autoritzacio del
-		nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
+	//Llegim la Trama d'autoritzacio del
+	nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
 
-checkTrama(sTrama, 1);
+	checkTrama(sTrama, 1);
 
-		//Comprovem si la Trama es correcte
-		if (nBytesLlegits < MAX_TRAMA && checkTrama(sTrama, 1)) {
-			printf("error trama incorrecte\n");
-		} else {
-			printf("2a trama rebuda: %s...\n", sTrama);
-		}
+	//Comprovem si la Trama es correcte
+	if (nBytesLlegits < MAX_TRAMA && checkTrama(sTrama, 1)) {
+		printf("error trama incorrecte\n");
+	} else {
+		printf("2a trama rebuda: %s\n", sTrama);
 	}
 
 }
