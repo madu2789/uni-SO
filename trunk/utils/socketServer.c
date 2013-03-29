@@ -144,12 +144,13 @@ int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) 
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
 int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sPwd[8], int nType) {
-	int bTramaOk = 0;
 
-	//Separacio de camps de la trama:
+	int bTramaOk = 0;
+	//Camps de la trama:
 	char sLoginDTrama[8];
 	char sTypeTrama;
 	char sDataTrama[100];
+
 
 	memset(sLoginOrigen, '\0', 7);
 	memset(sLoginDTrama, '\0', 7);
@@ -170,28 +171,27 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sPwd[8], int 
   memcpy( sPwd, &sDataTrama[8], 7 );
 	sPwd[7] = '\0';
 
-/* // Comprovacio que parseja be la trama:
+
+ // Comprovacio que parseja be la trama:
   printf("camp login origen parsejat:  %s\n", sLoginOrigen);
   printf("camp login desti parsejat:  %s\n", sLoginDTrama);
   printf("camp trama parsejat:  %c\n", sTypeTrama);
   printf("camp data parsejat:  %s\n", sDataTrama);
   printf("password parsejat:  %s\n", sPwd);
-*/
 
+
+	bTramaOk = 0;
 
 	switch (nType) {
 		//cas autentificacio
 		case 1:
 
 			if (sTypeTrama == 'A' ){
-				if (strcmp (sLoginDTrama, "LSBox  ") == 0) {
-					bTramaOk = 1;
-				}
+				bTramaOk = 1;
 			}
+
 		break;
 	}
-
-
 
 	return bTramaOk;
 }
@@ -270,7 +270,7 @@ int ServerConection (int nPort) {
 
 	char sLoginOrigen[8];
 	char sPwd[8];
-	int bValidTrama = 0;
+	int bValidTrama = 0, bValidAuth = 0;
 
 
 	gnSocketFD = socketConnnection(nPort);
@@ -278,6 +278,7 @@ int ServerConection (int nPort) {
 	while (1) {
 
 		printf("esperant client...\n");
+
 		//Obtenim un socket al client que es conecti
 		socklen_t c_len = sizeof (stDireccionCliente);
 		nSocketCliente = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
@@ -310,9 +311,11 @@ int ServerConection (int nPort) {
 
 
 		bValidTrama = checkTrama(sTrama, sLoginOrigen, sPwd, 1);
+		bValidAuth = checkAuthentication (sTrama, sLoginOrigen, sPwd);
+		printf("trama correcte? %d - %d\n", bValidTrama, bValidAuth);
 
 		//Comprovem que la trama rebuda es correcte
-		if ( checkAuthentication (sTrama, sLoginOrigen, sPwd) && bValidTrama ) {
+		if ( bValidAuth && bValidTrama ) {
 			//Creem la trama de resposta OK peticio d'autentificacio
  			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 3);
 
