@@ -196,31 +196,25 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sPwd[8], int 
 	return bTramaOk;
 }
 
+
+
 /**
- * Connecta el socket Inicial amb el client i Autentica el Usuari
+ * Connecta el socket inicial amb el servidor
  * @param  nPort {Integer}	Number of Port al que ens conectarem
- * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ * @return nSocketFD {Integer} Id del socket associat
  */
-int ServerConection (int nPort) {
+int socketConnnection (int nPort) {
 
-	int gnSocketFD;
-	int nAux, nBytesLeidos, nFinal;
-	int nSocketCliente;
-	char sFrase[MAX], sTrama[MAX_TRAMA];
+	char sFrase[MAX];
 	uint16_t wPuerto;
-	struct sockaddr_in stDireccionSocket, stDireccionCliente;
-
-	char sLoginOrigen[8];
-	char sPwd[8];
-
-	int nBytesLlegits = 0;
-	int bValidTrama = 0;
+	struct sockaddr_in stDireccionSocket;
+	int gnSocketFD = 0;
 
 	//Comprovem que el port estigui en el marge correcte
 	if ( nPort < 1024 || nPort > 65535){
 		sprintf (sFrase,"Port invalid!\n");
 		write (1,sFrase,strlen (sFrase));
-		exit();
+
 		return ERROR;
 	}
 	wPuerto = nPort;
@@ -230,7 +224,7 @@ int ServerConection (int nPort) {
 	if (gnSocketFD < 0){
 		sprintf (sFrase,"Error al crear el socket!\n");
 		write (1,sFrase,strlen (sFrase));
-		exit();
+
 		return ERROR;
 	}
 
@@ -246,7 +240,7 @@ int ServerConection (int nPort) {
 		write (1,sFrase,strlen (sFrase));
 		//Cerramos el socket
 		close (gnSocketFD);
-		exit();
+
 		return ERROR;
 	}
 
@@ -256,6 +250,30 @@ int ServerConection (int nPort) {
 	sprintf (sFrase, "Servidor connectat!\n");
 	write (1, sFrase, strlen (sFrase));
 
+	return gnSocketFD;
+
+}
+
+
+
+/**
+ * Connecta el socket Inicial amb el client i Autentica el Usuari
+ * @param  nPort {Integer}	Number of Port al que ens conectarem
+ * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
+ */
+int ServerConection (int nPort) {
+
+	int gnSocketFD;
+	int nSocketCliente;
+	char sFrase[MAX], sTrama[MAX_TRAMA];
+	struct sockaddr_in stDireccionCliente;
+
+	char sLoginOrigen[8];
+	char sPwd[8];
+	int bValidTrama = 0;
+
+
+	gnSocketFD = socketConnnection(nPort);
 
 	while (1) {
 
@@ -284,27 +302,36 @@ int ServerConection (int nPort) {
 
 		//Enviem la trama de peticio d'autentificacio
 		write (nSocketCliente, sTrama, MAX_TRAMA);
-		printf("trama enviada: %s...\n", sTrama);
+		printf("trama enviada: %s\n", sTrama);
 
 		//Rebem Trama amb les dades del client
-		nBytesLlegits = read(nSocketCliente, sTrama, MAX_TRAMA);
-		printf("trama rebuda: %s...\n", sTrama);
+		read(nSocketCliente, sTrama, MAX_TRAMA);
+		printf("trama rebuda: %s\n", sTrama);
 
 
 		bValidTrama = checkTrama(sTrama, sLoginOrigen, sPwd, 1);
 
 		//Comprovem que la trama rebuda es correcte
-		if ( nBytesLlegits <= MAX_TRAMA && checkAuthentication (sTrama, sLoginOrigen, sPwd) && bValidTrama ) {
+		if ( checkAuthentication (sTrama, sLoginOrigen, sPwd) && bValidTrama ) {
 			//Creem la trama de resposta OK peticio d'autentificacio
- 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 2);
+ 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 3);
+
+ 			//Enviem la trama de de connexio correcta
+			write (nSocketCliente, sTrama, MAX_TRAMA);
+			printf("trama enviada: %s\n", sTrama);
 		} else {
 			//Creem la trama de resposta KO peticio d'autentificacio
- 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 3);
- 			//hem de desconectar...
+ 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 2);
+
+ 			//Enviem la trama de de connexio correcta
+			write (nSocketCliente, sTrama, MAX_TRAMA);
+			printf("aqui la lio parda!!! adeu!  trama enviada: %s\n", sTrama);
+
+ 			//Cerramos el socket
+			close (gnSocketFD);
+			exit(0);
 		}
-		//Enviem la trama de de connexio correcta
-		write (nSocketCliente, sTrama, MAX_TRAMA);
-		printf("trama enviada: %s...\n", sTrama);
+
 
 	}
 
