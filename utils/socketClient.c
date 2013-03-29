@@ -18,6 +18,7 @@ void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], in
 	char sData[100];
 
 	//Netejant variables
+	memset(sTrama, '\0', MAX_TRAMA);
 	memset(sLoginOrigen, '\0', 7);
 	memset(sLoginDesti, '\0', 7);
 	sTipus= '\0';
@@ -52,8 +53,8 @@ void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], in
 
 
 	//creant Trama final que enviarem
-	strncat(sTrama, sLoginOrigen, 7);
 	strncat(sTrama, sLoginDesti, 7);
+	strncat(sTrama, sLoginOrigen, 7);
 	sTrama[strlen(sTrama)] = sTipus;
 	strncat(sTrama, sData, 100);
 
@@ -195,6 +196,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
 	//Enviem la trama de peticio
 	write (nSocketFD, sTrama, MAX_TRAMA);
+	printf("trama enviada: %s\n", sTrama);
 
 	//Llegim la Trama d'autoritzacio del
 	nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
