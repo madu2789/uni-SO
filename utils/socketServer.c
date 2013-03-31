@@ -143,7 +143,7 @@ int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) 
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sPwd[8], int nType) {
+int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[8], int nType) {
 
 	int bTramaOk = 0;
 	//Camps de la trama:
@@ -186,8 +186,11 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sPwd[8], int 
 		//cas autentificacio
 		case 1:
 
-			if (sTypeTrama == 'A' ){
-				bTramaOk = 1;
+			if (sTypeTrama == 'A'){
+				if(strcmp(sLoginOrigen, "LSBox  ") == 0) {
+					bTramaOk = 1;
+					strcpy(sLoginDesti, sLoginDTrama);
+				}
 			}
 
 		break;
@@ -269,6 +272,7 @@ int ServerConection (int nPort) {
 	struct sockaddr_in stDireccionCliente;
 
 	char sLoginOrigen[8];
+	char sLoginDesti[8];
 	char sPwd[8];
 	int bValidTrama = 0, bValidAuth = 0;
 
@@ -299,7 +303,7 @@ int ServerConection (int nPort) {
 		//---------------------------------------------------------------------------
 
 		//Creem la primera trama de peticio d'autentificacio
- 		creaTrama(sTrama, "LSBox", "client", 1);
+ 		creaTrama(sTrama, "LSBox  ", "client ", 1);
 
 		//Enviem la trama de peticio d'autentificacio
 		write (nSocketCliente, sTrama, MAX_TRAMA);
@@ -310,14 +314,14 @@ int ServerConection (int nPort) {
 		printf("trama rebuda: %s\n", sTrama);
 
 
-		bValidTrama = checkTrama(sTrama, sLoginOrigen, sPwd, 1);
+		bValidTrama = checkTrama(sTrama, sLoginOrigen, sLoginDesti, sPwd, 1);
 		bValidAuth = checkAuthentication (sTrama, sLoginOrigen, sPwd);
 		printf("trama correcte? %d - %d\n", bValidTrama, bValidAuth);
 
 		//Comprovem que la trama rebuda es correcte
-		if ( bValidAuth && bValidTrama ) {
+		if ( !bValidAuth && bValidTrama ) {
 			//Creem la trama de resposta OK peticio d'autentificacio
- 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 3);
+ 			creaTrama(sTrama, "LSBox  ", sLoginDesti, 3);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
@@ -328,7 +332,7 @@ int ServerConection (int nPort) {
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
-			printf("aqui la lio parda!!! adeu!  trama enviada: %s\n", sTrama);
+			printf("aqui la lio parda!!! trama enviada: %s\n", sTrama);
 
  			//Cerramos el socket
 			close (gnSocketFD);

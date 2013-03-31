@@ -68,32 +68,61 @@ void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], in
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTrama (char sTrama[MAX_TRAMA], int nType) {
+int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
+
 	int bTramaOk = 0;
-
-	int i = 0;
-
-	//Separacio de camps de la trama:
-	char sLoginOTrama[7];
-	char sLoginDTrama[7];
-	char sTypeTrama[1];
+	//Camps de la trama:
+	char sLoginOrigen[8];
+	char sLoginDTrama[8];
+	char sPwd[8];
+	char sTypeTrama;
 	char sDataTrama[100];
 
- strncpy(sLoginOTrama, sTrama, 7);
 
-	//memcpy(sLoginOTrama, &sTrama[0], 8);
-	/*memcpy(sLoginDTrama, &sTrama[8], 14);
-	memcpy(sTypeTrama, &sTrama[15], 1);
-	memcpy(sDataTrama, &sTrama[16], 100);
-*/
+	memset(sLoginOrigen, '\0', 7);
+	memset(sLoginDTrama, '\0', 7);
+	memset(sDataTrama, '\0', 100);
 
-	printf("camp loginorigen parsejat:  %s\n", sLoginOTrama);
-	/*printf("%s\n", sLoginDTrama);
-	printf("%s\n", sTypeTrama);
-	printf("%s\n", sDataTrama);*/
 
-//dos heuristikes : trama tipus E || trama incorrecte
+	memcpy( sLoginOrigen, &sTrama[0], 7 );
+	sLoginOrigen[7] = '\0';
 
+	memcpy( sLoginDTrama, &sTrama[7], 14 );
+	sLoginDTrama[7] = '\0';
+
+  sTypeTrama = sTrama[14];
+
+  strncpy(sDataTrama, sTrama+15, 100);
+  sDataTrama[strlen(sDataTrama)] = '\0';
+
+  memcpy( sPwd, &sDataTrama[8], 7 );
+	sPwd[7] = '\0';
+
+
+ // Comprovacio que parseja be la trama:
+  printf("camp login origen parsejat:  %s\n", sLoginOrigen);
+  printf("camp login desti parsejat:  %s\n", sLoginDTrama);
+  printf("camp trama parsejat:  %c\n", sTypeTrama);
+  printf("camp data parsejat:  %s\n", sDataTrama);
+  printf("password parsejat:  %s\n", sPwd);
+
+
+	bTramaOk = 0;
+
+	switch (nType) {
+		//cas autentificacio
+		case 1:
+
+			if (sTypeTrama == 'O'){
+				if(strcmp(sLoginOrigen, "LSBox  ") == 0) {
+					if(strcmp(sLoginDTrama, sUser) == 0) {
+						bTramaOk = 1;
+					}
+				}
+			}
+
+		break;
+	}
 
 	return bTramaOk;
 }
@@ -166,7 +195,6 @@ int socketConnection (int nPort) {
  */
 int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
-	int nBytesLlegits;
 	int nSocketFD;
 	char sFrase[MAX], sTrama[MAX_TRAMA];
 	int bTramaOk = 0;
@@ -178,10 +206,10 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
 	//Protocol d'establiment de connexio
 	//Llegim la primera trama del servidor de P
-	nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
+	read (nSocketFD, sTrama, MAX_TRAMA);
 
 	//Comprovem si la Trama es correcte
-	if (nBytesLlegits < MAX_TRAMA && checkTrama(sTrama, 1)) {
+	if (checkTrama(sTrama, sUser, 1)) {
 		printf("error trama incorrecte\n");
 		nTipusTrama = 2;
 		//peticio again??
@@ -199,15 +227,16 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 	printf("trama enviada: %s\n", sTrama);
 
 	//Llegim la Trama d'autoritzacio del
-	nBytesLlegits = read (nSocketFD, sTrama, MAX_TRAMA);
+	read (nSocketFD, sTrama, MAX_TRAMA);
 
-	checkTrama(sTrama, 1);
+	bTramaOk = checkTrama(sTrama, sUser, 1);
+	printf("trama correcte? %d \n", bTramaOk);
 
 	//Comprovem si la Trama es correcte
-	if (nBytesLlegits < MAX_TRAMA && checkTrama(sTrama, 1)) {
-		printf("error trama incorrecte\n");
-	} else {
+	if (bTramaOk) {
 		printf("2a trama rebuda: %s\n", sTrama);
+	} else {
+		printf("error trama incorrecte\n");
 	}
 
 }
