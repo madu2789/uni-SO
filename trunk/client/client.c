@@ -187,10 +187,14 @@ void checkRootFiles (char sDirPath[MAX]) {
  */
 int main () {
 	int nPort = 0;
+	int bError = 0;
 	char sServer[11];
 	char sDirPath[MAX];
 	char sLogin[7];
 	char sPswd[32];
+
+	//Crear/Obrir fitxer de Log
+	bError = createLog("LSBox_cli");
 
 	//Guardem -> sLogin, sPswd
 	loginUser(sLogin, sPswd);

@@ -126,9 +126,13 @@ void checkRootFiles (char sDirPath[MAX]) {
  */
 int main () {
 
+	int bError = 0;
 	char sServer[11];
 	char nPort[3];
 	char sDirPath[MAX];
+
+	//Crear/Obrir fitxer de Log
+	bError = createLog("LSBox_svr");
 
 	//Llegir "config.dat"
 	getConfigInfo( sServer, nPort, sDirPath);
