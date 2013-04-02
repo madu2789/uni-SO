@@ -23,6 +23,7 @@
 #include <signal.h>
 
 // Includes propios
+#include "../utils/log.h"
 #include "../utils/facadeLL.h"
 #include "../utils/socketServer.h"
 

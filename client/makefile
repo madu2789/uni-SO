@@ -12,9 +12,12 @@ md5.o: md5.c ../utils/md5.h
 socketClient.o: socketClient.c ../utils/socketClient.h
 	gcc -Wall -Wextra -c ../utils/socketClient.c
 
+log.o: log.c ../utils/log.h
+	gcc -Wall -Wextra -c ../utils/log.c
+
 client.o: client.c client.h
 	gcc -Wall -Wextra -c client.c
 
 
-client: client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o
-	gcc -Wall -Wextra client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o -o client.exe
+client: client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o
+	gcc -Wall -Wextra client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o -o client.exe
