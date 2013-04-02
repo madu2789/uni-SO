@@ -194,10 +194,12 @@ int main () {
 	char sPswd[32];
 
 	//Crear/Obrir fitxer de Log
-	bError = createLog("LSBox_cli");
+	bError = createLog("LSBox_cli.log.html");
 
 	//Guardem -> sLogin, sPswd
 	loginUser(sLogin, sPswd);
+
+	writeLog ("LSBox_cli.log.html","fuu",1);
 
 	//Llegir "config.dat"
 	nPort = getConfigInfo(sServer, sDirPath);
