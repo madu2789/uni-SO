@@ -27,6 +27,7 @@
 
 // Includes propios
 #include "socketClient.h"
+#include "log.h"
 
 // Definicion de constantes
 

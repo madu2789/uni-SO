@@ -17,7 +17,7 @@
 
 
 // Includes propios
-
+#include "log.h"
 
 // Definicion de constantes
 

@@ -59,6 +59,7 @@ void addToLL (char sName[30], int nTipus) {
   conversorTipus(sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
 	addbeg(sName, sAdaptedTipus, sDate);
+	writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
 }
 
 
@@ -78,6 +79,7 @@ void updateToLL (char sLLDate[30], char sName[30]) {
 		setDateByName(sName, sDate);
 	 	printf("updated\n");
 	}
+	writeLog ("LSBox_cli.log.html","facadeLL.c","Element modificat", sName, 1);
 }
 
 
@@ -110,4 +112,5 @@ void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius) {
 		free(arxius[j]);
 	}
 	free(arxius);
+	writeLog ("LSBox_cli.log.html","facadeLL.c","Element eliminat", sNameToRemove, 1);
 }

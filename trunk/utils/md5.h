@@ -21,6 +21,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "log.h"
+
 /* MD5 context. */
 typedef struct MD5Context
 {

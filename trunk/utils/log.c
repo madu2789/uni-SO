@@ -50,10 +50,10 @@ int createLog (char sIdLog[15]) {
  * @param  bCorrect {Integer}	Resultat de l'acció descrita
  * @return
  */
-int writeLog (char sIdLog[15], char sFunction[32], int bCorrect){
+int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExplanation[116], int bCorrect){
 
 	int nFdInLog, nFdInBackUp;
-	char sAux[250], sAuxInit[50], sAuxFi[50];
+	char sAux[350], sAuxInit[50], sAuxFi[50];
 	char sProvaGuarrada[1400];
 
 	//Obrim el fitxer per llegir
@@ -69,11 +69,11 @@ int writeLog (char sIdLog[15], char sFunction[32], int bCorrect){
 		} else {
 
 			//Creem i Afegim el nou log al backup
-			memset(sAux, '\0', 250);
+			memset(sAux, '\0', 350);
 			memset(sAuxInit, '\0', 50);
 			memset(sAuxFi, '\0', 50);
 			sprintf (sAux,"<p> <fontcolor='blue'>[</font> <fontcolor='teal'>");
-			strcat(sAux, sIdLog);
+			strcat(sAux, sOrigen);
 			sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
 			strcat(sAux, sAuxFi);
 
@@ -87,10 +87,11 @@ int writeLog (char sIdLog[15], char sFunction[32], int bCorrect){
 
 			memset(sAuxInit, '\0', 50);
 			memset(sAuxFi, '\0', 50);
-			sprintf (sAuxInit,"<fontcolor='black'> explicacio </font>");
-			//strcat(sAuxInit, sExplicacio);
-			//sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
+			sprintf (sAuxInit,"<fontcolor='black'><font>");
+			strcat(sAuxInit, sExplanation);
+			sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
 			strcat(sAux, sAuxInit);
+			strcat(sAux, sAuxFi);
 
 
 			memset(sAuxInit, '\0', 50);
@@ -102,7 +103,7 @@ int writeLog (char sIdLog[15], char sFunction[32], int bCorrect){
 				sprintf (sAuxInit,"<fontcolor='blue'>[ </font><fontcolor='red'>");
 				strcat(sAuxInit, "KO");
 			}
-			sprintf (sAuxFi," </font><fontcolor='blue'>]</font></p>");
+			sprintf (sAuxFi,"</font><fontcolor='blue'>]</font></p>");
 			strcat(sAux, sAuxInit);
 			strcat(sAux, sAuxFi);
 

@@ -144,8 +144,7 @@ int socketConnection (int nPort) {
 
 	//Comprobem port valid
 	if ( nPort < 1024 || nPort > 65535){
-		sprintf (sFrase,"Port invalid!\n");
-		write (1,sFrase,strlen(sFrase));
+		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","Port invalid!", 0);
 		return ERROR;
 	}
 	wPuerto = nPort;
@@ -153,8 +152,7 @@ int socketConnection (int nPort) {
 	//Creem el socket
 	nSocketFD = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(nSocketFD < 0){
-		sprintf (sFrase,"Error al crear el socket!\n");
-		write (1, sFrase, strlen(sFrase));
+		writeLog ("LSBox_cli.log.html", "socketClient.c","[Error] socket","Error al crear el socket!", 0);
 		return ERROR;
 	}
 
@@ -166,8 +164,7 @@ int socketConnection (int nPort) {
 	//Extraemos el host
 	stHost = gethostbyname ("cygnus.salle.url.edu");
 	if (NULL == stHost){
-		sprintf (sFrase,"No se ha podido resolver la direccion de cygnus!\n");
-		write (1,sFrase,strlen (sFrase));
+		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","No se ha podido resolver la direccion de cygnus!", 0);
 		return ERROR;
 	}
 
@@ -175,10 +172,7 @@ int socketConnection (int nPort) {
 	bcopy (stHost->h_addr, &stDireccionServidor.sin_addr.s_addr, stHost->h_length);
 
 	if (connect (nSocketFD, &stDireccionServidor, sizeof (stDireccionServidor)) < 0){
-		sprintf (sFrase, "Error al intentarnos conectar al servidor!\n");
-		write (1, sFrase, strlen(sFrase));
-		//tancar el programa
-		exit(0);
+		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","Error al intentarnos conectar al servidor!", 0);
 		return ERROR;
 	}
 
@@ -210,10 +204,12 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
 	//Comprovem si la Trama es correcte
 	if (checkTrama(sTrama, sUser, 1)) {
+		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte",sTrama, 0);
 		printf("error trama incorrecte\n");
 		nTipusTrama = 2;
 		//peticio again??
 	} else {
+		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda",sTrama, 1);
 		printf("trama rebuda: %s\n", sTrama);
 		nTipusTrama = 3;
 	}
@@ -224,6 +220,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
 	//Enviem la trama de peticio
 	write (nSocketFD, sTrama, MAX_TRAMA);
+	writeLog ("LSBox_cli.log.html","socketClient.c","Trama enviada",sTrama, 1);
 	printf("trama enviada: %s\n", sTrama);
 
 	//Llegim la Trama d'autoritzacio del
@@ -235,8 +232,11 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 	//Comprovem si la Trama es correcte
 	if (bTramaOk) {
 		printf("2a trama rebuda: %s\n", sTrama);
+		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda", sTrama, 1);
 	} else {
 		printf("error trama incorrecte\n");
+		//aqui peta i no tinc ni PM de pk!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		//writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte",sTrama, 0);
 	}
 
 }

@@ -24,6 +24,7 @@
 // Includes propios
 
 #include "LinkedList.h"
+#include "log.h"
 
 // Definicion de constantes
 
