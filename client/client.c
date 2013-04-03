@@ -198,8 +198,7 @@ int main () {
 
 	//Guardem -> sLogin, sPswd
 	loginUser(sLogin, sPswd);
-
-	writeLog ("LSBox_cli.log.html","fuu",1);
+	writeLog ("LSBox_cli.log.html", "client.c","Login del usuari","User introdueix Login i Password",1);
 
 	//Llegir "config.dat"
 	nPort = getConfigInfo(sServer, sDirPath);

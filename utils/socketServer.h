@@ -26,6 +26,7 @@
 
 // Includes propios
 #include "socketServer.h"
+#include "log.h"
 
 // Definicion de constantes
 

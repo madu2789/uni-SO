@@ -34,6 +34,6 @@
 
 //Funciones
 int createLog (char sIdLog[10]);
-int writeLog (char sIdLog[10], char sFunction[32], int bCorrect);
+int writeLog (char sIdLog[10], char sOrigen[15], char sFunction[32], char sExplanation[116], int bCorrect);
 
 #endif
