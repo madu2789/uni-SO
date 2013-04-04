@@ -107,12 +107,11 @@ int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]) {
 
 /**
  * Comprova que el usuari que ha enviat la trama estigui registrat al sistema (shadows.dat)
- * @param  sTrama {String}	Trama rebuda que analitzarem
  * @param  sUser {String}	Login de la trama
  * @param  sPswd {String}	Password de la trama
  * @return bValid {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkAuthentication (char sTrama[MAX_TRAMA], char sUser[7], char sPswd[32]) {
+int checkAuthentication (char sUser[7], char sPswd[32]) {
 	int nFdIn = 0;
 	int i = 0;
 	int nNumUsers = 0;
@@ -315,7 +314,7 @@ int ServerConection (int nPort) {
 
 
 		bValidTrama = checkTrama(sTrama, sLoginOrigen, sLoginDesti, sPwd, 1);
-		bValidAuth = checkAuthentication (sTrama, sLoginOrigen, sPwd);
+		bValidAuth = checkAuthentication (sLoginOrigen, sPwd);
 		printf("trama correcte? %d - %d\n", bValidTrama, bValidAuth);
 
 		//Comprovem que la trama rebuda es correcte
