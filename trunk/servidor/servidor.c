@@ -132,7 +132,7 @@ int main () {
 	char sDirPath[MAX];
 
 	//Crear/Obrir fitxer de Log
-	bError = createLog("LSBox_svr");
+	bError = createLog("LSBox_svr.log.html");
 
 	//Llegir "config.dat"
 	getConfigInfo( sServer, nPort, sDirPath);

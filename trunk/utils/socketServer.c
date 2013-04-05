@@ -142,7 +142,7 @@ int checkAuthentication (char sUser[7], char sPswd[32]) {
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[8], int nType) {
+int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[33], int nType) {
 
 	int bTramaOk = 0;
 	//Camps de la trama:
@@ -159,7 +159,7 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
 	memcpy( sLoginOrigen, &sTrama[0], 7 );
 	sLoginOrigen[7] = '\0';
 
-	memcpy( sLoginDTrama, &sTrama[7], 14 );
+	memcpy( sLoginDTrama, &sTrama[7], 7 );
 	sLoginDTrama[7] = '\0';
 
   sTypeTrama = sTrama[14];
@@ -167,17 +167,17 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
   strncpy(sDataTrama, sTrama+15, 100);
   sDataTrama[strlen(sDataTrama)] = '\0';
 
-  memcpy( sPwd, &sDataTrama[8], 7 );
-	sPwd[7] = '\0';
+  memcpy( sPwd, &sDataTrama[8], 32 );
+	sPwd[32] = '\0';
 
 
- // Comprovacio que parseja be la trama:
+ /* // Comprovacio que parseja be la trama:
   printf("camp login origen parsejat:  %s\n", sLoginOrigen);
   printf("camp login desti parsejat:  %s\n", sLoginDTrama);
   printf("camp trama parsejat:  %c\n", sTypeTrama);
   printf("camp data parsejat:  %s\n", sDataTrama);
   printf("password parsejat:  %s\n", sPwd);
-
+*/
 
 	bTramaOk = 0;
 
@@ -272,7 +272,7 @@ int ServerConection (int nPort) {
 
 	char sLoginOrigen[8];
 	char sLoginDesti[8];
-	char sPwd[8];
+	char sPwd[33];
 	int bValidTrama = 0, bValidAuth = 0;
 
 

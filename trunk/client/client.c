@@ -108,10 +108,11 @@ int ReadDir (char sDirPath[MAX]) {
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
-		write(2,"[Error] Prova amb un path correcte el proxim cop!\n",51);
-		perror ("scandir");
-		exit(0);
-		return -1;
+		writeLog ("LSBox_cli.log.html", "client.c","[Error] scandir","Path incorrecte",0);
+		exit(-1);
+		return 0;
+	} else {
+		writeLog ("LSBox_cli.log.html", "client.c","scandir","Em escanejat el directori correctament",1);
 	}
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 	return nTotalFiles;
