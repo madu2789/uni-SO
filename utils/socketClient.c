@@ -74,7 +74,7 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 	//Camps de la trama:
 	char sLoginOrigen[8];
 	char sLoginDTrama[8];
-	char sPwd[8];
+	char sPwd[33];
 	char sTypeTrama;
 	char sDataTrama[100];
 
@@ -87,7 +87,7 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 	memcpy( sLoginOrigen, &sTrama[0], 7 );
 	sLoginOrigen[7] = '\0';
 
-	memcpy( sLoginDTrama, &sTrama[7], 14 );
+	memcpy( sLoginDTrama, &sTrama[7], 7 );
 	sLoginDTrama[7] = '\0';
 
   sTypeTrama = sTrama[14];
@@ -95,17 +95,17 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
   strncpy(sDataTrama, sTrama+15, 100);
   sDataTrama[strlen(sDataTrama)] = '\0';
 
-  memcpy( sPwd, &sDataTrama[8], 7 );
-	sPwd[7] = '\0';
+  memcpy( sPwd, &sDataTrama[8], 32 );
+	sPwd[32] = '\0';
 
 
- // Comprovacio que parseja be la trama:
+/* // Comprovacio que parseja be la trama:
   printf("camp login origen parsejat:  %s\n", sLoginOrigen);
   printf("camp login desti parsejat:  %s\n", sLoginDTrama);
   printf("camp trama parsejat:  %c\n", sTypeTrama);
   printf("camp data parsejat:  %s\n", sDataTrama);
   printf("password parsejat:  %s\n", sPwd);
-
+*/
 
 	bTramaOk = 0;
 
