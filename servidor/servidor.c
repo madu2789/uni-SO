@@ -9,8 +9,10 @@ struct dirent **arxius;
 /**
  * Carrega el fitxer config.dat
  */
-void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]) {
-	int nFdIn;
+int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
+	int nFdIn = 0;
+	int nPort = 0;
+	char sPort[5];
 
 	nFdIn = open("config.dat", O_RDONLY);
 	if (-1 == nFdIn) {
@@ -18,15 +20,18 @@ void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]) {
 		exit(ERROR);
 	} else {
 		read(nFdIn, sServer, 12);
-		read(nFdIn, nPort, 3);
-		read(nFdIn, sDirPath, MAX);
+		read(nFdIn, sPort, 5);
+		read(nFdIn, sDirPath, MAX-1);
 		close(nFdIn);
 
 		sServer[strlen(sServer)] = '\0';
-		nPort[strlen(nPort)] = '\0';
+		sPort[strlen(sPort)] = '\0';
 		sDirPath[strlen(sDirPath)] = '\0';
+
+		//Convertim el nombre del port a Integer
+		nPort = atoi(sPort);
 	}
-	return;
+	return nPort;
 }
 
 
@@ -49,10 +54,13 @@ int ReadDir (char sDirPath[MAX]) {
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
+		writeLog ("LSBox_svr.log.html", "servidor.c","[Error] scandir","Path incorrecte",0);
 		write(2,"[Error] Prova amb un path correcte el proxim cop!\n",51);
 		perror ("scandir");
 		exit(0);
 		return -1;
+	} else {
+			writeLog ("LSBox_svr.log.html", "servidor.c","scandir","Em escanejat el directori correctament",1);
 	}
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 	return nTotalFiles;
@@ -127,17 +135,18 @@ void checkRootFiles (char sDirPath[MAX]) {
 int main () {
 
 	int bError = 0;
+	int nPort = 0;
 	char sServer[11];
-	char nPort[3];
 	char sDirPath[MAX];
 
 	//Crear/Obrir fitxer de Log
 	bError = createLog("LSBox_svr.log.html");
 
 	//Llegir "config.dat"
-	getConfigInfo( sServer, nPort, sDirPath);
+	nPort = getConfigInfo( sServer, sDirPath);
 
-	ServerConection(5454);
+	//Socket peticio connexio
+	ServerConection(nPort);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList(sDirPath);

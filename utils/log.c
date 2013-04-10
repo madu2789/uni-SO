@@ -50,10 +50,10 @@ int createLog (char sIdLog[15]) {
  * @param  bCorrect {Integer}	Resultat de l'acció descrita
  * @return
  */
-int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExplanation[116], int bCorrect){
+int writeLog (char sIdLog[32], char sOrigen[32], char sFunction[32], char sExplanation[120], int bCorrect){
 
 	int nFdInLog, nFdInBackUp;
-	char sAux[350], sAuxInit[50], sAuxFi[50];
+	char sAux[450], sAuxInit[250], sAuxFi[250];
 	char sProvaGuarrada[1400];
 
 	//Obrim el fitxer per llegir
@@ -68,16 +68,19 @@ int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExpla
 		exit(-1);
 		} else {
 
+
 			//Creem i Afegim el nou log al backup
 			memset(sAux, '\0', 350);
-			memset(sAuxInit, '\0', 50);
+			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
 			sprintf (sAux,"<p> <fontcolor='blue'>[</font> <fontcolor='teal'>");
 			strcat(sAux, sOrigen);
 			sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
 			strcat(sAux, sAuxFi);
 
-			memset(sAuxInit, '\0', 50);
+
+
+			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
 			sprintf (sAuxInit,"<fontcolor='blue'>[</font> <fontcolor='red'>");
 			strcat(sAuxInit, sFunction);
@@ -85,7 +88,8 @@ int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExpla
 			strcat(sAux, sAuxInit);
 			strcat(sAux, sAuxFi);
 
-			memset(sAuxInit, '\0', 50);
+
+			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
 			sprintf (sAuxInit,"<fontcolor='black'><font>");
 			strcat(sAuxInit, sExplanation);
@@ -94,7 +98,7 @@ int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExpla
 			strcat(sAux, sAuxFi);
 
 
-			memset(sAuxInit, '\0', 50);
+			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
 			if (bCorrect) {
 				sprintf (sAuxInit,"<fontcolor='blue'>[ </font><fontcolor='green'>");
@@ -113,7 +117,7 @@ int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExpla
 			//Tornem a formar el arxiu sencer de log
 
 			//escric capçelera
-			memset (sAux, '\0', 150);
+			memset (sAux, '\0', 350);
 			sprintf (sAux,"<!DOCTYPE html>\n<html lang='en'>\n<head>\n<meta charset='utf−8'/>\n<title>[SO ] Logs</title>\n</head>\n<body id='index' class='home'>\n");
 			write (nFdInLog, sAux, strlen(sAux));
 
@@ -130,13 +134,15 @@ int writeLog (char sIdLog[15], char sOrigen[15], char sFunction[32], char sExpla
 				write (nFdInLog, sProvaGuarrada, strlen(sProvaGuarrada));
 
 				//escric peu
-				memset (sAux, '\0', 150);
+				memset (sAux, '\0', 350);
 				sprintf (sAux,"</body>\n</html>");
 				write (nFdInLog, sAux, strlen(sAux));
 
 			}
 		}
 	}
+
 	close(nFdInLog);
 	close(nFdInBackUp);
+	return 0;
 }
