@@ -38,7 +38,7 @@
 
 //Funciones
 int main();
-void getConfigInfo (char sServer[11], char nPort[3], char sDirPath[MAX]);
+int getConfigInfo (char sServer[11], char sDirPath[MAX]);
 int ReadDir (char sDirPath[MAX]);
 int checkUser (char sSckUser[32], char sSckPswd[32]);
 static int triar (const struct dirent *arg);

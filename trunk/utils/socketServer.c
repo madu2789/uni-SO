@@ -214,9 +214,7 @@ int socketConnnection (int nPort) {
 
 	//Comprovem que el port estigui en el marge correcte
 	if ( nPort < 1024 || nPort > 65535){
-		sprintf (sFrase,"Port invalid!\n");
-		write (1,sFrase,strlen (sFrase));
-
+		writeLog ("LSBox_svr.log.html","socketServer.c","[Error] socket","Port invalid!", 0);
 		return ERROR;
 	}
 	wPuerto = nPort;
@@ -224,9 +222,7 @@ int socketConnnection (int nPort) {
 	//Creamos el socket
 	gnSocketFD = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (gnSocketFD < 0){
-		sprintf (sFrase,"Error al crear el socket!\n");
-		write (1,sFrase,strlen (sFrase));
-
+		writeLog ("LSBox_svr.log.html", "socketServer.c","[Error] socket","Error al crear el socket!", 0);
 		return ERROR;
 	}
 
@@ -238,17 +234,16 @@ int socketConnnection (int nPort) {
 
 	//Vinculamos el socket con la direccion
 	if (bind (gnSocketFD, (void *) &stDireccionSocket, sizeof (stDireccionSocket)) < 0){
-		sprintf (sFrase,"Error al vincular el socket y la direccion!\n");
-		write (1,sFrase,strlen (sFrase));
+		writeLog ("LSBox_svr.log.html", "socketServer.c","[Error] socket","Error al vincular el socket y la direccion!", 0);
 		//Cerramos el socket
 		close (gnSocketFD);
-
 		return ERROR;
 	}
 
 	//Escuchamos peticiones (1 a la vez)
 	listen (gnSocketFD, 1);
 
+	writeLog ("LSBox_svr.log.html", "socketServer.c","Socket Connectat","Socket esperant entrades de clients", 0);
 	sprintf (sFrase, "Servidor connectat!\n");
 	write (1, sFrase, strlen (sFrase));
 
@@ -286,6 +281,7 @@ int ServerConection (int nPort) {
 		socklen_t c_len = sizeof (stDireccionCliente);
 		nSocketCliente = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
 		if (nSocketCliente < 0){
+			writeLog ("LSBox_svr.log.html","socketServer.c","[Error] Connexio","En acceptar la peticio del cliente!", 0);
 			sprintf (sFrase,"Error al aceptar la peticion del cliente!\n");
 			write (1,sFrase,strlen (sFrase));
 			//Tanquem socket
@@ -307,6 +303,7 @@ int ServerConection (int nPort) {
 		//Enviem la trama de peticio d'autentificacio
 		write (nSocketCliente, sTrama, MAX_TRAMA);
 		printf("trama enviada: %s\n", sTrama);
+		writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
 		//Rebem Trama amb les dades del client
 		read(nSocketCliente, sTrama, MAX_TRAMA);
@@ -319,20 +316,27 @@ int ServerConection (int nPort) {
 
 		//Comprovem que la trama rebuda es correcte
 		if ( !bValidAuth && bValidTrama ) {
+
+			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Rebuda", sTrama, 1);
+
 			//Creem la trama de resposta OK peticio d'autentificacio
  			creaTrama(sTrama, "LSBox  ", sLoginDesti, 3);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
 			printf("trama enviada: %s\n", sTrama);
+			//petaaa
+			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 		} else {
+
+			writeLog ("LSBox_svr.log.html","socketServer.c","[Error]Trama Rebuda", sTrama, 0);
 			//Creem la trama de resposta KO peticio d'autentificacio
  			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 2);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
 			printf("aqui la lio parda!!! trama enviada: %s\n", sTrama);
-
+			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
  			//Cerramos el socket
 			close (gnSocketFD);
 			exit(0);
