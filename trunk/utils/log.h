@@ -33,7 +33,7 @@
 // Definicion de tipos propios
 
 //Funciones
-int createLog (char sIdLog[20]);
+int createLog (char sIdLog[32]);
 int writeLog (char sIdLog[32], char sOrigen[32], char sFunction[32], char sExplanation[120], int bCorrect);
 
 #endif

@@ -214,7 +214,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 		nTipusTrama = 3;
 	}
 
-
+	printf("%s\n", sPwd);
 	//Formem trama per la petició
 	petitionConection(sTrama, sUser, sPwd, nTipusTrama);
 

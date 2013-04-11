@@ -76,9 +76,13 @@ int getNumUsers(int nFdIn) {
 int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]) {
 	int i = 0;
 	char cAux = '0';
-	char sAux[MAX];
 	char sFileUser[32];
+	char sAux[MAX];
 	char sFilePswd[32];
+
+	memset(sFileUser, '\0', 32);
+	memset(sFilePswd, '\0', 32);
+	memset(sAux, '\0', MAX);
 
 	// Llegim char a char fins a ':'
 	while (cAux != ':') {
@@ -90,15 +94,38 @@ int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]) {
 		}
 		i++;
 	}
+	sAux[strlen(sAux)] = '\0';
 
 	strcpy (sFileUser, sAux);
+	sFileUser[strlen(sFileUser)] = '\0';
+
+	//netegem variables
+	memset(sFilePswd, '\0', 32);
+	memset(sAux, '\0', MAX);
+	cAux = '\0';
+	i = 0;
 
 	// Llegim contrasenya
-	read (nFdIn, &sFilePswd, 32);
-	sFilePswd[strlen(sFilePswd)] = '\0';
+	// Llegim char a char fins a '\n'
+	while (cAux != '\n') {
+		read (nFdIn, &cAux, 1);
+		if (cAux != ':') {
+			sAux[i] = cAux;
+		} else {
+			sAux[i] = '\0';
+		}
+		i++;
+	}
 
-	if (strcmp(sUser, sFileUser) == 0 && strcmp(sPswd, sFilePswd) == 0) {
-			return 1;
+	strcpy (sFilePswd, sAux);
+	sFilePswd[strlen(sFilePswd)] = '\0';
+	sFilePswd[strlen(sFilePswd)-1] = '\0';
+	sPswd[strlen(sPswd)] = '\0';
+
+	if (strcmp(sUser, sFileUser) == 0 ) {
+			if (strcmp(sPswd, sFilePswd) == 0 ){
+				return 1;
+			}
 	}
 
 	return 0;
@@ -128,8 +155,6 @@ int checkAuthentication (char sUser[7], char sPswd[32]) {
 			if ( checkUserInfo(nFdIn, sUser, sPswd) == 1 ) {
 				return 1;
 			}
-			// Llegim el \n
-			read (nFdIn, &cAux, 1);
 		}
 
 		close(nFdIn);
@@ -292,10 +317,7 @@ int ServerConection (int nPort) {
 		sprintf (sFrase,"\nClient conectat\n");
 		write (1,sFrase,strlen (sFrase));
 
-
-		//---------------------------------------------------------------------------
 		//Protocol de trames d'establiment de connexio
-		//---------------------------------------------------------------------------
 
 		//Creem la primera trama de peticio d'autentificacio
  		creaTrama(sTrama, "LSBox  ", "client ", 1);
@@ -311,11 +333,11 @@ int ServerConection (int nPort) {
 
 
 		bValidTrama = checkTrama(sTrama, sLoginOrigen, sLoginDesti, sPwd, 1);
-		bValidAuth = checkAuthentication (sLoginOrigen, sPwd);
+		bValidAuth = checkAuthentication (sLoginDesti, sPwd);
 		printf("trama correcte? %d - %d\n", bValidTrama, bValidAuth);
 
 		//Comprovem que la trama rebuda es correcte
-		if ( !bValidAuth && bValidTrama ) {
+		if ( bValidAuth && bValidTrama ) {
 
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Rebuda", sTrama, 1);
 
@@ -325,8 +347,9 @@ int ServerConection (int nPort) {
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
 			printf("trama enviada: %s\n", sTrama);
-			//petaaa
+			//Escribim al Log
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
+
 		} else {
 
 			writeLog ("LSBox_svr.log.html","socketServer.c","[Error]Trama Rebuda", sTrama, 0);
@@ -335,8 +358,9 @@ int ServerConection (int nPort) {
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
-			printf("aqui la lio parda!!! trama enviada: %s\n", sTrama);
+			printf("[desconnexio] trama enviada: %s\n", sTrama);
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
+
  			//Cerramos el socket
 			close (gnSocketFD);
 			exit(0);

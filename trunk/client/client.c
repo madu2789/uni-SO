@@ -48,13 +48,13 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 			write (1, sAux, strlen(sAux));
 		}
 	}
-	//sPswd[strlen(sPswd)-1] = '\0';
 
 	//Md5
 	stringToMd5 (sPswd, sPswdMd5);
 	memset(sPswd, '\0', 32);
 	strcpy (sPswd, sPswdMd5);
-	printf("%s\n", sPswdMd5);
+	sPswd[strlen(sPswd)] = '\0';
+	printf("%s\n", sPswd);
 
 }
 
@@ -189,20 +189,21 @@ void checkRootFiles (char sDirPath[MAX]) {
 int main () {
 	int nPort = 0;
 	int bError = 0;
-	char sServer[11];
+
 	char sDirPath[MAX];
+	char sServer[11];
 	char sLogin[7];
 	char sPswd[32];
 
 	//Crear/Obrir fitxer de Log
 	bError = createLog("LSBox_cli.log.html");
 
+	//Llegir "config.dat"
+	nPort = getConfigInfo(sServer, sDirPath);
+
 	//Guardem -> sLogin, sPswd
 	loginUser(sLogin, sPswd);
 	writeLog ("LSBox_cli.log.html", "client.c","Login del usuari","User introdueix Login i Password",1);
-
-	//Llegir "config.dat"
-	nPort = getConfigInfo(sServer, sDirPath);
 
 	//Socket peticio connexio
 	clientConnect(nPort, sLogin, sPswd);

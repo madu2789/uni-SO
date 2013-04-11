@@ -9,7 +9,7 @@
  * @param  sIdLog {String}	Cadena amb l'Id de l'app
  * @return bCorrect {0 wrong | 1 right}
  */
-int createLog (char sIdLog[15]) {
+int createLog (char sIdLog[32]) {
 
 	int nFdIn;
 	char sAux[150];
