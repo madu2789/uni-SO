@@ -73,18 +73,18 @@ int writeLog (char sIdLog[32], char sOrigen[32], char sFunction[32], char sExpla
 			memset(sAux, '\0', 350);
 			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
-			sprintf (sAux,"<p> <fontcolor='blue'>[</font> <fontcolor='teal'>");
+			sprintf (sAux,"<p> <fontcolor='blue'> [ </font> <fontcolor='teal'>");
 			strcat(sAux, sOrigen);
-			sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
+			sprintf (sAuxFi," </font><fontcolor='blue'> ] </font>");
 			strcat(sAux, sAuxFi);
 
 
 
 			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
-			sprintf (sAuxInit,"<fontcolor='blue'>[</font> <fontcolor='red'>");
+			sprintf (sAuxInit,"<fontcolor='blue'> [ </font> <fontcolor='red'>");
 			strcat(sAuxInit, sFunction);
-			sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
+			sprintf (sAuxFi," </font><fontcolor='blue'> ] </font>");
 			strcat(sAux, sAuxInit);
 			strcat(sAux, sAuxFi);
 
@@ -93,7 +93,7 @@ int writeLog (char sIdLog[32], char sOrigen[32], char sFunction[32], char sExpla
 			memset(sAuxFi, '\0', 50);
 			sprintf (sAuxInit,"<fontcolor='black'><font>");
 			strcat(sAuxInit, sExplanation);
-			sprintf (sAuxFi," </font><fontcolor='blue'>]</font>");
+			sprintf (sAuxFi," </font><fontcolor='blue'> ] </font>");
 			strcat(sAux, sAuxInit);
 			strcat(sAux, sAuxFi);
 
@@ -101,18 +101,19 @@ int writeLog (char sIdLog[32], char sOrigen[32], char sFunction[32], char sExpla
 			memset(sAuxInit, '\0', 150);
 			memset(sAuxFi, '\0', 50);
 			if (bCorrect) {
-				sprintf (sAuxInit,"<fontcolor='blue'>[ </font><fontcolor='green'>");
+				sprintf (sAuxInit,"<fontcolor='blue'> [ </font><fontcolor='green'>");
 				strcat(sAuxInit, "OK");
 			}else {
-				sprintf (sAuxInit,"<fontcolor='blue'>[ </font><fontcolor='red'>");
+				sprintf (sAuxInit,"<fontcolor='blue'> [ </font><fontcolor='red'>");
 				strcat(sAuxInit, "KO");
 			}
-			sprintf (sAuxFi,"</font><fontcolor='blue'>]</font></p>");
+			sprintf (sAuxFi,"</font><fontcolor='blue'>]</font></p> \0 ");
 			strcat(sAux, sAuxInit);
 			strcat(sAux, sAuxFi);
 
 
 			write (nFdInBackUp, sAux, strlen(sAux));
+			write (nFdInBackUp, 26, 1);
 
 			//Tornem a formar el arxiu sencer de log
 
@@ -128,10 +129,17 @@ int writeLog (char sIdLog[32], char sOrigen[32], char sFunction[32], char sExpla
 				printf("error al obrir backup!\n");
 				exit(-1);
 			} else {
-				//guarrada maxima k sa de canviar a un bucle fins final de fitxer
-				memset (sProvaGuarrada, '\0', 1400);
-				read (nFdInBackUp, sProvaGuarrada, 1399);
-				write (nFdInLog, sProvaGuarrada, strlen(sProvaGuarrada));
+
+			int nBytes = -1;
+			char cAux = '\0';
+			// Llegim char a char fins a EOF
+			while (nBytes != 0) {
+				nBytes = read (nFdInBackUp, &cAux, 1);
+				if (nBytes == 0) {
+					cAux = '\0';
+				}
+				write (nFdInLog, &cAux, 1);
+			}
 
 				//escric peu
 				memset (sAux, '\0', 350);
