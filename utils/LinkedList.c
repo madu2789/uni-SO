@@ -34,13 +34,14 @@ void delnode (char sName[30]) {
 }
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */
-void append (char sName[30], char sTipus[30], char sDate[64]) {
+void append (char sName[30], char sTipus[30], char sDate[64], int nSize) {
   struct node *temp,*r;
   temp = (struct node *)malloc(sizeof(struct node));
 
   strcpy(temp->sName, sName);
   strcpy(temp->sTipus, sTipus);
   strcpy(temp->sDate, sDate);
+  temp->nSize = nSize;
   r = (struct node *)p;
 
   if (p == NULL) {
@@ -56,13 +57,14 @@ void append (char sName[30], char sTipus[30], char sDate[64]) {
   }
 
 /* ADD A NEW NODE AT BEGINNING  */
-void addbeg (char sName[30], char sTipus[30], char sDate[64]) {
+void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize) {
   struct node *temp;
   temp =(struct node *)malloc(sizeof(struct node));
 
   strcpy(temp->sName, sName);
   strcpy(temp->sTipus, sTipus);
   strcpy(temp->sDate, sDate);
+  temp->nSize = nSize;
 
   if (p == NULL) {
     p = temp;
@@ -74,7 +76,7 @@ void addbeg (char sName[30], char sTipus[30], char sDate[64]) {
 }
 
 /* ADD A NEW NODE AFTER A SPECIFIED NO OF NODES */
-void addafter (int loc , char sName[30], char sTipus[30], char sDate[64]) {
+void addafter (int loc , char sName[30], char sTipus[30], char sDate[64], int nSize) {
   int i;
   struct node *temp,*t,*r;
   //here r stores the first location
@@ -85,7 +87,7 @@ void addafter (int loc , char sName[30], char sTipus[30], char sDate[64]) {
     return;
   }
   if (loc == 1) {
-    addbeg(sName, sTipus, sDate);
+    addbeg(sName, sTipus, sDate, nSize);
     return;
   } else {
     for (i=1;i<loc;i++) {
@@ -112,7 +114,7 @@ void display (struct node *r) {
     return;
   }
   while (r != NULL) {
-    printf(" -> %s \t %s \t %s \n", r->sName, r->sTipus, r->sDate );
+    printf(" -> %s \t %s \t %s \t %d \n", r->sName, r->sTipus, r->sDate, r->nSize );
     r = r->next;
   }
     printf(" ");
@@ -156,7 +158,7 @@ int getDateByName (char sDate[30], char sName[30]) {
 }
 
 /*Canvia la sDate segons el sName*/
-int setDateByName (char sName[30], char sDate[64]) {
+int setDateByName (char sName[30], char sDate[64], int nSize) {
   struct node *temp;
   int bTrobat = 0;
   temp = p;
@@ -165,6 +167,7 @@ int setDateByName (char sName[30], char sDate[64]) {
     if (strcmp(sName, temp->sName) == 0) {
       bTrobat = 1;
       strcpy(temp->sDate, sDate);
+      temp->nSize = nSize;
     } else {
       temp = temp->next;
     }

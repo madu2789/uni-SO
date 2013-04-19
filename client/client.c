@@ -125,6 +125,7 @@ int ReadDir (char sDirPath[MAX]) {
 int initLinkedList (char sDirPath[MAX]) {
 
 	int nTotalFiles = ReadDir(sDirPath);
+
 	while (nTotalFiles--) {
 		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type);
 		free (arxius[nTotalFiles]);
@@ -188,7 +189,6 @@ void checkRootFiles (char sDirPath[MAX]) {
  */
 int main () {
 	int nPort = 0;
-	int bError = 0;
 
 	char sDirPath[MAX];
 	char sServer[11];
@@ -196,7 +196,7 @@ int main () {
 	char sPswd[32];
 
 	//Crear/Obrir fitxer de Log
-	bError = createLog("LSBox_cli.log.html");
+	createLog("LSBox_cli.log.html");
 
 	//Llegir "config.dat"
 	nPort = getConfigInfo(sServer, sDirPath);
@@ -210,14 +210,12 @@ int main () {
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList(sDirPath);
-
+//display(p);
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		checkRootFiles(sDirPath);
 		sleep(5);
 	}
-
-	//display(p);
 
 	return 0;
 }
