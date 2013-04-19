@@ -51,14 +51,16 @@ void addToLL (char sName[30], int nTipus) {
 	struct stat status;
 	char sAdaptedTipus[30];
 	char *sDate;
+	int nSize = 0;
 
 	//hora de modificacio del arxiu -> sDate
 	if (stat(sName, &status) == 0) {
     sDate = ((char *)ctime(&status.st_mtime));
+    nSize = status.st_size;
   }
   conversorTipus(sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
-	addbeg(sName, sAdaptedTipus, sDate);
+	addbeg(sName, sAdaptedTipus, sDate, nSize);
 	writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
 }
 
@@ -71,12 +73,14 @@ void addToLL (char sName[30], int nTipus) {
 void updateToLL (char sLLDate[30], char sName[30]) {
 	struct stat status;
 	char *sDate;
+	int nSize = 0;
 
 	if (stat(sName, &status) == 0) {
 		sDate = ((char *)ctime(&status.st_mtime));
+		nSize = status.st_size;
 	}
 	if (strcmp(sLLDate, sDate) != 0 ){
-		setDateByName(sName, sDate);
+		setDateByName(sName, sDate, nSize);
 	 	printf("updated\n");
 	}
 	writeLog ("LSBox_cli.log.html","facadeLL.c","Element modificat", sName, 1);

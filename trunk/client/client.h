@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>			// strlen, bzero
 #include <dirent.h>			// opendir, readdir...
-#include <sys/stat.h>		//stat, obtenir data modificacio
+#include <sys/stat.h>		//stat, obtenir data modificacio i nSize
 #include <sys/types.h>
 #include <fcntl.h>
 #include <time.h>
