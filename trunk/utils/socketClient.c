@@ -235,8 +235,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda", sTrama, 1);
 	} else {
 		printf("error trama incorrecte\n");
-		//aqui peta i no tinc ni PM de pk!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		//writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte",sTrama, 0);
+		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte",sTrama, 0);
 	}
 
 }
