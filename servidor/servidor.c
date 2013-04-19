@@ -111,7 +111,7 @@ void checkRootFiles (char sDirPath[MAX]) {
 
 	} else if (nTotalFiles > nLLTotalFiles) {
 
-	 	 write(2, "cal afegir el nou arxiu\n", 25);
+	 	write(2, "cal afegir el nou arxiu\n", 25);
 
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
