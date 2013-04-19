@@ -145,7 +145,7 @@ int socketConnection (int nPort) {
 	//Comprobem port valid
 	if ( nPort < 1024 || nPort > 65535){
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","Port invalid!", 0);
-		return ERROR;
+		exit(ERROR);
 	}
 	wPuerto = nPort;
 
@@ -153,7 +153,7 @@ int socketConnection (int nPort) {
 	nSocketFD = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if(nSocketFD < 0){
 		writeLog ("LSBox_cli.log.html", "socketClient.c","[Error] socket","Error al crear el socket!", 0);
-		return ERROR;
+		exit(ERROR);
 	}
 
 	//Creamos la estructura para conectarnos
@@ -165,7 +165,7 @@ int socketConnection (int nPort) {
 	stHost = gethostbyname ("cygnus.salle.url.edu");
 	if (NULL == stHost){
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","No se ha podido resolver la direccion de cygnus!", 0);
-		return ERROR;
+		exit(ERROR);
 	}
 
 	//Copiem les dades a la estructura
@@ -173,7 +173,7 @@ int socketConnection (int nPort) {
 
 	if (connect (nSocketFD, &stDireccionServidor, sizeof (stDireccionServidor)) < 0){
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","Error al intentarnos conectar al servidor!", 0);
-		return ERROR;
+		exit(ERROR);
 	}
 
 	return nSocketFD;

@@ -350,6 +350,9 @@ int ServerConection (int nPort) {
 			//Escribim al Log
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
+			//Beta PROVAAA
+			//startSincro();
+
 		} else {
 
 			writeLog ("LSBox_svr.log.html","socketServer.c","[Error]Trama Rebuda", sTrama, 0);

@@ -109,7 +109,7 @@ int ReadDir (char sDirPath[MAX]) {
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius == NULL) {
 		writeLog ("LSBox_cli.log.html", "client.c","[Error] scandir","Path incorrecte",0);
-		exit(-1);
+		exit(ERROR);
 		return 0;
 	} else {
 		writeLog ("LSBox_cli.log.html", "client.c","scandir","Em escanejat el directori correctament",1);
