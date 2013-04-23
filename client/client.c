@@ -138,15 +138,13 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-void checkRootFiles (char sDirPath[MAX], struct node *LinkedList) {
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList) {
 	int i = 0;
 	int bUpdate = 0;
-	int nLLTotalFiles;
 	int nTotalFiles;
 	char sLLDate[30];
 
 	nTotalFiles = ReadDir(sDirPath);
-	nLLTotalFiles = count(LinkedList);
 	i = nTotalFiles;
 
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
@@ -189,6 +187,7 @@ void checkRootFiles (char sDirPath[MAX], struct node *LinkedList) {
  */
 int main () {
 	int nPort = 0;
+	int nLLTotalFiles = 0;
 
 	char sDirPath[MAX];
 	char sServer[11];
@@ -224,9 +223,9 @@ int main () {
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 
-		display(LinkedList);
+		nLLTotalFiles = display(LinkedList);
 
-		checkRootFiles(sDirPath, LinkedList);
+		checkRootFiles(sDirPath, nLLTotalFiles, LinkedList);
 		sleep(5);
 	}
 
