@@ -11,7 +11,7 @@
  * @param  sPwd {String}	Password amb md5 que inclourem
  * @return
  */
-void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama) {
+void creaTrama (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama) {
 	char sLoginDesti[7];
 	char sLoginOrigen[7];
 	char sTipus;
@@ -48,6 +48,13 @@ void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], in
 			strcpy(sData, sUser);
 			strcat(sData, ":");
 			strcat(sData, sPwd);
+		break;
+			case 4:
+			//creant Camps de la trama separadament
+			strcpy(sLoginOrigen, sUser);
+			strcpy(sLoginDesti, "LSBox  ");
+			sprintf (sData,"'Sincronitzacio confirmada'");
+			sTipus = 'O';
 		break;
 	}
 
@@ -97,16 +104,6 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 
   memcpy( sPwd, &sDataTrama[8], 32 );
 	sPwd[32] = '\0';
-
-
-/* // Comprovacio que parseja be la trama:
-  printf("camp login origen parsejat:  %s\n", sLoginOrigen);
-  printf("camp login desti parsejat:  %s\n", sLoginDTrama);
-  printf("camp trama parsejat:  %c\n", sTypeTrama);
-  printf("camp data parsejat:  %s\n", sDataTrama);
-  printf("password parsejat:  %s\n", sPwd);
-*/
-
 	bTramaOk = 0;
 
 	switch (nType) {
@@ -123,6 +120,14 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 
 		break;
 	}
+
+/* // Comprovacio que parseja be la trama:
+  printf("camp login origen parsejat:  %s\n", sLoginOrigen);
+  printf("camp login desti parsejat:  %s\n", sLoginDTrama);
+  printf("camp trama parsejat:  %c\n", sTypeTrama);
+  printf("camp data parsejat:  %s\n", sDataTrama);
+  printf("password parsejat:  %s\n", sPwd);
+*/
 
 	return bTramaOk;
 }
@@ -204,19 +209,18 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 
 	//Comprovem si la Trama es correcte
 	if (checkTrama(sTrama, sUser, 1)) {
-		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte",sTrama, 0);
+		writeLog ("LSBox_cli.log.html","socketClient.c", "[Error] Trama rebuda incorrecte",sTrama, 0);
 		printf("error trama incorrecte\n");
 		nTipusTrama = 2;
 		//peticio again??
 	} else {
-		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda",sTrama, 1);
+		writeLog ("LSBox_cli.log.html", "socketClient.c", "Trama rebuda", sTrama, 1);
 		printf("trama rebuda: %s\n", sTrama);
 		nTipusTrama = 3;
 	}
 
-	printf("%s\n", sPwd);
 	//Formem trama per la petició
-	petitionConection(sTrama, sUser, sPwd, nTipusTrama);
+	creaTrama(sTrama, sUser, sPwd, nTipusTrama);
 
 	//Enviem la trama de peticio
 	write (nSocketFD, sTrama, MAX_TRAMA);
@@ -235,7 +239,15 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda", sTrama, 1);
 	} else {
 		printf("error trama incorrecte\n");
-		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte",sTrama, 0);
+		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte", sTrama, 0);
 	}
+
+ 	int nTotalFiles = 0;
+  nTotalFiles = count();
+  printf("socketclient: %d\n", nTotalFiles);
+
+	display(p);
+
+	receiveServerSincro(nSocketFD, sTrama);
 
 }

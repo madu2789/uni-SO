@@ -35,6 +35,10 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 			sprintf (sData,"'Autentificacio realitzada satisfactoriament'");
 			sTipus = 'O';
 		break;
+			case 4:
+			sprintf (sData,"'Inici sincronitzacio'");
+			sTipus = 'S';
+		break;
 	}
 
 	//creant Trama final que enviarem
@@ -351,18 +355,18 @@ int ServerConection (int nPort) {
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
 			//Beta PROVAAA
-			//startSincro();
+			startSincroServer(nSocketCliente, sTrama, sLoginDesti);
 
 		} else {
 
-			writeLog ("LSBox_svr.log.html","socketServer.c","[Error]Trama Rebuda", sTrama, 0);
+			writeLog ("LSBox_svr.log.html", "socketServer.c", "[Error]Trama Rebuda", sTrama, 0);
 			//Creem la trama de resposta KO peticio d'autentificacio
  			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 2);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
 			printf("[desconnexio] trama enviada: %s\n", sTrama);
-			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
+			writeLog ("LSBox_svr.log.html", "socketServer.c", "Trama Enviada", sTrama, 1);
 
  			//Cerramos el socket
 			close (gnSocketFD);

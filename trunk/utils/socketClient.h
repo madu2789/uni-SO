@@ -28,10 +28,13 @@
 // Includes propios
 #include "socketClient.h"
 #include "log.h"
+#include "facadeLL.h"
 
 // Definicion de constantes
 
 // Definicion de tipos propios
+
+
 
 //Funciones
 int clientConnect (int nPort, char sUser[7], char sPwd[32]);

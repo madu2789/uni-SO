@@ -5,7 +5,6 @@
 4.PRINT THE ELEMENTS IN THE LIST
 5.PRINT THE TOTAL NUMBER OF ELEMENTS IN THE LIST
 6.DELETE A NODE IN THE LINKED LIST:
-7.REVERSE A LINKED LIST :
 8.Exit:*/
 #include "LinkedList.h"
 
@@ -34,7 +33,7 @@ void delnode (char sName[30]) {
 }
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */
-void append (char sName[30], char sTipus[30], char sDate[64], int nSize) {
+void append (char sName[30], char sTipus[30], char sDate[64], int nSize, struct node *LinkedList) {
   struct node *temp,*r;
   temp = (struct node *)malloc(sizeof(struct node));
 
@@ -42,11 +41,11 @@ void append (char sName[30], char sTipus[30], char sDate[64], int nSize) {
   strcpy(temp->sTipus, sTipus);
   strcpy(temp->sDate, sDate);
   temp->nSize = nSize;
-  r = (struct node *)p;
+  r = (struct node *)LinkedList;
 
-  if (p == NULL) {
-    p = temp;
-    p->next = NULL;
+  if (LinkedList == NULL) {
+    LinkedList = temp;
+    LinkedList->next = NULL;
   } else {
     while (r->next != NULL)
       r = r->next;
@@ -57,7 +56,7 @@ void append (char sName[30], char sTipus[30], char sDate[64], int nSize) {
   }
 
 /* ADD A NEW NODE AT BEGINNING  */
-void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize) {
+void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize, struct node *LinkedList) {
   struct node *temp;
   temp =(struct node *)malloc(sizeof(struct node));
 
@@ -65,50 +64,21 @@ void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize) {
   strcpy(temp->sTipus, sTipus);
   strcpy(temp->sDate, sDate);
   temp->nSize = nSize;
+  temp->next = NULL;
 
-  if (p == NULL) {
-    p = temp;
-    p->next = NULL;
-  } else {
-    temp->next = p;
-    p = temp;
-  }
+  display(temp);
+
+  LinkedList->next = temp;
+
 }
 
-/* ADD A NEW NODE AFTER A SPECIFIED NO OF NODES */
-void addafter (int loc , char sName[30], char sTipus[30], char sDate[64], int nSize) {
-  int i;
-  struct node *temp,*t,*r;
-  //here r stores the first location
-  r = p;
-
-  if (loc > count()+1 || loc <= 0) {
-    printf("insertion is not possible :\n");
-    return;
-  }
-  if (loc == 1) {
-    addbeg(sName, sTipus, sDate, nSize);
-    return;
-  } else {
-    for (i=1;i<loc;i++) {
-      t = r;   // t will be holding previous value
-      r = r->next;
-    }
-    temp = (struct node *)malloc(sizeof(struct node));
-
-    strcpy(temp->sName, sName);
-    strcpy(temp->sTipus, sTipus);
-    strcpy(temp->sDate, sDate);
-    t->next = temp;
-    t = temp;
-    t->next = r;
-    return;
-  }
-}
 
 /* THIS FUNCTION DISPLAYS THE CONTENTS OF THE LINKED LIST */
-void display (struct node *r) {
-  r = p;
+int display (struct node *r) {
+  struct node *inici;
+  inici = r;
+  //r = p;
+  int nElements = 0;
   if (r == NULL) {
     printf("NO ELEMENT IN THE LIST :\n");
     return;
@@ -116,12 +86,16 @@ void display (struct node *r) {
   while (r != NULL) {
     printf(" -> %s \t %s \t %s \t %d \n", r->sName, r->sTipus, r->sDate, r->nSize );
     r = r->next;
+    nElements++;
   }
-    printf(" ");
+
+  printf("num total delements: %d ", nElements);
+  r = inici;
+  return nElements;
 }
 
 /*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/
-int showNode (char sName[30], int nLocation) {
+int showNode (char sName[30], char sDate[64], int *nSize, int nLocation) {
   struct node *temp;
   int i = 0, bTrobat = 0;
   temp=p;
@@ -131,6 +105,8 @@ int showNode (char sName[30], int nLocation) {
           bTrobat = 1;
           printf(" ELEMENT %s FOUND!\n", temp->sName);
           strcpy(sName, temp->sName);
+          strcpy(sDate, temp->sDate);
+          *(nSize) = temp->nSize;
         } else {
           temp = temp->next;
         }
@@ -176,7 +152,7 @@ int setDateByName (char sName[30], char sDate[64], int nSize) {
 }
 
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
-int count (void) {
+int count (struct node *LinkedList) {
   struct node *n;
   int c = 0;
   n = p;
@@ -186,107 +162,3 @@ int count (void) {
   }
   return(c);
 }
-
-//THIS FUNCTION REVERSES A LINKED LIST
-void reverse (struct node *q) {
-  struct node *m,*n,*s;
-  m = q;
-  n = NULL;
-  while (m != NULL) {
-    s = n;
-    n = m;
-    m = m->next;
-    n->next = s;
-  }
-  p = n;
-}
-
-/* THIS IS THE MAIN PROGRAM  */
-/*int main () {
-  int i;
-
-	p = NULL;
-	while(1) {
-		printf("1.INSERT AT BEGINNING;\n");
-		printf("2.INSERT AT LAST:\n");
-		printf("3.INSERT AT A PARTICULAR LOCATION:\n");
-		printf("4.PRINT THE ELEMENTS:\n");
-		printf("5.STRLENGTH:\n");
-		printf("6.DELETE A NODE:\n");
-		printf("7.REVERSE:\n");
-    printf("8.getDateByName:\n");
-		printf("9.Exit:\n");
-		printf("PLEASE, ENTER THE NUMBER:\n");
-
-		scanf("%d",&i);
-    switch (i) {
-      case 1: {
-        char sName[30], sTipus[30], sDate[64];
-        printf(" PLEASE ENTER sName, sType, sDate :-");
-        scanf("%s",&sName);
-        scanf("%s",&sTipus);
-        scanf("%s",&sDate);
-        addbeg(sName, sTipus, sDate);
-        break;
-      }
-      case 2: {
-        int num;
-        char sName[30], sTipus[30], sDate[64];
-        printf(" PLEASE ENTER THE sName, sType, sDate :-");
-        scanf("%s",&sName);
-        scanf("%s",&sTipus);
-        scanf("%s",&sDate);
-        append(sName, sTipus, sDate);
-        break;
-       }
-      case 3: {
-        int loc;
-        char sName[30], sTipus[30], sDate[64];
-        printf(" PLEASE ENTER THE sName, sType, sDate :-");
-        scanf("%s",&sName);
-        scanf("%s",&sTipus);
-        scanf("%s",&sDate);
-        printf("PLEASE ENTER THE LOCATION NUMBER :-");
-        scanf("%d",&loc);
-        addafter(loc, sName, sTipus, sDate);
-        break;
-      }
-      case 4: {
-        printf("THE  ELEMENTS IN THE LIST ARE :");
-        display(p);
-        printf("\n");
-        break;
-      }
-      case 5: {
-        printf(" TOTAL NO OF ELEMENTS IN THE LIST ARE %d \n",count());
-        break;
-      }
-      case 6: {
-        char sName[30];
-        printf("PLEASE ENTER A sName FROM THE LIST :");
-        scanf("%s",&sName);
-        delnode(sName);
-      break;
-      }
-      case 7: {
-        reverse(p);
-        display(p);
-        printf("\n");
-        break;
-      }
-      case 8: {
-        char sName[30], sDate[64];
-        printf("PLEASE ENTER A sName FROM THE LIST :");
-        scanf("%s",&sName);
-        getDateByName(sDate, sName);
-        printf("%s\n", sDate);
-        break;
-      }
-      case 9: {
-        return 0;
-      }
-    }
-  }
-}
-
-*/

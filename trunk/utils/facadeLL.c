@@ -47,11 +47,12 @@ void conversorTipus (char sTipus[30], int nToConvert) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLL (char sName[30], int nTipus) {
+void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
 	struct stat status;
 	char sAdaptedTipus[30];
 	char *sDate;
 	int nSize = 0;
+
 
 	//hora de modificacio del arxiu -> sDate
 	if (stat(sName, &status) == 0) {
@@ -60,8 +61,12 @@ void addToLL (char sName[30], int nTipus) {
   }
   conversorTipus(sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
-	addbeg(sName, sAdaptedTipus, sDate, nSize);
+
+	//aqui  va add
+	//addbeg(sName, sAdaptedTipus, sDate, nSize, LinkedList);
+	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
 	writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
+
 }
 
 
@@ -95,9 +100,11 @@ void updateToLL (char sLLDate[30], char sName[30]) {
 void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius) {
 	int i,j, bToRemove= 1;
 	char sNameToRemove[30];
+	char sDateBasura[64];
+	int *nSize;
 
 	for (i = 1; i < nLLTotalFiles; i++) {
-		showNode(sNameToRemove, i);
+		showNode(sNameToRemove, sDateBasura, &nSize, i);
 		printf("mirem: %s si %s \n",sNameToRemove, (*arxius[j]).d_name );
 		for (j = 1; j < nTotalFiles; j++){
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
