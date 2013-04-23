@@ -1,11 +1,4 @@
-/*Single linked list inplementation
-1.INSERT A NUMBER AT THE BEGINNING;
-2.INSERT A NUMBER AT LAST
-3.INSERT A NUMBER AT A PARTICULAR LOCATION IN LIST
-4.PRINT THE ELEMENTS IN THE LIST
-5.PRINT THE TOTAL NUMBER OF ELEMENTS IN THE LIST
-6.DELETE A NODE IN THE LINKED LIST:
-8.Exit:*/
+
 #include "LinkedList.h"
 
 
@@ -52,8 +45,8 @@ void append (char sName[30], char sTipus[30], char sDate[64], int nSize, struct 
       r->next = temp;
       r = temp;
       r->next = NULL;
-    }
   }
+}
 
 /* ADD A NEW NODE AT BEGINNING  */
 void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize, struct node *LinkedList) {
@@ -65,8 +58,6 @@ void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize, struct 
   strcpy(temp->sDate, sDate);
   temp->nSize = nSize;
   temp->next = NULL;
-
-  display(temp);
 
   LinkedList->next = temp;
 
@@ -89,9 +80,9 @@ int display (struct node *r) {
     nElements++;
   }
 
-  printf("num total delements: %d ", nElements);
+  printf("num total delements: %d ", nElements-1);
   r = inici;
-  return nElements;
+  return nElements-1;
 }
 
 /*Show a A NODE (molt guarro utilitzant variables globals->REFACTORING)*/

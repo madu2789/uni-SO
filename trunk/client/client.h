@@ -45,7 +45,7 @@ int ReadDir (char sDirPath[MAX]);
 static int triar (const struct dirent *arg);
 void conversorTipus (char sTipus[30], int nToConvert);
 int initLinkedList (char sDirPath[MAX], struct node *LinkedList);
-void checkRootFiles (char sDirPath[MAX],  struct node *LinkedList);
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList);
 
 
 #endif

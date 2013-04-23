@@ -242,11 +242,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte", sTrama, 0);
 	}
 
- 	int nTotalFiles = 0;
-  nTotalFiles = count();
-  printf("socketclient: %d\n", nTotalFiles);
 
-	display(p);
 
 	receiveServerSincro(nSocketFD, sTrama);
 

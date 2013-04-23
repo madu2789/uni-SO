@@ -56,10 +56,6 @@ void getSincroInfo(int nFdIn) {
  	int nLocation = 0;
  	int nTotalFiles = 0;
 
-  nTotalFiles = count();
-
-
-  printf("sincro: %d\n", nTotalFiles);
 
  	for (nLocation = 0 ; nLocation < nTotalFiles ; nLocation++ ) {
  		showNode(sName, sDate, &nSize, nLocation);
