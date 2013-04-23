@@ -32,7 +32,7 @@
 
 //Funciones
 void conversorTipus (char sTipus[30], int nToConvert);
-void addToLL (char sName[30], int nTipus);
+void addToLL (char sName[30], int nTipus, struct node *LinkedList);
 void updateToLL (char sLLDate[30], char sName[30]);
 void removeToLL ( int nTotalFiles, int nLLTotalFiles, struct dirent **arxius);
 

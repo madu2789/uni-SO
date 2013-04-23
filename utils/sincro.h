@@ -29,12 +29,15 @@
 #include "sincro.h"
 #include "socketServer.h"
 #include "socketClient.h"
+#include "facadeLL.h"
 
 // Definicion de constantes
 
 // Definicion de tipos propios
 
 //Funciones
-int startSincro ();
+int startSincroServer(int nFdIn, char sTrama[MAX_TRAMA], char sLoginDesti[7]);
+int receiveServerSincro(int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7]);
+void getSincroInfo(int nFdIn);
 
 #endif

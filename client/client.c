@@ -122,12 +122,12 @@ int ReadDir (char sDirPath[MAX]) {
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
-int initLinkedList (char sDirPath[MAX]) {
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
 
 	int nTotalFiles = ReadDir(sDirPath);
 
 	while (nTotalFiles--) {
-		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type);
+		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type, LinkedList);
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
@@ -138,7 +138,7 @@ int initLinkedList (char sDirPath[MAX]) {
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-void checkRootFiles (char sDirPath[MAX]) {
+void checkRootFiles (char sDirPath[MAX], struct node *LinkedList) {
 	int i = 0;
 	int bUpdate = 0;
 	int nLLTotalFiles;
@@ -146,7 +146,7 @@ void checkRootFiles (char sDirPath[MAX]) {
 	char sLLDate[30];
 
 	nTotalFiles = ReadDir(sDirPath);
-	nLLTotalFiles = count();
+	nLLTotalFiles = count(LinkedList);
 	i = nTotalFiles;
 
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
@@ -169,7 +169,7 @@ void checkRootFiles (char sDirPath[MAX]) {
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
 			if( bUpdate != 1 ) {
-				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type);
+				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList);
 			}
 			free (arxius[i]);
 		}
@@ -195,6 +195,8 @@ int main () {
 	char sLogin[7];
 	char sPswd[32];
 
+	struct node *LinkedList;
+
 	//Crear/Obrir fitxer de Log
 	createLog("LSBox_cli.log.html");
 
@@ -209,11 +211,22 @@ int main () {
 	clientConnect(nPort, sLogin, sPswd);
 
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList(sDirPath);
-//display(p);
+
+
+	LinkedList = (struct node *)malloc(sizeof(struct node));
+	strcpy(LinkedList->sName,"fantasma");
+	LinkedList->nSize = 0;
+	LinkedList->next = NULL;
+
+	initLinkedList(sDirPath, LinkedList);
+
+
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
-		checkRootFiles(sDirPath);
+
+		display(LinkedList);
+
+		checkRootFiles(sDirPath, LinkedList);
 		sleep(5);
 	}
 
