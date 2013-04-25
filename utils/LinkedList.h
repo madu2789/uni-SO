@@ -38,14 +38,12 @@ struct node {
 
 //Funciones
 
-void delnode (char sName[30]);
+void delnode (char sName[30], struct node *LinkedList);
 void append (char sName[30], char sTipus[30], char sDate[64], int nSize, struct node *LinkedList);
-void addbeg (char sName[30], char sTipus[30], char sDate[64], int nSize, struct node *LinkedList);
-void addafter (int loc , char sName[30], char sTipus[30], char sDate[64], int nSize);
 int display (struct node *r);
-int showNode (char sName[30], char sDate[64], int *nSize, int nLocation) ;
-int getDateByName (char sDate[30], char sName[30]);
-int setDateByName (char sName[30], char sDate[64], int nSize);
+int showNode (char sName[30], char sDate[64], int nLocation, struct node *LinkedList) ;
+int getDateByName (char sDate[30], char sName[30], struct node *LinkedList);
+int setDateByName (char sName[30], char sDate[64], int nSize, struct node *LinkedList);
 int count (struct node *LinkedList);
 
 

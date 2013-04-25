@@ -59,11 +59,9 @@ void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
     sDate = ((char *)ctime(&status.st_mtime));
     nSize = status.st_size;
   }
+
   conversorTipus(sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
-
-	//aqui  va add
-	//addbeg(sName, sAdaptedTipus, sDate, nSize, LinkedList);
 	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
 	writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
 
@@ -75,7 +73,7 @@ void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void updateToLL (char sLLDate[30], char sName[30]) {
+void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList) {
 	struct stat status;
 	char *sDate;
 	int nSize = 0;
@@ -85,7 +83,7 @@ void updateToLL (char sLLDate[30], char sName[30]) {
 		nSize = status.st_size;
 	}
 	if (strcmp(sLLDate, sDate) != 0 ){
-		setDateByName(sName, sDate, nSize);
+		setDateByName(sName, sDate, nSize, LinkedList);
 	 	printf("updated\n");
 	}
 	writeLog ("LSBox_cli.log.html","facadeLL.c","Element modificat", sName, 1);
@@ -97,31 +95,36 @@ void updateToLL (char sLLDate[30], char sName[30]) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius) {
-	int i,j, bToRemove= 1;
+void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, struct node *LinkedList) {
+	int i = 0;
+	int j= 0;
+	int nSize = 0;
+	int bToRemove= 1;
 	char sNameToRemove[30];
 	char sDateBasura[64];
-	int *nSize;
 
-	for (i = 1; i < nLLTotalFiles; i++) {
-		showNode(sNameToRemove, sDateBasura, &nSize, i);
-		printf("mirem: %s si %s \n",sNameToRemove, (*arxius[j]).d_name );
+	for (i = 1; i < nLLTotalFiles+1; i++) {
+		nSize = showNode(sNameToRemove, sDateBasura, i, LinkedList);
+		printf("mirem: %s si es: %s \n",sNameToRemove, arxius[j]->d_name );
+
 		for (j = 1; j < nTotalFiles; j++){
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
 				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
 			}
 		}
+
 		if (bToRemove == 1) {
 			printf("hem de borrar : %s\n", sNameToRemove);
-			delnode(sNameToRemove);
+			delnode(sNameToRemove, LinkedList);
 			printf("BORRAT : %s\n", sNameToRemove);
 		}
 		bToRemove = 1;
 	}
+
 	for (j = 1; j < nTotalFiles; j++){
-		free(arxius[j]);
+		//free(arxius[j]);
 	}
-	free(arxius);
+	//free(arxius);
 	writeLog ("LSBox_cli.log.html","facadeLL.c","Element eliminat", sNameToRemove, 1);
 }
