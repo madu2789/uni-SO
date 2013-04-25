@@ -30,6 +30,7 @@
 #include "socketServer.h"
 #include "socketClient.h"
 #include "facadeLL.h"
+#include <stdlib.h>
 
 // Definicion de constantes
 
@@ -37,7 +38,7 @@
 
 //Funciones
 int startSincroServer(int nFdIn, char sTrama[MAX_TRAMA], char sLoginDesti[7]);
-int receiveServerSincro(int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7]);
-void getSincroInfo(int nFdIn);
+int receiveServerSincro(int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7], struct node *LinkedList);
+void sincroInfo(int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
 
 #endif

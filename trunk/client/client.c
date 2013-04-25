@@ -152,9 +152,9 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 	if (nTotalFiles == nLLTotalFiles) {
 		//update o res
 		while (i--) {
-		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate == 1 ) {
-				updateToLL(sLLDate, arxius[i]->d_name);
+				updateToLL(sLLDate, arxius[i]->d_name, LinkedList);
 			}
 			free (arxius[i]);
 		}
@@ -165,7 +165,7 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 	 	write(2, "cal afegir el nou arxiu\n", 25);
 
 		while (i--) {
-			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate != 1 ) {
 				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList);
 			}
@@ -174,7 +174,7 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			removeToLL(nTotalFiles, nLLTotalFiles, &arxius);
+			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList);
 		}
 	return;
 	}
@@ -204,20 +204,18 @@ int main () {
 
 	//Guardem -> sLogin, sPswd
 	loginUser(sLogin, sPswd);
-	writeLog ("LSBox_cli.log.html", "client.c","Login del usuari","User introdueix Login i Password",1);
-
-	//Socket peticio connexio
-	clientConnect(nPort, sLogin, sPswd);
+	writeLog ("LSBox_cli.log.html", "client.c", "Login del usuari", "User introdueix Login i Password",1);
 
 	//Init LL posant tots els ele. trobats al directori root
-
-
 	LinkedList = (struct node *)malloc(sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
 	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
 	initLinkedList(sDirPath, LinkedList);
+
+	//Socket peticio connexio
+	clientConnect(nPort, sLogin, sPswd, LinkedList);
 
 
 	//Check al directori si hi ha hagut algun canvi cada 2''

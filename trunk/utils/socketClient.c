@@ -192,7 +192,7 @@ int socketConnection (int nPort) {
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
+int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedList) {
 
 	int nSocketFD;
 	char sFrase[MAX], sTrama[MAX_TRAMA];
@@ -242,8 +242,6 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32]) {
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte", sTrama, 0);
 	}
 
-
-
-	receiveServerSincro(nSocketFD, sTrama);
+	receiveServerSincro(nSocketFD, sTrama, sUser, LinkedList);
 
 }

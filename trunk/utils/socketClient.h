@@ -37,7 +37,7 @@
 
 
 //Funciones
-int clientConnect (int nPort, char sUser[7], char sPwd[32]);
+int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedList);
 int checkTrama (char sTrama[MAX_TRAMA],char sUser[7], int nType);
 void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama);
 
