@@ -39,12 +39,7 @@
 
 //Funciones
 int main();
-int getConfigInfo (char sServer[11], char sDirPath[MAX]);
-int ReadDir (char sDirPath[MAX]);
-int checkUser (char sSckUser[32], char sSckPswd[32]);
-static int triar (const struct dirent *arg);
-int initLinkedList (char sDirPath[MAX], struct node *LinkedList) ;
-void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList);
+
 
 
 #endif

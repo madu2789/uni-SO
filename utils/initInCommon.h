@@ -27,13 +27,17 @@
 
 // Includes propios
 #include "initInCommon.h"
+#include "../utils/facadeLL.h"
 
 // Definicion de constantes
 
 // Definicion de tipos propios
 
 //Funciones
+static int triar (const struct dirent *arg);
 int getConfigInfo (char sServer[11], char sDirPath[MAX]);
-
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList);
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList);
+int ReadDir (int bIsNull) ;
 
 #endif
