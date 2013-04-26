@@ -222,6 +222,14 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
 			}
 
 		break;
+		case 4:
+			if (sTypeTrama == 'X'){
+				if(strcmp(sLoginOrigen, "LSBox  ") == 0) {
+					bTramaOk = 1;
+
+				}
+			}
+		break;
 	}
 
 	return bTramaOk;
@@ -346,26 +354,38 @@ int ServerConection (int nPort) {
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Rebuda", sTrama, 1);
 
 			//Creem la trama de resposta OK peticio d'autentificacio
- 			creaTrama(sTrama, "LSBox  ", sLoginDesti, 3);
+ 			creaTrama (sTrama, "LSBox  ", sLoginDesti, 3);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
-			printf("trama enviada: %s\n", sTrama);
+			printf ("trama enviada: %s\n", sTrama);
 			//Escribim al Log
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
-			//Beta PROVAAA
-			startSincroServer(nSocketCliente, sTrama, sLoginDesti);
+
+			//Beta PROVA de SINCRO*****************WORKING***********************************
+			startSincroServer (nSocketCliente, sTrama, sLoginDesti);
+
+			int bFinalSincro = 0;
+			while (!bFinalSincro)	{
+
+			//Rebem Trames de Sincro amb les dades del client
+				read (nSocketCliente, sTrama, MAX_TRAMA);
+				printf ("trama rebuda: %s\n", sTrama);
+				bFinalSincro = checkTrama (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
+			}
+			//END PROVA sincronitzacio*********************************************
+
 
 		} else {
 
 			writeLog ("LSBox_svr.log.html", "socketServer.c", "[Error]Trama Rebuda", sTrama, 0);
 			//Creem la trama de resposta KO peticio d'autentificacio
- 			creaTrama(sTrama, "LSBox  ", sLoginOrigen, 2);
+ 			creaTrama (sTrama, "LSBox  ", sLoginOrigen, 2);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
-			printf("[desconnexio] trama enviada: %s\n", sTrama);
+			printf ("[desconnexio] trama enviada: %s\n", sTrama);
 			writeLog ("LSBox_svr.log.html", "socketServer.c", "Trama Enviada", sTrama, 1);
 
  			//Cerramos el socket
