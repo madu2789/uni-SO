@@ -18,9 +18,12 @@ log.o: log.c ../utils/log.h
 sincro.o: sincro.c ../utils/sincro.h
 	gcc -Wall -Wextra -c ../utils/sincro.c
 
+initInCommon.o: initInCommon.c ../utils/initInCommon.h
+	gcc -Wall -Wextra -c ../utils/initInCommon.c
+
 client.o: client.c client.h
 	gcc -Wall -Wextra -c client.c
 
 
-client: client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/sincro.o
-	gcc -Wall -Wextra client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/sincro.o -o client.exe
+client: client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/sincro.o ../utils/initInCommon.o
+	gcc -Wall -Wextra client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/sincro.o ../utils/initInCommon.o -o client.exe

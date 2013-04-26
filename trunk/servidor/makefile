@@ -15,9 +15,12 @@ log.o: log.c ../utils/log.h
 sincro.o: sincro.c ../utils/sincro.h
 	gcc -Wall -Wextra -c ../utils/sincro.c
 
+initInCommon.o: initInCommon.c ../utils/initInCommon.h
+	gcc -Wall -Wextra -c ../utils/initInCommon.c
+
 servidor.o: servidor.c servidor.h
 	gcc -Wall -Wextra -c servidor.c
 
 
-servidor: servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/sincro.o
-	gcc -Wall -Wextra servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/sincro.o -o servidor.exe
+servidor: servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/sincro.o ../utils/initInCommon.o
+	gcc -Wall -Wextra servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/sincro.o ../utils/initInCommon.o -o servidor.exe

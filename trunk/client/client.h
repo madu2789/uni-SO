@@ -23,6 +23,7 @@
 #include <signal.h>
 
 // Includes propios
+#include "../utils/initInCommon.h"
 #include "../utils/log.h"
 #include "../utils/socketClient.h"
 #include "../utils/facadeLL.h"
@@ -40,12 +41,10 @@
 //Funciones
 int main();
 void loginUser (char sLogin[MAX], char sPswd[MAX]);
-int getConfigInfo (char sServer[11], char sDirPath[MAX]);
 int ReadDir (char sDirPath[MAX]);
-static int triar (const struct dirent *arg);
 void conversorTipus (char sTipus[30], int nToConvert);
 int initLinkedList (char sDirPath[MAX], struct node *LinkedList);
 void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList);
-
+static int triar (const struct dirent *arg);
 
 #endif
