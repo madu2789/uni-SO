@@ -363,7 +363,7 @@ int ServerConection (int nPort) {
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
 
-			//Beta PROVA de SINCRO*****************WORKING***********************************
+	//**************Beta PROVA de SINCRO*****************WORKING***************************
 			startSincroServer (nSocketCliente, sTrama, sLoginDesti);
 
 			int bFinalSincro = 0;
@@ -374,7 +374,7 @@ int ServerConection (int nPort) {
 				printf ("trama rebuda: %s\n", sTrama);
 				bFinalSincro = checkTrama (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
 			}
-			//END PROVA sincronitzacio*********************************************
+	//**********************END PROVA sincronitzacio*********************************************
 
 
 		} else {
