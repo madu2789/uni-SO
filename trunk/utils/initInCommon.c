@@ -36,4 +36,103 @@ int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
 }
 
 
+/**
+ * Fp necessaria per llegir el directori
+ * @param  arg {struct dirent} path al directori
+ */
+static int triar (const struct dirent *arg) {
+	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0 ) return 0;
+	return 1;
+}
+
+/**
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
+ */
+int ReadDir (int bIsNull) {
+
+	if (bIsNull == 0) {
+		writeLog ("LSBox_cli.log.html", "client.c","[Error] scandir","Path incorrecte",0);
+		exit(ERROR);
+		return 0;
+	} else {
+		writeLog ("LSBox_cli.log.html", "client.c","scandir","Em escanejat el directori correctament",1);
+	}
+	return 0;
+}
+
+
+/**
+ * Inicialitza la LinkedList posant tos els elements del directori a la LL
+ */
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
+	int bArxiusOk = 0;
+	struct dirent **arxius;
+
+	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	if (arxius != NULL) bArxiusOk = 1;
+	ReadDir(bArxiusOk);
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+
+	while (nTotalFiles--) {
+		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type, LinkedList);
+		free (arxius[nTotalFiles]);
+	}
+	free (arxius);
+	return 0;
+}
+
+
+/**
+ * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
+ */
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList) {
+
+	struct dirent **arxius;
+	int i = 0;
+	int bUpdate = 0;
+	int nTotalFiles = 0;
+	int bArxiusOk = 0;
+	char sLLDate[30];
+
+	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	if (arxius != NULL) bArxiusOk = 1;
+	ReadDir(bArxiusOk);
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+
+	i = nTotalFiles;
+
+	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
+
+	if (nTotalFiles == nLLTotalFiles) {
+		//update o res
+		while (i--) {
+		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
+			if( bUpdate == 1 ) {
+				updateToLL(sLLDate, arxius[i]->d_name, LinkedList);
+			}
+			free (arxius[i]);
+		}
+		free (arxius);
+
+	} else if (nTotalFiles > nLLTotalFiles) {
+
+	 	write(2, "cal afegir el nou arxiu\n", 25);
+
+		while (i--) {
+			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
+			if( bUpdate != 1 ) {
+				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList);
+			}
+			free (arxius[i]);
+		}
+		free (arxius);
+
+		} else if (nTotalFiles < nLLTotalFiles) {
+			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList);
+		}
+	return;
+	}
+
 

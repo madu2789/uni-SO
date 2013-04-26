@@ -41,10 +41,7 @@
 //Funciones
 int main();
 void loginUser (char sLogin[MAX], char sPswd[MAX]);
-int ReadDir (char sDirPath[MAX]);
 void conversorTipus (char sTipus[30], int nToConvert);
-int initLinkedList (char sDirPath[MAX], struct node *LinkedList);
-void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList);
-static int triar (const struct dirent *arg);
+
 
 #endif
