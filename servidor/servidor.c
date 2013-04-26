@@ -70,11 +70,12 @@ int ReadDir (char sDirPath[MAX]) {
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
-int initLinkedList (char sDirPath[MAX]) {
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
 
 	int nTotalFiles = ReadDir(sDirPath);
+
 	while (nTotalFiles--) {
-		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type);
+		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type, LinkedList);
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
@@ -85,15 +86,13 @@ int initLinkedList (char sDirPath[MAX]) {
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-void checkRootFiles (char sDirPath[MAX]) {
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList) {
 	int i = 0;
 	int bUpdate = 0;
 	int nTotalFiles;
-	int nLLTotalFiles;
 	char sLLDate[30];
 
 	nTotalFiles = ReadDir(sDirPath);
-	nLLTotalFiles = count();
 	i = nTotalFiles;
 
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
@@ -101,9 +100,9 @@ void checkRootFiles (char sDirPath[MAX]) {
 	if (nTotalFiles == nLLTotalFiles) {
 		//update o res
 		while (i--) {
-		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate == 1 ) {
-				updateToLL(sLLDate, arxius[i]->d_name);
+				updateToLL(sLLDate, arxius[i]->d_name, LinkedList);
 			}
 			free (arxius[i]);
 		}
@@ -114,16 +113,16 @@ void checkRootFiles (char sDirPath[MAX]) {
 	 	write(2, "cal afegir el nou arxiu\n", 25);
 
 		while (i--) {
-			bUpdate = getDateByName(sLLDate, arxius[i]->d_name);
+			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate != 1 ) {
-				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type);
+				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList);
 			}
 			free (arxius[i]);
 		}
 		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			removeToLL(nTotalFiles, nLLTotalFiles, arxius);
+			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList);
 		}
 	return;
 	}
@@ -134,27 +133,36 @@ void checkRootFiles (char sDirPath[MAX]) {
  */
 int main () {
 
-	int bError = 0;
 	int nPort = 0;
+	int nLLTotalFiles = 0;
 	char sServer[11];
 	char sDirPath[MAX];
 
+	struct node *LinkedList;
+
 	//Crear/Obrir fitxer de Log
-	bError = createLog("LSBox_svr.log.html");
+	createLog ("LSBox_svr.log.html");
 
 	//Llegir "config.dat"
-	nPort = getConfigInfo( sServer, sDirPath);
+	nPort = getConfigInfo (sServer, sDirPath);
 
 	//Socket peticio connexio
-	ServerConection(nPort);
+	ServerConection (nPort);
 
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList(sDirPath);
+	LinkedList = (struct node *) malloc (sizeof(struct node));
+	strcpy(LinkedList->sName,"fantasma");
+	LinkedList->nSize = 0;
+	LinkedList->next = NULL;
+
+	//Init LL posant tots els ele. trobats al directori root
+	initLinkedList (sDirPath, LinkedList);
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
-		checkRootFiles(sDirPath);
-		sleep(5);
+		nLLTotalFiles = display(LinkedList);
+		checkRootFiles (sDirPath, nLLTotalFiles, LinkedList);
+		sleep (5);
 	}
 
 	//display(p);
