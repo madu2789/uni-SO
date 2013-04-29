@@ -179,12 +179,12 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
 	char sTypeTrama;
 	char sDataTrama[100];
 
-
+	//Netejant strings
 	memset(sLoginOrigen, '\0', 7);
 	memset(sLoginDTrama, '\0', 7);
 	memset(sDataTrama, '\0', 100);
 
-
+	//Parseig de la trama
 	memcpy( sLoginOrigen, &sTrama[0], 7 );
 	sLoginOrigen[7] = '\0';
 
@@ -327,7 +327,7 @@ int ServerConection (int nPort) {
 		}
 
 		sprintf (sFrase,"\nClient conectat\n");
-		write (1,sFrase,strlen (sFrase));
+		write (1, sFrase, strlen (sFrase));
 
 		//Protocol de trames d'establiment de connexio
 
@@ -363,18 +363,11 @@ int ServerConection (int nPort) {
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
 
-	//**************Beta PROVA de SINCRO*****************WORKING***************************
-			startSincroServer (nSocketCliente, sTrama, sLoginDesti);
+			//Sincronitzacio
+			startSincro (nSocketCliente, sTrama, sLoginDesti);
+			//Agafa la info procedent de Client
+			getSincroInfo(nSocketCliente);
 
-			int bFinalSincro = 0;
-			while (!bFinalSincro)	{
-
-			//Rebem Trames de Sincro amb les dades del client
-				read (nSocketCliente, sTrama, MAX_TRAMA);
-				printf ("trama rebuda: %s\n", sTrama);
-				bFinalSincro = checkTrama (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
-			}
-	//**********************END PROVA sincronitzacio*********************************************
 
 
 		} else {
@@ -389,8 +382,8 @@ int ServerConection (int nPort) {
 			writeLog ("LSBox_svr.log.html", "socketServer.c", "Trama Enviada", sTrama, 1);
 
  			//Cerramos el socket
-			close (gnSocketFD);
-			exit(0);
+			//close (gnSocketFD);
+
 		}
 
 

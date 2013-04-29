@@ -37,8 +37,9 @@
 // Definicion de tipos propios
 
 //Funciones
-int startSincroServer(int nFdIn, char sTrama[MAX_TRAMA], char sLoginDesti[7]);
-int receiveServerSincro(int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7], struct node *LinkedList);
-void sincroInfo(int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
+int startSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginDesti[7]);
+int receiveServerSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7], struct node *LinkedList);
+void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
+void getSincroInfo (int nFdIn);
 
 #endif

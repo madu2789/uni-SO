@@ -54,9 +54,9 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 	memset(sPswd, '\0', 32);
 	strcpy (sPswd, sPswdMd5);
 	sPswd[strlen(sPswd)] = '\0';
-	printf("%s\n", sPswd);
 
 }
+
 
 
 
