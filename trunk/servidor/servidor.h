@@ -23,10 +23,12 @@
 #include <signal.h>
 
 // Includes propios
+#include "../utils/sincro.h"
 #include "../utils/initInCommon.h"
 #include "../utils/log.h"
 #include "../utils/facadeLL.h"
 #include "../utils/socketServer.h"
+
 
 // Definicion de constantes
 #define ERROR -1

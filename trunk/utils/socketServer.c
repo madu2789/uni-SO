@@ -180,8 +180,9 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
 	char sDataTrama[100];
 
 	//Netejant strings
-	memset(sLoginOrigen, '\0', 7);
-	memset(sLoginDTrama, '\0', 7);
+	memset(sLoginOrigen, '\0', 8);
+	memset(sLoginDTrama, '\0', 8);
+	memset(sPwd, '\0', 33);
 	memset(sDataTrama, '\0', 100);
 
 	//Parseig de la trama
@@ -226,7 +227,6 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
 			if (sTypeTrama == 'X'){
 				if(strcmp(sLoginOrigen, "LSBox  ") == 0) {
 					bTramaOk = 1;
-
 				}
 			}
 		break;
@@ -284,6 +284,7 @@ int socketConnnection (int nPort) {
 	sprintf (sFrase, "Servidor connectat!\n");
 	write (1, sFrase, strlen (sFrase));
 
+
 	return gnSocketFD;
 
 }
@@ -297,8 +298,8 @@ int socketConnnection (int nPort) {
  */
 int ServerConection (int nPort) {
 
-	int gnSocketFD;
-	int nSocketCliente;
+	int gnSocketFD = 0;
+	int nSocketCliente = 0 ;
 	char sFrase[MAX], sTrama[MAX_TRAMA];
 	struct sockaddr_in stDireccionCliente;
 
@@ -310,7 +311,7 @@ int ServerConection (int nPort) {
 
 	gnSocketFD = socketConnnection(nPort);
 
-	while (1) {
+	while (nSocketCliente == 0) {
 
 		printf("esperant client...\n");
 
@@ -362,13 +363,7 @@ int ServerConection (int nPort) {
 			//Escribim al Log
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
-
-			//Sincronitzacio
-			startSincro (nSocketCliente, sTrama, sLoginDesti);
-			//Agafa la info procedent de Client
-			getSincroInfo(nSocketCliente);
-
-
+	//aqui anava beta sincro----------
 
 		} else {
 
@@ -388,6 +383,6 @@ int ServerConection (int nPort) {
 
 
 	}
-
+	return nSocketCliente;
 
 }
