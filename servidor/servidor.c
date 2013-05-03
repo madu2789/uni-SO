@@ -14,6 +14,7 @@ int main () {
 
 	int nPort = 0;
 	int nLLTotalFiles = 0;
+	int nSocketFD = 0;
 	char sServer[11];
 	char sDirPath[MAX];
 
@@ -26,7 +27,9 @@ int main () {
 	nPort = getConfigInfo (sServer, sDirPath);
 
 	//Socket peticio connexio
-	ServerConection (nPort);
+	nSocketFD = ServerConection (nPort);
+
+	printf("conectaat\n");
 
 	//Init LL posant tots els ele. trobats al directori root
 	LinkedList = (struct node *) malloc (sizeof(struct node));
@@ -34,13 +37,23 @@ int main () {
 	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
+printf("creada LL i ara lomplirem\n");
+
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList (sDirPath, LinkedList);
+	//initLinkedList (sDirPath, LinkedList);
+
+	printf("anem a sincro a socket: %d \n", nSocketFD);
+
+	//Sincronitzacio - a manija
+	startSincro (nSocketFD, "madu123");
+
+	//Agafa la info procedent de Client
+	getSincroInfo(nSocketFD, LinkedList);
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		nLLTotalFiles = display(LinkedList);
-		checkRootFiles (sDirPath, nLLTotalFiles, LinkedList);
+		//checkRootFiles (sDirPath, nLLTotalFiles, LinkedList);
 		sleep (5);
 	}
 

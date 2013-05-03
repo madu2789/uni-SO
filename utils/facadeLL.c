@@ -42,6 +42,8 @@ void conversorTipus (char sTipus[30], int nToConvert) {
 }
 
 
+
+
 /**
  * Fp que passa de codi a string el tipus de fitxer
  * @param  sTipus {String} on es guardara el resultat,(ref)
@@ -63,9 +65,32 @@ void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
   conversorTipus(sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
 	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
-	writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
+	//writeLog ("LSBox_svr.log.html","facadeLL.c","Nou element afegit", sName, 1);
 
 }
+
+
+
+
+/**
+ * Fp que passa de codi a string el tipus de fitxer
+ * @param  sTipus {String} on es guardara el resultat,(ref)
+ * @param  nToConvert {Integer} Codi
+ */
+void addToLLTx (char sTrama[MAX_TRAMA], char sName[30], char sDate[64], int nSize, struct node *LinkedList) {
+
+	char sAdaptedTipus[30];
+
+
+
+
+	//afegir a la cua el nou element: ->LinkedList
+	//append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
+	//writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
+
+}
+
+
 
 
 /**
@@ -86,7 +111,7 @@ void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList) {
 		setDateByName(sName, sDate, nSize, LinkedList);
 	 	printf("updated\n");
 	}
-	writeLog ("LSBox_cli.log.html","facadeLL.c","Element modificat", sName, 1);
+	//writeLog ("LSBox_cli.log.html","facadeLL.c","Element modificat", sName, 1);
 }
 
 
@@ -126,5 +151,5 @@ void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, str
 		//free(arxius[j]);
 	}
 	//free(arxius);
-	writeLog ("LSBox_cli.log.html","facadeLL.c","Element eliminat", sNameToRemove, 1);
+	//writeLog ("LSBox_cli.log.html","facadeLL.c","Element eliminat", sNameToRemove, 1);
 }

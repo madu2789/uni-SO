@@ -81,10 +81,16 @@ void creaTramaSincro (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], cha
  * @param  sLoginDesti {String}	Login d'usuari que inclourem
  * @return bCorrect {0 wrong | 1 right}
  */
-int startSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginDesti[7]) {
+int startSincro (int nFdIn, char sLoginDesti[7]) {
+
+	char sTrama[MAX_TRAMA];
+
+	printf("volem sincroo\n");
 
 	//Creem la Trama 'S'
 	creaTrama(sTrama, "LsBox  ", sLoginDesti, 4);
+
+printf("trama creada\n");
 
 	//Enviem la trama de peticio d'autentificacio
 	write (nFdIn, sTrama, MAX_TRAMA);
@@ -169,12 +175,35 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
  * @param  nFd {Number}	nFile descriptor del socket obert
  * @return bCorrect {0 wrong | 1 right}
  */
-void getSincroInfo (int nFdIn) {
+void getSincroInfo (int nFdIn, struct node *LinkedList) {
 	char sTrama[MAX_TRAMA];
 	char sLoginOrigen[8];
 	char sLoginDesti[8];
 	char sPwd[33];
+
 	int bFinalSincro = 0;
+	int i = 0;
+	int j = 0;
+	int z = 0;
+	char ArrayInfo[50][50];
+	int nNumberOfSincroElemets = -1;
+
+	char sName[24];
+	char sData[24];
+	char sDataLL[24];
+	char sSize[8];
+
+	struct node *LinkedListToTx;
+
+	//Llinked list que contindra els elements a Tx
+	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
+	strcpy(LinkedListToTx->sName, "fantasma");
+	LinkedListToTx->nSize = 0;
+	LinkedListToTx->next = NULL;
+
+	memset(sName, '\0', 24);
+	memset(sData, '\0', 24);
+	memset(sDataLL, '\0', 24);
 
 	while (!bFinalSincro)	{
 
@@ -183,8 +212,52 @@ void getSincroInfo (int nFdIn) {
 		printf ("trama rebuda: %s\n", sTrama);
 		bFinalSincro = checkTrama (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
 
-		//crear una nova Linked list i posar tots els elements a transmetre
+	  strncpy (ArrayInfo[nNumberOfSincroElemets], sTrama+15, 100);
+	  ArrayInfo[nNumberOfSincroElemets][strlen(ArrayInfo[nNumberOfSincroElemets])] = '\0';
+
+	  nNumberOfSincroElemets++;
+	}
+
+  //aqui toca parsejar la data ens els tres camps
+
+	for (i = 1; i < nNumberOfSincroElemets; i++) {
+		j = 0;
+		z = 0;
+		memset(sName, '\0', 24);
+		memset(sData, '\0', 24);
+
+		printf("sPwd: %s - %d \n\n", ArrayInfo[i], i);
+
+		while (ArrayInfo[i][j+1] != '>') {
+			sName[j] = ArrayInfo[i][j+1];
+			j++;
+		}
+
+		j += 3;
+
+		while (ArrayInfo[i][j+1] != '>') {
+			sData[z] = ArrayInfo[i][j+1];
+			j++;
+			z++;
+		}
+
+		sName[strlen(sName)-1] = '\0';
+		sData[strlen(sData)-1] = '\0';
+		printf("sName %s\n", sName);
+		printf("sData %s\n", sData);
+
+ 	//comprobar de laltre LL si cal actualitzar, si cal inserir a la LLTx
+
+		getDateByName (sDataLL, sName, LinkedList);
+		printf("data de la LL %s\n", sDataLL);
 
 	}
 
+
+  //comprobar de laltre LL si cal actualitzar, si cal inserir a la LLTx
+
+
+	//Omplir LLTx amb els elements a transmetre
+
+	//addToLLTx (sTrama, LinkedListToTx);
 }

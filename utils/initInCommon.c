@@ -53,11 +53,11 @@ static int triar (const struct dirent *arg) {
 int ReadDir (int bIsNull) {
 
 	if (bIsNull == 0) {
-		writeLog ("LSBox_cli.log.html", "client.c","[Error] scandir","Path incorrecte",0);
+		//writeLog ("LSBox_cli.log.html", "client.c","[Error] scandir","Path incorrecte",0);
 		exit(ERROR);
 		return 0;
 	} else {
-		writeLog ("LSBox_cli.log.html", "client.c","scandir","Em escanejat el directori correctament",1);
+		//writeLog ("LSBox_cli.log.html", "client.c","scandir","Em escanejat el directori correctament",1);
 	}
 	return 0;
 }
