@@ -40,6 +40,7 @@
 int startSincro (int nFdIn, char sLoginDesti[7]);
 int receiveServerSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7], struct node *LinkedList);
 void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
-void getSincroInfo (int nFdIn, struct node *LinkedList);
+void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListToTx);
+int ParserBucles (char Frase[50], char sName[24],	char sData[24]);
 
 #endif

@@ -19,6 +19,7 @@ int main () {
 	char sDirPath[MAX];
 
 	struct node *LinkedList;
+	struct node *LinkedListToTx;
 
 	//Crear/Obrir fitxer de Log
 	createLog ("LSBox_svr.log.html");
@@ -35,6 +36,11 @@ int main () {
 	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
+	//Linked list que contindra els elements a Tx
+	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
+	strcpy(LinkedListToTx->sName, "fantasma");
+	LinkedListToTx->nSize = 0;
+	LinkedListToTx->next = NULL;
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList);
@@ -43,7 +49,7 @@ int main () {
 	startSincro (nSocketFD, "madu123");
 
 	//Agafa la info procedent de Client
-	getSincroInfo(nSocketFD, LinkedList);
+	getSincroInfo(nSocketFD, LinkedList, LinkedListToTx);
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
@@ -52,7 +58,6 @@ int main () {
 		sleep (5);
 	}
 
-	//display(p);
 
 	return 0;
 }

@@ -20,7 +20,7 @@ void creaTramaSincro (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], cha
 	char sLoginOrigen[7];
 	char sTipus = '0';
 	char sData[100];
-	char sSize[2];
+	char sSize[10];
 
 	//Netejant variables
 	memset(sTrama, '\0', MAX_TRAMA);
@@ -40,11 +40,11 @@ void creaTramaSincro (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], cha
 			strncat(sData, ">:<", 3);
 			strncat(sData, sDate, 24);
 			strncat(sData, ">:<", 3);
-			//nsize
+			//nSize
 			sprintf(sSize, "%d", nSize);
-			strncat(sData, sSize, 3);
+			strcat(sData, sSize);
 
-			sData[strlen(sData)-1] = '>';
+			sData[strlen(sData)] = '>';
 			sData[strlen(sData)] = '\0';
 			sTipus = 'N';
 		break;
@@ -165,20 +165,59 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
 }
 
 
+int ParserBucles (char Frase[50], char sName[24],	char sData[24]) {
+	int nSize = 0;
+	char sSize[10];
+	int j, z;
+
+	j = z = 0;
+	memset(sSize, '\0', 10);
+
+	while (Frase[j+1] != '>') {
+		sName[j] = Frase[j+1];
+		j++;
+	}
+
+	j += 3;
+	while (Frase[j+1] != '>') {
+		sData[z] = Frase[j+1];
+		j++;
+		z++;
+	}
+
+	j += 3;
+	z = 0;
+	while (Frase[j+1] != '>') {
+		sSize[z] = Frase[j+1];
+		j++;
+		z++;
+	}
+
+	sName[strlen (sName)] = '\0';
+	sData[strlen (sData)] = '\0';
+	sSize[strlen (sSize)] = '\0';
+	nSize = atoi (sSize);
+
+	return nSize;
+}
+
+
+
+
 
 /**
  * Servidor rep la informacio del Client en trames N
  * @param  nFd {Number}	nFile descriptor del socket obert
  * @return bCorrect {0 wrong | 1 right}
  */
-void getSincroInfo (int nFdIn, struct node *LinkedList) {
+void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListToTx) {
 	char sTrama[MAX_TRAMA];
 	char sLoginOrigen[8];
 	char sLoginDesti[8];
 	char sPwd[33];
 
 	int bFinalSincro = 0;
-	int i, j, z;
+	int i = 0;
 	char ArrayInfo[50][50];
 	int nNumberOfSincroElemets = -1;
 
@@ -186,19 +225,10 @@ void getSincroInfo (int nFdIn, struct node *LinkedList) {
 	char sName[24];
 	char sData[24];
 	char sDataLL[24];
-	char sSize[10];
-	struct node *LinkedListToTx;
-
-	//Linked list que contindra els elements a Tx
-	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
-	strcpy(LinkedListToTx->sName, "fantasma");
-	LinkedListToTx->nSize = 0;
-	LinkedListToTx->next = NULL;
 
 	memset(sName, '\0', 24);
 	memset(sData, '\0', 24);
 	memset(sDataLL, '\0', 24);
-	memset(sSize, '\0', 10);
 
 	while (!bFinalSincro)	{
 
@@ -215,38 +245,14 @@ void getSincroInfo (int nFdIn, struct node *LinkedList) {
 
 	nNumberOfSincroElemets--;
 
-  //aqui toca parsejar la data ens els tres camps REFACTOR
+  //aqui toca parsejar la data ens els tres camps
 
 	for (i = 1; i < nNumberOfSincroElemets; i++) {
-		z = j = 0;
 		memset(sName, '\0', 24);
 		memset(sData, '\0', 24);
-		memset(sSize, '\0', 10);
 
-		while (ArrayInfo[i][j+1] != '>') {
-			sName[j] = ArrayInfo[i][j+1];
-			j++;
-		}
-
-		j += 3;
-		while (ArrayInfo[i][j+1] != '>') {
-			sData[z] = ArrayInfo[i][j+1];
-			j++;
-			z++;
-		}
-
-		j += 3;
-		z = 0;
-		while (ArrayInfo[i][j+1] != '>') {
-			sSize[z] = ArrayInfo[i][j+1];
-			j++;
-			z++;
-		}
-
-		sName[strlen(sName)] = '\0';
-		sData[strlen(sData)] = '\0';
-		sSize[strlen(sSize)] = '\0';
-		nSize = atoi(sSize);
+		//Parseja la info de les trames N (sincro)
+		nSize = ParserBucles (ArrayInfo[i], sName, sData);
 
  		//comprobar de laltre LL si cal actualitzar, si cal inserir a la LLTx
 		getDateByName (sDataLL, sName, LinkedList);
