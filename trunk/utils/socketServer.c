@@ -386,3 +386,4 @@ int ServerConection (int nPort) {
 	return nSocketCliente;
 
 }
+

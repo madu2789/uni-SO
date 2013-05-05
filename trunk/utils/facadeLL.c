@@ -77,15 +77,12 @@ void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLLTx (char sTrama[MAX_TRAMA], char sName[30], char sDate[64], int nSize, struct node *LinkedList) {
+void addToLLTx (char sName[30], char sDate[24], int nSize, struct node *LinkedList) {
 
 	char sAdaptedTipus[30];
 
-
-
-
 	//afegir a la cua el nou element: ->LinkedList
-	//append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
+	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
 	//writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
 
 }

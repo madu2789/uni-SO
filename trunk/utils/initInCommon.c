@@ -80,7 +80,7 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
-	return 0;
+	return nTotalFiles;
 }
 
 
