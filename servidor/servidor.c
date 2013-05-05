@@ -29,20 +29,15 @@ int main () {
 	//Socket peticio connexio
 	nSocketFD = ServerConection (nPort);
 
-	printf("conectaat\n");
-
 	//Init LL posant tots els ele. trobats al directori root
 	LinkedList = (struct node *) malloc (sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
 	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
-printf("creada LL i ara lomplirem\n");
 
 	//Init LL posant tots els ele. trobats al directori root
-	//initLinkedList (sDirPath, LinkedList);
-
-	printf("anem a sincro a socket: %d \n", nSocketFD);
+	initLinkedList (sDirPath, LinkedList);
 
 	//Sincronitzacio - a manija
 	startSincro (nSocketFD, "madu123");
@@ -53,7 +48,7 @@ printf("creada LL i ara lomplirem\n");
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		nLLTotalFiles = display(LinkedList);
-		//checkRootFiles (sDirPath, nLLTotalFiles, LinkedList);
+		checkRootFiles (sDirPath, nLLTotalFiles, LinkedList);
 		sleep (5);
 	}
 
