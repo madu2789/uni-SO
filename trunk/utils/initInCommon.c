@@ -50,14 +50,14 @@ static int triar (const struct dirent *arg) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-int ReadDir (int bIsNull) {
+int ReadDir (int bIsNull, char sMyLog[20]) {
 
 	if (bIsNull == 0) {
-		//writeLog ("LSBox_cli.log.html", "client.c","[Error] scandir","Path incorrecte",0);
+		writeLog (sMyLog, "client.c","[Error] scandir","Path incorrecte",0);
 		exit(ERROR);
 		return 0;
 	} else {
-		//writeLog ("LSBox_cli.log.html", "client.c","scandir","Em escanejat el directori correctament",1);
+		writeLog (sMyLog, "client.c","scandir","Em escanejat el directori correctament",1);
 	}
 	return 0;
 }
@@ -66,17 +66,17 @@ int ReadDir (int bIsNull) {
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
-int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]) {
 	int bArxiusOk = 0;
 	struct dirent **arxius;
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius != NULL) bArxiusOk = 1;
-	ReadDir(bArxiusOk);
+	ReadDir(bArxiusOk, sMyLog);
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 
 	while (nTotalFiles--) {
-		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type, LinkedList);
+		addToLL(arxius[nTotalFiles]->d_name, (int)arxius[nTotalFiles]->d_type, LinkedList, sMyLog);
 		free (arxius[nTotalFiles]);
 	}
 	free (arxius);
@@ -87,7 +87,7 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList) {
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList) {
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList, char sMyLog[20]) {
 
 	struct dirent **arxius;
 	int i = 0;
@@ -98,7 +98,7 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 
 	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius != NULL) bArxiusOk = 1;
-	ReadDir(bArxiusOk);
+	ReadDir(bArxiusOk, sMyLog);
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 
 	i = nTotalFiles;
@@ -110,7 +110,7 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 		while (i--) {
 		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate == 1 ) {
-				updateToLL(sLLDate, arxius[i]->d_name, LinkedList);
+				updateToLL(sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
 			}
 			free (arxius[i]);
 		}
@@ -123,14 +123,14 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate != 1 ) {
-				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList);
+				addToLL(arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, sMyLog);
 			}
 			free (arxius[i]);
 		}
 		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList);
+			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList, sMyLog);
 		}
 	return;
 	}

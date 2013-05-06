@@ -71,26 +71,36 @@ int main () {
 	char sServer[11];
 	char sLogin[7];
 	char sPswd[32];
+	char sMyLog[20];
 
 	struct node *LinkedList;
 
-	//Crear/Obrir fitxer de Log
-	createLog("LSBox_cli.log.html");
-
-	//Llegir "config.dat"
-	nPort = getConfigInfo(sServer, sDirPath);
-
-	//Guardem -> sLogin, sPswd
-	loginUser(sLogin, sPswd);
-	writeLog ("LSBox_cli.log.html", "client.c", "Login del usuari", "User introdueix Login i Password",1);
-
-	//Init LL posant tots els ele. trobats al directori root
+	//INITS
+	//Demanem memoria per la LL
 	LinkedList = (struct node *)malloc(sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
 	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
-	initLinkedList(sDirPath, LinkedList);
+	memset(sDirPath, '\0', MAX);
+	memset(sServer, '\0', 11);
+	memset(sLogin, '\0', 7);
+	memset(sPswd, '\0', 32);
+	memset(sMyLog, '\0', 20);
+
+	//Llegir "config.dat"
+	nPort = getConfigInfo(sServer, sDirPath);
+
+	//Guardem -> sLogin, sPswd
+	loginUser (sLogin, sPswd);
+
+	//Crear/Obrir fitxer de Log
+	strcpy (sMyLog, "LSBox_cli.log.html");
+	sMyLog[strlen(sMyLog)] = '\0';
+	createLog (sMyLog);
+
+	//Init LL posant tots els ele. trobats al directori root
+	initLinkedList(sDirPath, LinkedList, sMyLog);
 
 	//Socket peticio connexio
 	clientConnect(nPort, sLogin, sPswd, LinkedList);
@@ -101,7 +111,7 @@ int main () {
 
 		nLLTotalFiles = display(LinkedList);
 
-		checkRootFiles(sDirPath, nLLTotalFiles, LinkedList);
+		checkRootFiles(sDirPath, nLLTotalFiles, LinkedList, sMyLog);
 		sleep(5);
 	}
 

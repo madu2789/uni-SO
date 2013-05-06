@@ -36,8 +36,8 @@
 //Funciones
 static int triar (const struct dirent *arg);
 int getConfigInfo (char sServer[11], char sDirPath[MAX]);
-int initLinkedList (char sDirPath[MAX], struct node *LinkedList);
-void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList);
-int ReadDir (int bIsNull) ;
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]);
+void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList, char sMyLog[20]);
+int ReadDir (int bIsNull, char sMyLog[20]) ;
 
 #endif
