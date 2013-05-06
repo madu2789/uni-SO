@@ -49,7 +49,7 @@ void conversorTipus (char sTipus[30], int nToConvert) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
+void addToLL (char sName[30], int nTipus, struct node *LinkedList, char sMyLog[20]) {
 	struct stat status;
 	char sAdaptedTipus[30];
 	char *sDate;
@@ -62,10 +62,10 @@ void addToLL (char sName[30], int nTipus, struct node *LinkedList) {
     nSize = status.st_size;
   }
 
-  conversorTipus(sAdaptedTipus, nTipus);
+  conversorTipus (sAdaptedTipus, nTipus);
 	//afegir a la cua el nou element: ->LinkedList
-	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
-	//writeLog ("LSBox_svr.log.html","facadeLL.c","Nou element afegit", sName, 1);
+	append (sName, sAdaptedTipus, sDate, nSize, LinkedList);
+	writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
 
 }
 
@@ -83,7 +83,7 @@ void addToLLTx (char sName[30], char sDate[24], int nSize, struct node *LinkedLi
 
 	//afegir a la cua el nou element: ->LinkedList
 	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
-	//writeLog ("LSBox_cli.log.html","facadeLL.c","Nou element afegit", sName, 1);
+	//writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
 
 }
 
@@ -95,7 +95,7 @@ void addToLLTx (char sName[30], char sDate[24], int nSize, struct node *LinkedLi
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList) {
+void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList, char sMyLog[20]) {
 	struct stat status;
 	char *sDate;
 	int nSize = 0;
@@ -107,8 +107,9 @@ void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList) {
 	if (strcmp(sLLDate, sDate) != 0 ){
 		setDateByName(sName, sDate, nSize, LinkedList);
 	 	printf("updated\n");
+	 	writeLog (sMyLog, "facadeLL.c", "Element modificat", sName, 1);
 	}
-	//writeLog ("LSBox_cli.log.html","facadeLL.c","Element modificat", sName, 1);
+
 }
 
 
@@ -117,7 +118,7 @@ void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, struct node *LinkedList) {
+void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, struct node *LinkedList, char sMyLog[20]) {
 	int i = 0;
 	int j= 0;
 	int nSize = 0;
@@ -145,8 +146,8 @@ void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, str
 	}
 
 	for (j = 1; j < nTotalFiles; j++){
-		//free(arxius[j]);
+		free(arxius[j]);
 	}
-	//free(arxius);
-	//writeLog ("LSBox_cli.log.html","facadeLL.c","Element eliminat", sNameToRemove, 1);
+	free(arxius);
+	writeLog (sMyLog, "facadeLL.c", "Element eliminat", sNameToRemove, 1);
 }

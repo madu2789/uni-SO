@@ -17,18 +17,10 @@ int main () {
 	int nSocketFD = 0;
 	char sServer[11];
 	char sDirPath[MAX];
+	char sMyLog[20];
 
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
-
-	//Crear/Obrir fitxer de Log
-	createLog ("LSBox_svr.log.html");
-
-	//Llegir "config.dat"
-	nPort = getConfigInfo (sServer, sDirPath);
-
-	//Socket peticio connexio
-	nSocketFD = ServerConection (nPort);
 
 	//Init LL posant tots els ele. trobats al directori root
 	LinkedList = (struct node *) malloc (sizeof(struct node));
@@ -42,8 +34,19 @@ int main () {
 	LinkedListToTx->nSize = 0;
 	LinkedListToTx->next = NULL;
 
+	//Crear/Obrir fitxer de Log
+	strcpy (sMyLog, "LSBox_svr.log.html");
+	sMyLog[strlen(sMyLog)] = '\0';
+	createLog (sMyLog);
+
+	//Llegir "config.dat"
+	nPort = getConfigInfo (sServer, sDirPath);
+
+	//Socket peticio connexio
+	nSocketFD = ServerConection (nPort);
+
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList (sDirPath, LinkedList);
+	initLinkedList (sDirPath, LinkedList, sMyLog);
 
 	//Sincronitzacio - a manija
 	startSincro (nSocketFD, "madu123");
@@ -54,7 +57,7 @@ int main () {
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		nLLTotalFiles = display(LinkedList);
-		checkRootFiles (sDirPath, nLLTotalFiles, LinkedList);
+		checkRootFiles (sDirPath, nLLTotalFiles, LinkedList, sMyLog);
 		sleep (5);
 	}
 
