@@ -296,7 +296,7 @@ int socketConnnection (int nPort) {
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int ServerConection (int nPort) {
+int ServerConection (int nPort, char sLoginDesti[8]) {
 
 	int gnSocketFD = 0;
 	int nSocketCliente = 0 ;
@@ -304,7 +304,6 @@ int ServerConection (int nPort) {
 	struct sockaddr_in stDireccionCliente;
 
 	char sLoginOrigen[8];
-	char sLoginDesti[8];
 	char sPwd[33];
 	int bValidTrama = 0, bValidAuth = 0;
 
@@ -363,8 +362,6 @@ int ServerConection (int nPort) {
 			//Escribim al Log
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
-	//aqui anava beta sincro----------
-
 		} else {
 
 			writeLog ("LSBox_svr.log.html", "socketServer.c", "[Error]Trama Rebuda", sTrama, 0);
@@ -378,12 +375,8 @@ int ServerConection (int nPort) {
 
  			//Cerramos el socket
 			//close (gnSocketFD);
-
 		}
-
-
 	}
 	return nSocketCliente;
-
 }
 

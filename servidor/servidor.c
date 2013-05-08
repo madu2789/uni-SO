@@ -17,22 +17,29 @@ int main () {
 	int nSocketFD = 0;
 	char sServer[11];
 	char sDirPath[MAX];
+	char sLoginUser[8];
 	char sMyLog[20];
 
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
 
-	//Init LL posant tots els ele. trobats al directori root
+	//INITS
+	//Demanem memoria per la LL
 	LinkedList = (struct node *) malloc (sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
 	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
-	//Linked list que contindra els elements a Tx
+	//Memoria per Linked list que contindra els elements a Tx
 	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
 	strcpy(LinkedListToTx->sName, "fantasma");
 	LinkedListToTx->nSize = 0;
 	LinkedListToTx->next = NULL;
+
+	memset(sServer, '\0', 11);
+	memset(sDirPath, '\0', MAX);
+	memset(sLoginUser, '\0', 7);
+	memset(sMyLog, '\0', 20);
 
 	//Crear/Obrir fitxer de Log
 	strcpy (sMyLog, "LSBox_svr.log.html");
@@ -42,14 +49,15 @@ int main () {
 	//Llegir "config.dat"
 	nPort = getConfigInfo (sServer, sDirPath);
 
-	//Socket peticio connexio
-	nSocketFD = ServerConection (nPort);
+	//Socket peticio connexio	//que aqui em retoni tambe el login del client per posarlo a la sincro
+	nSocketFD = ServerConection (nPort, sLoginUser);
+	printf("login: %s\n", sLoginUser);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, sMyLog);
 
-	//Sincronitzacio - a manija
-	startSincro (nSocketFD, "madu123");
+	//Sincronitzacio
+	startSincro (nSocketFD, sLoginUser);
 
 	//Agafa la info procedent de Client
 	getSincroInfo(nSocketFD, LinkedList, LinkedListToTx);

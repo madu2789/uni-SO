@@ -226,6 +226,11 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 	char sData[24];
 	char sDataLL[24];
 
+//provaaa
+char sDataP[24];
+char sDataLLP[24];
+int nSupoData = 0;
+
 	memset(sName, '\0', 24);
 	memset(sData, '\0', 24);
 	memset(sDataLL, '\0', 24);
@@ -243,13 +248,13 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 	  nNumberOfSincroElemets++;
 	}
 
-	nNumberOfSincroElemets--;
-
   //aqui toca parsejar la data ens els tres camps
 
 	for (i = 1; i < nNumberOfSincroElemets; i++) {
 		memset(sName, '\0', 24);
 		memset(sData, '\0', 24);
+		memset(sDataP, '\0', 24);
+		memset(sDataLLP, '\0', 24);
 
 		//Parseja la info de les trames N (sincro)
 		nSize = ParserBucles (ArrayInfo[i], sName, sData);
@@ -258,8 +263,20 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 		getDateByName (sDataLL, sName, LinkedList);
 
 		//Omplir LLTx amb els elements a transmetre Si cal
-		if (strcmp (sData, sDataLL) != 0 ) {
+		strncpy (sDataP, sData+3, 21);
+		strncpy (sDataLLP, sDataLL+3, 21);
+		sDataP [strlen (sDataP)] = '\0';
+		sDataLLP [strlen (sDataLLP)] = '\0';
+
+		nSupoData = strcmp (sDataP, sDataLLP);
+		if ( nSupoData != 0 ) {
 			addToLLTx (sName, sData, nSize, LinkedListToTx);
+			if (nSupoData > 0) {
+				printf("actualita: sDataLL\n");
+			} else {
+				printf("actualitza: sData\n");
+			}
+			printf("sData: %s - sDataLL %s\n", sDataP, sDataLLP);
 		}
 	}
 	printf("elements de la LLTx:\n");
