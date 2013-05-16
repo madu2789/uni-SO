@@ -144,8 +144,11 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
  	int nLocation = 0;
  	int nTotalFiles = count(LinkedList);
 
-
- 	for (nLocation = 1 ; nLocation < nTotalFiles ; nLocation++ ) {
+ 	//	REVISAR!!!
+ 	//Aixo es raro i sa de ajustar:
+ 	//		 nLocation es 1 pk la primera casella de la llista es el fantasma
+ 	//		 nTotalFiles+2 per el primer punt i pk el count ens dona -1 casella k la k ens interesa
+ 	for (nLocation = 2 ; nLocation < nTotalFiles+2 ; nLocation++ ) {
 
  		nSize = showNode(sName, sDate, nLocation, LinkedList);
 
@@ -217,23 +220,24 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 	char sPwd[33];
 
 	int bFinalSincro = 0;
+	int bTrobat = 0;
 	int i = 0;
 	char ArrayInfo[50][50];
-	int nNumberOfSincroElemets = -1;
+	int nNumberOfSincroElemets = 0;
 
 	int nSize = 0;
 	char sName[24];
-	char sData[24];
+	char sDataTrama[24];
 	char sDataLL[24];
 
-//provaaa
-char sDataP[24];
-char sDataLLP[24];
-int nSupoData = 0;
+	char sDataTramaShort[24];
+	char sDataLLShort[24];
+	int nSupoData = 0;
 
 	memset(sName, '\0', 24);
-	memset(sData, '\0', 24);
+	memset(sDataTrama, '\0', 24);
 	memset(sDataLL, '\0', 24);
+	memset(sTrama, '\0', MAX_TRAMA);
 
 	while (!bFinalSincro)	{
 
@@ -245,40 +249,62 @@ int nSupoData = 0;
 	  strncpy (ArrayInfo[nNumberOfSincroElemets], sTrama+15, 100);
 	  ArrayInfo[nNumberOfSincroElemets][strlen(ArrayInfo[nNumberOfSincroElemets])] = '\0';
 
+		memset(sTrama, '\0', MAX_TRAMA);
 	  nNumberOfSincroElemets++;
 	}
+  
 
   //aqui toca parsejar la data ens els tres camps
-
-	for (i = 1; i < nNumberOfSincroElemets; i++) {
+  //var i comença a 1 per saltarnos la trama de inici sincro
+  //nNumberOfSincroElements -1 per saltarnos la trama final sincro
+	for (i = 1; i < nNumberOfSincroElemets-1; i++) {
 		memset(sName, '\0', 24);
-		memset(sData, '\0', 24);
-		memset(sDataP, '\0', 24);
-		memset(sDataLLP, '\0', 24);
+		memset(sDataTrama, '\0', 24);
+		memset(sDataTramaShort, '\0', 24);
+		memset(sDataLLShort, '\0', 24);
+		bTrobat = 0;
 
 		//Parseja la info de les trames N (sincro)
-		nSize = ParserBucles (ArrayInfo[i], sName, sData);
+		nSize = ParserBucles (ArrayInfo[i], sName, sDataTrama);
 
  		//comprobar de laltre LL si cal actualitzar, si cal inserir a la LLTx
-		getDateByName (sDataLL, sName, LinkedList);
+		//bTrobat = getDateByName (sDataLL, sName, LinkedList);
 
-		//Omplir LLTx amb els elements a transmetre Si cal
-		strncpy (sDataP, sData+3, 21);
-		strncpy (sDataLLP, sDataLL+3, 21);
-		sDataP [strlen (sDataP)] = '\0';
-		sDataLLP [strlen (sDataLLP)] = '\0';
+		printf("info: sName %s , sDataTrama %s, sDataLL %s\n", sName, sDataTrama, sDataLL);
 
-		nSupoData = strcmp (sDataP, sDataLLP);
-		if ( nSupoData != 0 ) {
-			addToLLTx (sName, sData, nSize, LinkedListToTx);
-			if (nSupoData > 0) {
-				printf("actualita: sDataLL\n");
+		if ( bTrobat == 0) {
+			//no trobat, client ma d'enviar el fitxer
+			printf("ADD_SERVER: que me lenvii!\n");
+			addToLLTx (sName, sDataTrama, nSize, LinkedListToTx);
+
+		} else {
+
+			//Omplir LLTx amb els elements a transmetre Si cal
+			strncpy (sDataTramaShort, sDataTrama+3, 21);
+			strncpy (sDataLLShort, sDataLL+3, 21);
+			sDataTramaShort [strlen (sDataTramaShort)] = '\0';
+			sDataLLShort [strlen (sDataLLShort)] = '\0';
+
+			nSupoData = strcmp (sDataTramaShort, sDataLLShort);
+
+			//teest!
+			printf("sData: %s - sDataLL %s\n", sDataTramaShort, sDataLLShort);
+
+			if ( nSupoData != 0 ) {
+				if (nSupoData > 0) {
+					printf("UPDATE_SERVER:  Client envia a Servidor\n");
+					addToLLTx (sName, sDataTrama, nSize, LinkedListToTx);
+				} else {
+					printf("UPDATE_CLIENT: Servidor envia a client\n");
+					addToLLTx (sName, sDataTrama, nSize, LinkedListToTx);
+				}
 			} else {
-				printf("actualitza: sData\n");
+				// les dates son iguals, no faig res
+				printf("ningu envia res!\n");
 			}
-			printf("sData: %s - sDataLL %s\n", sDataP, sDataLLP);
 		}
+	
+		printf("llistaTx:\n");
+	  display (LinkedListToTx);
 	}
-	printf("elements de la LLTx:\n");
-	display(LinkedListToTx);
 }

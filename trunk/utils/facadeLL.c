@@ -49,22 +49,28 @@ void conversorTipus (char sTipus[30], int nToConvert) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLL (char sName[30], int nTipus, struct node *LinkedList, char sMyLog[20]) {
+void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *LinkedList, char sMyLog[20]) {
 	struct stat status;
 	char sAdaptedTipus[30];
 	char *sDate;
+	char sRealDirPath[MAX+30];
 	int nSize = 0;
 
+	memset (sRealDirPath, '\0', MAX+30);
+	strcat (sRealDirPath, sDirPath);
+	strcat (sRealDirPath, sName);
 
 	//hora de modificacio del arxiu -> sDate
-	if (stat(sName, &status) == 0) {
+	if (stat(sRealDirPath, &status) == 0) {
     sDate = ((char *)ctime(&status.st_mtime));
     nSize = status.st_size;
   }
 
   conversorTipus (sAdaptedTipus, nTipus);
+
 	//afegir a la cua el nou element: ->LinkedList
 	append (sName, sAdaptedTipus, sDate, nSize, LinkedList);
+
 	writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
 
 }
@@ -83,7 +89,7 @@ void addToLLTx (char sName[30], char sDate[24], int nSize, struct node *LinkedLi
 
 	//afegir a la cua el nou element: ->LinkedList
 	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
-	//writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
+	//writeLog (sMyLog, "facadeLL.c", "Nou element afegit a LLTx", sName, 1);
 
 }
 

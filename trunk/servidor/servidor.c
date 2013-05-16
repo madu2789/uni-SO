@@ -51,7 +51,6 @@ int main () {
 
 	//Socket peticio connexio	//que aqui em retoni tambe el login del client per posarlo a la sincro
 	nSocketFD = ServerConection (nPort, sLoginUser);
-	printf("login: %s\n", sLoginUser);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, sMyLog);
@@ -60,7 +59,8 @@ int main () {
 	startSincro (nSocketFD, sLoginUser);
 
 	//Agafa la info procedent de Client
-	getSincroInfo(nSocketFD, LinkedList, LinkedListToTx);
+	getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
+
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
