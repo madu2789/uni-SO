@@ -69,7 +69,7 @@ int display (struct node *r) {
     nElements++;
   }
 
-  printf("num total delements: %d ", nElements-1);
+  //printf("num total delements: %d ", nElements-1);
   r = inici;
   return nElements-1;
 }
