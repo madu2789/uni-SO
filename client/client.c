@@ -105,7 +105,6 @@ int main () {
 	//Socket peticio connexio
 	clientConnect(nPort, sLogin, sPswd, LinkedList);
 
-
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 
