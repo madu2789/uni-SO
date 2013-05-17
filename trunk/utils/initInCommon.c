@@ -45,6 +45,30 @@ static int triar (const struct dirent *arg) {
 	return 1;
 }
 
+
+/**
+ * [getDateReal description]
+ */
+void getDateReal (char sRealDate[30], char sDirPath[MAX], char sName[30]) {
+
+	struct stat status;
+	char *sDate;
+	char sRealDirPath[MAX+30];
+
+	memset (sRealDirPath, '\0', MAX+30);
+	strcat (sRealDirPath, sDirPath);
+	strcat (sRealDirPath, sName);
+
+	//hora de modificacio del arxiu -> sDate
+	if (stat(sRealDirPath, &status) == 0) {
+    sDate = ((char *)ctime(&status.st_mtime));
+  }
+  strcpy (sRealDate, sDate);
+}
+
+
+
+
 /**
  * Fp que passa de codi a string el tipus de fitxer
  * @param  sTipus {String} on es guardara el resultat,(ref)
@@ -97,14 +121,16 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList, char sMyLog[20]) {
+int checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList, char sMyLog[20]) {
 
 	struct dirent **arxius;
 	int i = 0;
 	int bUpdate = 0;
 	int nTotalFiles = 0;
 	int bArxiusOk = 0;
+	int bSincro = 0;
 	char sLLDate[30];
+	char sRealDate[30];
 
 	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	if (arxius != NULL) bArxiusOk = 1;
@@ -118,9 +144,13 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 	if (nTotalFiles == nLLTotalFiles) {
 		//update o res
 		while (i--) {
-		 	bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
-			if( bUpdate == 1 ) {
+
+		 	getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
+		 	getDateReal (sRealDate, sDirPath, arxius[i]->d_name);	
+
+			if( strcmp (sLLDate, sRealDate) != 0) {
 				updateToLL(sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
+				bSincro = 1;
 			}
 			free (arxius[i]);
 		}
@@ -134,6 +164,7 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate != 1 ) {
 				addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, sMyLog);
+				bSincro = 1;
 			}
 			free (arxius[i]);
 		}
@@ -141,8 +172,11 @@ void checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedL
 
 		} else if (nTotalFiles < nLLTotalFiles) {
 			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList, sMyLog);
+			//update nEstat a LLtx a REMOVED:7 l'element eliminat
+			bSincro = 1;
 		}
-	return;
+
+	return bSincro;
 	}
 
 
