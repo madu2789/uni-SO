@@ -148,7 +148,7 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
  	//Aixo es raro i sa de ajustar:
  	//		 nLocation es 1 pk la primera casella de la llista es el fantasma
  	//		 nTotalFiles+2 per el primer punt i pk el count ens dona -1 casella k la k ens interesa
- 	for (nLocation = 2 ; nLocation < nTotalFiles+2 ; nLocation++ ) {
+ 	for (nLocation = 1 ; nLocation < nTotalFiles+1 ; nLocation++ ) {
 
  		nSize = showNode(sName, sDate, nLocation, LinkedList);
 
@@ -206,6 +206,27 @@ int ParserBucles (char Frase[50], char sName[24],	char sData[24]) {
 
 
 
+int decideWhoUpdate (char sDataTrama[24], char sDataLL[24]) {
+
+	char sDataTramaShort[24];
+	char sDataLLShort[24];
+	int nResult = 0;
+
+	memset(sDataTramaShort, '\0', 24);
+	memset(sDataLLShort, '\0', 24);
+
+	strncpy (sDataTramaShort, sDataTrama+3, 21);
+	strncpy (sDataLLShort, sDataLL+3, 21);
+	sDataTramaShort [strlen (sDataTramaShort)] = '\0';
+	sDataLLShort [strlen (sDataLLShort)] = '\0';
+
+	nResult = strcmp (sDataTramaShort, sDataLLShort);
+
+	printf("sData: %s - sDataLL %s\n", sDataTramaShort, sDataLLShort);
+
+	return nResult;
+}
+
 
 
 /**
@@ -214,32 +235,25 @@ int ParserBucles (char Frase[50], char sName[24],	char sData[24]) {
  * @return bCorrect {0 wrong | 1 right}
  */
 void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListToTx) {
+	
+	int bFinalSincro, bTrobat, i, nNumberOfSincroElemets, nSize, nWhoUpdate;
 	char sTrama[MAX_TRAMA];
+	//chars que realment no em caldrien... ¬¬
 	char sLoginOrigen[8];
 	char sLoginDesti[8];
 	char sPwd[33];
-
-	int bFinalSincro = 0;
-	int bTrobat = 0;
-	int i = 0;
+	//Vars
 	char ArrayInfo[50][50];
-	int nNumberOfSincroElemets = 0;
-
-	int nSize = 0;
 	char sName[24];
 	char sDataTrama[24];
 	char sDataLL[24];
 
-	char sDataTramaShort[24];
-	char sDataLLShort[24];
-	int nSupoData = 0;
 
-	memset(sName, '\0', 24);
-	memset(sDataTrama, '\0', 24);
-	memset(sDataLL, '\0', 24);
-	memset(sTrama, '\0', MAX_TRAMA);
-
+	bFinalSincro = bTrobat = i = nNumberOfSincroElemets = nSize = nWhoUpdate = 0;
+	
 	while (!bFinalSincro)	{
+
+		memset(sTrama, '\0', MAX_TRAMA);
 
 		//Rebem Trames de Sincro amb les dades del client
 		read (nFdIn, sTrama, MAX_TRAMA);
@@ -249,62 +263,53 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 	  strncpy (ArrayInfo[nNumberOfSincroElemets], sTrama+15, 100);
 	  ArrayInfo[nNumberOfSincroElemets][strlen(ArrayInfo[nNumberOfSincroElemets])] = '\0';
 
-		memset(sTrama, '\0', MAX_TRAMA);
 	  nNumberOfSincroElemets++;
 	}
   
 
-  //aqui toca parsejar la data ens els tres camps
   //var i comença a 1 per saltarnos la trama de inici sincro
   //nNumberOfSincroElements -1 per saltarnos la trama final sincro
 	for (i = 1; i < nNumberOfSincroElemets-1; i++) {
 		memset(sName, '\0', 24);
 		memset(sDataTrama, '\0', 24);
-		memset(sDataTramaShort, '\0', 24);
-		memset(sDataLLShort, '\0', 24);
-		bTrobat = 0;
+		memset(sDataLL, '\0', 24);
 
 		//Parseja la info de les trames N (sincro)
 		nSize = ParserBucles (ArrayInfo[i], sName, sDataTrama);
 
- 		//comprobar de laltre LL si cal actualitzar, si cal inserir a la LLTx
-		//bTrobat = getDateByName (sDataLL, sName, LinkedList);
-
+ 		//Buscar la nostra Data del element Rebut
+		bTrobat = getDateByName (sDataLL, sName, LinkedList);
 		printf("info: sName %s , sDataTrama %s, sDataLL %s\n", sName, sDataTrama, sDataLL);
 
 		if ( bTrobat == 0) {
 			//no trobat, client ma d'enviar el fitxer
-			printf("ADD_SERVER: que me lenvii!\n");
-			addToLLTx (sName, sDataTrama, nSize, LinkedListToTx);
+			printf("SERVER_ADD: que me lenvii!\n");
+			addToLLTx (sName, sDataTrama, nSize, 4, LinkedListToTx);
 
 		} else {
 
-			//Omplir LLTx amb els elements a transmetre Si cal
-			strncpy (sDataTramaShort, sDataTrama+3, 21);
-			strncpy (sDataLLShort, sDataLL+3, 21);
-			sDataTramaShort [strlen (sDataTramaShort)] = '\0';
-			sDataLLShort [strlen (sDataLLShort)] = '\0';
+			//distingir si REMOVE | UPDATE mirant el camp estat pero ala LLTx
 
-			nSupoData = strcmp (sDataTramaShort, sDataLLShort);
+			nWhoUpdate = decideWhoUpdate (sDataTrama, sDataLL);
+			if ( nWhoUpdate > 0 ) {
+				printf("SER_UPDATE:  Client envia a Servidor\n");
+				addToLLTx (sName, sDataTrama, nSize, 5, LinkedListToTx);
 
-			//teest!
-			printf("sData: %s - sDataLL %s\n", sDataTramaShort, sDataLLShort);
+			} else if ( nWhoUpdate < 0 ) {
+				printf("CLI_UPDATE: Servidor envia a client\n");
+				addToLLTx (sName, sDataTrama, nSize, 2, LinkedListToTx);
 
-			if ( nSupoData != 0 ) {
-				if (nSupoData > 0) {
-					printf("UPDATE_SERVER:  Client envia a Servidor\n");
-					addToLLTx (sName, sDataTrama, nSize, LinkedListToTx);
-				} else {
-					printf("UPDATE_CLIENT: Servidor envia a client\n");
-					addToLLTx (sName, sDataTrama, nSize, LinkedListToTx);
-				}
-			} else {
-				// les dates son iguals, no faig res
-				printf("ningu envia res!\n");
+			} else if (nWhoUpdate == 0)  {
+				printf("ningu envia res! les dates son iguals\n");
 			}
 		}
 	
 		printf("llistaTx:\n");
 	  display (LinkedListToTx);
+
+	  printf("llista:\n");
+	  display (LinkedList);
 	}
+
+	//aqui s'hauria de mirar ADD_CLI comparar llistes LL i LLTx (for)
 }

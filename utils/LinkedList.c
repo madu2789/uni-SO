@@ -29,7 +29,7 @@ void delnode (char sName[30], struct node *LinkedList) {
 
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */
-void append (char sName[30], char sTipus[30], char sDate[64], int nSize, struct node *LinkedList) {
+void append (char sName[30], char sTipus[30], char sDate[64], int nSize, int nEstat, struct node *LinkedList) {
   struct node *temp,*r;
   temp = (struct node *)malloc(sizeof(struct node));
 
@@ -37,11 +37,15 @@ void append (char sName[30], char sTipus[30], char sDate[64], int nSize, struct 
   strcpy(temp->sTipus, sTipus);
   strcpy(temp->sDate, sDate);
   temp->nSize = nSize;
+  temp->nEstat = nEstat;
   r = (struct node *)LinkedList;
 
-  if (LinkedList == NULL) {
-    LinkedList = temp;
-    LinkedList->next = NULL;
+  if (strcmp(LinkedList->sName, "fantasma") == 0) {
+    strcpy(LinkedList->sName, sName);
+    strcpy(LinkedList->sTipus, sTipus);
+    strcpy(LinkedList->sDate, sDate);
+    LinkedList->nSize = nSize;
+    LinkedList->nEstat = nEstat;
   } else {
     while (r->next != NULL)
       r = r->next;
@@ -63,15 +67,16 @@ int display (struct node *r) {
     printf("NO ELEMENT IN THE LIST :\n");
     return;
   }
+  printf("\t sName \t sTipus \t sDate \t nSize \t nEstat \n");
   while (r != NULL) {
-    printf(" -> %s \t %s \t %s \t %d \n", r->sName, r->sTipus, r->sDate, r->nSize );
+    printf(" -> %s \t %s \t %s \t %d \t %d \n", r->sName, r->sTipus, r->sDate, r->nSize, r->nEstat );
     r = r->next;
     nElements++;
   }
 
   //printf("num total delements: %d ", nElements-1);
   r = inici;
-  return nElements-1;
+  return nElements;
 }
 
 
@@ -154,5 +159,5 @@ int count (struct node *LinkedList) {
   }
 
   LinkedList = inici;
-  return nElements-1;
+  return nElements;
 }

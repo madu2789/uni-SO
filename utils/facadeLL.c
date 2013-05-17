@@ -69,7 +69,7 @@ void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *Linke
   conversorTipus (sAdaptedTipus, nTipus);
 
 	//afegir a la cua el nou element: ->LinkedList
-	append (sName, sAdaptedTipus, sDate, nSize, LinkedList);
+	append (sName, sAdaptedTipus, sDate, nSize, 0, LinkedList);
 
 	writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
 
@@ -83,12 +83,12 @@ void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *Linke
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLLTx (char sName[30], char sDate[24], int nSize, struct node *LinkedList) {
+void addToLLTx (char sName[30], char sDate[24], int nSize, int nEstat, struct node *LinkedList) {
 
 	char sAdaptedTipus[30];
 
 	//afegir a la cua el nou element: ->LinkedList
-	append(sName, sAdaptedTipus, sDate, nSize, LinkedList);
+	append(sName, sAdaptedTipus, sDate, nSize, nEstat, LinkedList);
 	//writeLog (sMyLog, "facadeLL.c", "Nou element afegit a LLTx", sName, 1);
 
 }
