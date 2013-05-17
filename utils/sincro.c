@@ -123,7 +123,6 @@ int receiveServerSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7]
 	//Comencem a enviar tota la LL -> trames 'N'
 	setSincroInfo(nFdIn, sLoginOrigen, LinkedList);
 
-
 	return 0;
 }
 
@@ -146,8 +145,8 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
 
  	//	REVISAR!!!
  	//Aixo es raro i sa de ajustar:
- 	//		 nLocation es 1 pk la primera casella de la llista es el fantasma
- 	//		 nTotalFiles+2 per el primer punt i pk el count ens dona -1 casella k la k ens interesa
+ 	//		 nLocation es 1 pk la primera casella de la llista
+ 	//		 nTotalFiles+1 per el primer punt i pk el count ens dona -1 casella k la k ens interesa
  	for (nLocation = 1 ; nLocation < nTotalFiles+1 ; nLocation++ ) {
 
  		nSize = showNode(sName, sDate, nLocation, LinkedList);

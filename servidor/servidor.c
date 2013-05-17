@@ -15,6 +15,7 @@ int main () {
 	int nPort = 0;
 	int nLLTotalFiles = 0;
 	int nSocketFD = 0;
+	int bSincro = 0;
 	char sServer[11];
 	char sDirPath[MAX];
 	char sLoginUser[8];
@@ -27,13 +28,11 @@ int main () {
 	//Demanem memoria per la LL
 	LinkedList = (struct node *) malloc (sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
-	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
 
 	//Memoria per Linked list que contindra els elements a Tx
 	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
 	strcpy(LinkedListToTx->sName, "fantasma");
-	LinkedListToTx->nSize = 0;
 	LinkedListToTx->next = NULL;
 
 	memset(sServer, '\0', 11);
@@ -55,17 +54,22 @@ int main () {
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, sMyLog);
 
-	//Sincronitzacio
-	startSincro (nSocketFD, sLoginUser);
 
-	//Agafa la info procedent de Client
-	getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
 
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
+		bSincro = 0;
 		nLLTotalFiles = display(LinkedList);
-		checkRootFiles (sDirPath, nLLTotalFiles, LinkedList, sMyLog);
+		bSincro = checkRootFiles (sDirPath, nLLTotalFiles, LinkedList, sMyLog);
+
+		if ( bSincro ) {
+			//Sincronitzacio
+			startSincro (nSocketFD, sLoginUser);
+			//Agafa la info procedent de Client
+			getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
+		}
+
 		sleep (5);
 	}
 

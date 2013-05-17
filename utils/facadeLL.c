@@ -144,9 +144,10 @@ void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, str
 		}
 
 		if (bToRemove == 1) {
-			printf("hem de borrar : %s\n", sNameToRemove);
 			delnode(sNameToRemove, LinkedList);
 			printf("BORRAT : %s\n", sNameToRemove);
+			//Hi haura que passarli LinkedListtoTx
+			//addToLLTx (sName, sDataTrama, nSize, 7, LinkedListToTx);
 		}
 		bToRemove = 1;
 	}
