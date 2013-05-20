@@ -202,7 +202,6 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 	//Ens conectamem al servidor
 	nSocketFD = socketConnection (nPort);
 
-
 	//Protocol d'establiment de connexio
 	//Llegim la primera trama del servidor de P
 	read (nSocketFD, sTrama, MAX_TRAMA);
@@ -242,6 +241,5 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte", sTrama, 0);
 	}
 
-	receiveServerSincro(nSocketFD, sTrama, sUser, LinkedList);
-
+	return nSocketFD;
 }

@@ -67,6 +67,7 @@ int main () {
 	int nPort = 0;
 	int nLLTotalFiles = 0;
 	int bSincro = 0;
+	int nSocketFD = 0;
 
 	char sDirPath[MAX];
 	char sServer[11];
@@ -104,7 +105,7 @@ int main () {
 	initLinkedList(sDirPath, LinkedList, sMyLog);
 
 	//Socket peticio connexio
-	clientConnect(nPort, sLogin, sPswd, LinkedList);
+	nSocketFD = clientConnect(nPort, sLogin, sPswd, LinkedList);
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
@@ -113,10 +114,12 @@ int main () {
 		bSincro = checkRootFiles(sDirPath, nLLTotalFiles, LinkedList, sMyLog);
 
 		if ( bSincro ) {
-			//Sincronitzacio
-			//pleaseSincro();
-			printf("pleaseSincro!\n");
+			pleaseSincro (nSocketFD, sLogin);
+		} else {
+			write (nSocketFD, "init", 4);
 		}
+
+		receiveServerSincro (nSocketFD, sLogin, LinkedList);
 
 		sleep(5);
 	}

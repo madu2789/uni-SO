@@ -101,16 +101,21 @@ void addToLLTx (char sName[30], char sDate[24], int nSize, int nEstat, struct no
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void updateToLL (char sLLDate[30], char sName[30], struct node *LinkedList, char sMyLog[20]) {
+void updateToLL (char sDirPath[MAX], char sLLDate[30], char sName[30], struct node *LinkedList, char sMyLog[20]) {
 	struct stat status;
 	char *sDate;
 	int nSize = 0;
+	char sRealDirPath[MAX+30];
 
-	if (stat(sName, &status) == 0) {
+	memset (sRealDirPath, '\0', MAX+30);
+	strcat (sRealDirPath, sDirPath);
+	strcat (sRealDirPath, sName);
+
+	if (stat(sRealDirPath, &status) == 0) {
 		sDate = ((char *)ctime(&status.st_mtime));
 		nSize = status.st_size;
 	}
-	if (strcmp(sLLDate, sDate) != 0 ){
+	if (strcmp(sLLDate, sDate) != 0 ) {
 		setDateByName(sName, sDate, nSize, LinkedList);
 	 	printf("updated\n");
 	 	writeLog (sMyLog, "facadeLL.c", "Element modificat", sName, 1);
