@@ -66,6 +66,7 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 int main () {
 	int nPort = 0;
 	int nLLTotalFiles = 0;
+	int bSincro = 0;
 
 	char sDirPath[MAX];
 	char sServer[11];
@@ -107,10 +108,16 @@ int main () {
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
+		bSincro = 0;
+		nLLTotalFiles = display (LinkedList);
+		bSincro = checkRootFiles(sDirPath, nLLTotalFiles, LinkedList, sMyLog);
 
-		nLLTotalFiles = display(LinkedList);
+		if ( bSincro ) {
+			//Sincronitzacio
+			//pleaseSincro();
+			printf("pleaseSincro!\n");
+		}
 
-		checkRootFiles(sDirPath, nLLTotalFiles, LinkedList, sMyLog);
 		sleep(5);
 	}
 
