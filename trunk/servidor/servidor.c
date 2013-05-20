@@ -55,8 +55,6 @@ int main () {
 	initLinkedList (sDirPath, LinkedList, sMyLog);
 
 
-
-
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		bSincro = 0;
