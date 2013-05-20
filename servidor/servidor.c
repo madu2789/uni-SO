@@ -16,6 +16,8 @@ int main () {
 	int nLLTotalFiles = 0;
 	int nSocketFD = 0;
 	int bSincro = 0;
+	int bSincroPetition = 0;
+
 	char sServer[11];
 	char sDirPath[MAX];
 	char sLoginUser[8];
@@ -58,14 +60,19 @@ int main () {
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		bSincro = 0;
-		nLLTotalFiles = display(LinkedList);
-		bSincro = checkRootFiles (sDirPath, nLLTotalFiles, LinkedList, sMyLog);
+		bSincroPetition = 0;
 
-		if ( bSincro ) {
+		nLLTotalFiles = display (LinkedList);
+		bSincro = checkRootFiles (sDirPath, nLLTotalFiles, LinkedList, sMyLog);
+		bSincroPetition = receiveClientSincro (nSocketFD);
+
+		if ( bSincro || bSincroPetition) {
 			//Sincronitzacio
 			startSincro (nSocketFD, sLoginUser);
 			//Agafa la info procedent de Client
 			getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
+		} else {
+			write (nSocketFD, "init", 4);
 		}
 
 		sleep (5);

@@ -107,12 +107,16 @@ int startSincro (int nFdIn, char sLoginDesti[7]) {
  * @param  LinkedList {Struct}	Estructura On guardem tota la info
  * @return bCorrect {0 wrong | 1 right}
  */
-int receiveServerSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7], struct node *LinkedList) {
+int receiveServerSincro (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
+	char sTrama[MAX_TRAMA];
+	int nBytesRead = 0;
 
-	read (nFdIn, sTrama, MAX_TRAMA);
+	//Comprovem si realment el server ens ha confirmat sincro
+	nBytesRead = read (nFdIn, sTrama, MAX_TRAMA);
+	if (nBytesRead <= 4) return 0;
+
 	printf("trama rebuda:  %s\n", sTrama);
 	writeLog ("LSBox_cli.log.html","sincro.c","Trama Rebuda", sTrama, 1);
-
 
 	//Enviem la trama 'O' o 'E' sincronitzacio confirmada
 	creaTrama(sTrama, sLoginOrigen, "LsBox  ", 4);
@@ -123,7 +127,19 @@ int receiveServerSincro (int nFdIn, char sTrama[MAX_TRAMA], char sLoginOrigen[7]
 	//Comencem a enviar tota la LL -> trames 'N'
 	setSincroInfo(nFdIn, sLoginOrigen, LinkedList);
 
-	return 0;
+	return 1;
+}
+
+
+int receiveClientSincro (int nFdIn) {
+	char sTrama[MAX_TRAMA];
+	int nBytesRead = 0;
+
+	//Comprovem si realment el server ens ha confirmat sincro
+	nBytesRead = read (nFdIn, sTrama, MAX_TRAMA);
+	if (nBytesRead <= 4) return 0;
+
+	return 1;
 }
 
 
@@ -311,4 +327,30 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 	}
 
 	//aqui s'hauria de mirar ADD_CLI comparar llistes LL i LLTx (for)
+}
+
+
+void pleaseSincro (int nFdIn, char sLoginOrigen[7]) {
+
+	char sTrama[MAX_TRAMA];
+	char sLoginDesti[7];
+	char sTipus = '0';
+	char sData[100];
+
+	memset (sTrama, '\0', MAX_TRAMA);
+
+	//Posant dades adients
+	strcpy(sLoginDesti, "LSBox  ");
+	strcpy(sData, "'Peticio de Sincronitzacio'");
+	sTipus = 'L';
+
+	//creant Trama final que enviarem
+	strncat(sTrama, sLoginDesti, 7);
+	strncat(sTrama, sLoginOrigen, 7);
+	sTrama[strlen(sTrama)] = sTipus;
+	strncat(sTrama, sData, 100);
+
+	//Enviem Trama
+	write (nFdIn, sTrama, MAX_TRAMA);
+	printf("sTrama : %s\n", sTrama);
 }

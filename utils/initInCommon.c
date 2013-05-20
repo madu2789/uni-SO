@@ -145,11 +145,14 @@ int checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedLi
 		//update o res
 		while (i--) {
 
+			memset (sLLDate, '\0', 30);
+			memset (sRealDate, '\0', 30);
+
 		 	getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 		 	getDateReal (sRealDate, sDirPath, arxius[i]->d_name);	
 
-			if( strcmp (sLLDate, sRealDate) != 0) {
-				updateToLL(sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
+			if ( strcmp (sLLDate, sRealDate) != 0) {
+				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
 				bSincro = 1;
 			}
 			free (arxius[i]);
