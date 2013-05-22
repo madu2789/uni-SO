@@ -11,8 +11,9 @@ void delnode (char sName[30], struct node *LinkedList) {
   while (temp != NULL) {
     if (strcmp(temp->sName, sName) == 0) {
       if (temp == LinkedList) {
+        printf(" borrant: %s\n", sName);
         LinkedList = temp->next;
-        //free(temp); diria k no cal alliberar pk no arribes a demanar memoria (HIL?)
+        free(temp);
         return;
       } else {
         m->next = temp->next;
@@ -141,6 +142,24 @@ int setDateByName (char sName[30], char sDate[64], int nSize, struct node *Linke
     }
   }
   return 0;
+}
+
+/*RETURN nEstat of a Node*/
+int getEstatByName (char sName[30], struct node *LinkedList) {
+  struct node *temp;
+  struct node *inici;
+  int bTrobat = 0;
+  temp = LinkedList;
+
+  while(temp != NULL && bTrobat == 0){
+    if(strcmp(sName, temp->sName) == 0){
+      bTrobat = 1;
+    } else {
+      temp= temp->next;
+    }
+
+  }
+  return temp->nEstat;
 }
 
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST

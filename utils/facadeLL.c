@@ -129,19 +129,24 @@ void updateToLL (char sDirPath[MAX], char sLLDate[30], char sName[30], struct no
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, struct node *LinkedList, char sMyLog[20]) {
+void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]) {
 	int i = 0;
 	int j= 0;
 	int nSize = 0;
 	int bToRemove= 1;
+	int nLLTotalFiles = 0;
 	char sNameToRemove[30];
-	char sDateBasura[64];
+	char sDateLL[64];
+
+	nLLTotalFiles = count(LinkedList);
 
 	for (i = 1; i < nLLTotalFiles+1; i++) {
-		nSize = showNode(sNameToRemove, sDateBasura, i, LinkedList);
-		printf("mirem: %s si es: %s \n",sNameToRemove, arxius[j]->d_name );
+		nSize = showNode(sNameToRemove, sDateLL, i, LinkedList);
 
-		for (j = 1; j < nTotalFiles; j++){
+		for (j = 0; j < nTotalFiles; j++){
+
+			printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
+
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
 				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
@@ -150,9 +155,13 @@ void removeToLL (int nTotalFiles, int nLLTotalFiles, struct dirent **arxius, str
 
 		if (bToRemove == 1) {
 			delnode(sNameToRemove, LinkedList);
-			printf("BORRAT : %s\n", sNameToRemove);
-			//Hi haura que passarli LinkedListtoTx
-			//addToLLTx (sName, sDataTrama, nSize, 7, LinkedListToTx);
+
+			//ALERTAAA NO M'HAGRADA, DEIXA DE SER TANT (elegantment) ESCALABLE
+			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
+				printf("SER_RM:  Servidor elimina arxiu: %s \n", sNameToRemove);
+				addToLLTx (sNameToRemove, sDateLL, 0, 7, LinkedListToTx);
+			}
+			
 		}
 		bToRemove = 1;
 	}

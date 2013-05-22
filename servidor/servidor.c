@@ -13,7 +13,6 @@
 int main () {
 
 	int nPort = 0;
-	int nLLTotalFiles = 0;
 	int nSocketFD = 0;
 	int bSincro = 0;
 	int bSincroPetition = 0;
@@ -62,8 +61,8 @@ int main () {
 		bSincro = 0;
 		bSincroPetition = 0;
 
-		nLLTotalFiles = display (LinkedList);
-		bSincro = checkRootFiles (sDirPath, nLLTotalFiles, LinkedList, sMyLog);
+		display (LinkedList);
+		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 		bSincroPetition = receiveClientSincro (nSocketFD);
 
 		if ( bSincro || bSincroPetition) {
