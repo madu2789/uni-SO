@@ -27,7 +27,6 @@
 // Includes propios
 #include "socketServer.h"
 #include "log.h"
-#include "sincro.h"
 #include "facadeLL.h"
 
 // Definicion de constantes
