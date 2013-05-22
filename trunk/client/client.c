@@ -65,7 +65,6 @@ void loginUser (char sLogin[7], char sPswd[32]) {
  */
 int main () {
 	int nPort = 0;
-	int nLLTotalFiles = 0;
 	int bSincro = 0;
 	int nSocketFD = 0;
 
@@ -76,13 +75,18 @@ int main () {
 	char sMyLog[20];
 
 	struct node *LinkedList;
+	struct node *LinkedListToTx;
 
 	//INITS
 	//Demanem memoria per la LL
 	LinkedList = (struct node *)malloc(sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
-	LinkedList->nSize = 0;
 	LinkedList->next = NULL;
+
+	//Memoria per Linked list que contindra els elements a Tx
+	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
+	strcpy(LinkedListToTx->sName, "fantasma");
+	LinkedListToTx->next = NULL;
 
 	memset(sDirPath, '\0', MAX);
 	memset(sServer, '\0', 11);
@@ -110,8 +114,8 @@ int main () {
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		bSincro = 0;
-		nLLTotalFiles = display (LinkedList);
-		bSincro = checkRootFiles(sDirPath, nLLTotalFiles, LinkedList, sMyLog);
+		display (LinkedList);
+		bSincro = checkRootFiles(sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 		if ( bSincro ) {
 			pleaseSincro (nSocketFD, sLogin);

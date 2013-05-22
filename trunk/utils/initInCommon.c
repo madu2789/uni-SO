@@ -121,7 +121,7 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-int checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedList, char sMyLog[20]) {
+int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]) {
 
 	struct dirent **arxius;
 	int i = 0;
@@ -129,6 +129,7 @@ int checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedLi
 	int nTotalFiles = 0;
 	int bArxiusOk = 0;
 	int bSincro = 0;
+	int nLLTotalFiles = 0;
 	char sLLDate[30];
 	char sRealDate[30];
 
@@ -138,6 +139,7 @@ int checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedLi
 	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 
 	i = nTotalFiles;
+	nLLTotalFiles = count (LinkedList);
 
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
 
@@ -174,8 +176,7 @@ int checkRootFiles (char sDirPath[MAX], int nLLTotalFiles, struct node *LinkedLi
 		free (arxius);
 
 		} else if (nTotalFiles < nLLTotalFiles) {
-			removeToLL(nTotalFiles, nLLTotalFiles, arxius, LinkedList, sMyLog);
-			//update nEstat a LLtx a REMOVED:7 l'element eliminat
+			removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog);
 			bSincro = 1;
 		}
 

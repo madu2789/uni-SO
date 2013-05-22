@@ -6,8 +6,8 @@
 * Albert Hilazo Aguilera (se19467)
 *
 * ********************************************** */
-#ifndef __INITINCOMMON_H__
-#define __INITINCOMMON_H__
+#ifndef __SOCKETCLI_H__
+#define __SOCKETCLI_H__
 
 // Includes propios
 #define _GNU_SOURCE
@@ -26,18 +26,19 @@
 #define ERROR -1
 
 // Includes propios
-#include "initInCommon.h"
-#include "../utils/facadeLL.h"
+#include "socketServer.h"
+#include "socketClient.h"
+#include "facadeLL.h"
 
 // Definicion de constantes
 
 // Definicion de tipos propios
 
 //Funciones
-static int triar (const struct dirent *arg);
-int getConfigInfo (char sServer[11], char sDirPath[MAX]);
-int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]);
-int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]);
-int ReadDir (int bIsNull, char sMyLog[20]) ;
+int startSincro (int nFdIn, char sLoginDesti[7]);
+void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListToTx);
+int ParserBucles (char Frase[50], char sName[24],	char sData[24]);
+int receiveClientSincro (int nFdIn);
+
 
 #endif
