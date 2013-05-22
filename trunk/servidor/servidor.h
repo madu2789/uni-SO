@@ -23,7 +23,7 @@
 #include <signal.h>
 
 // Includes propios
-#include "../utils/sincro.h"
+#include "../utils/sincroServer.h"
 #include "../utils/initInCommon.h"
 #include "../utils/log.h"
 #include "../utils/facadeLL.h"

@@ -26,6 +26,7 @@
 #include "../utils/initInCommon.h"
 #include "../utils/log.h"
 #include "../utils/socketClient.h"
+#include "../utils/sincroClient.h"
 #include "../utils/facadeLL.h"
 #include "../utils/md5.h"
 
