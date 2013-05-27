@@ -29,6 +29,7 @@
 #include "../utils/socketClient.h"
 #include "../utils/facadeLL.h"
 #include "../utils/md5.h"
+#include "../utils/transfer.h"
 
 // Definicion de constantes
 #define ERROR -1

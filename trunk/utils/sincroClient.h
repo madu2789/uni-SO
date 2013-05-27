@@ -30,7 +30,7 @@
 #include "socketServer.h"
 #include "socketClient.h"
 #include "facadeLL.h"
-#include <stdlib.h>
+#include "transfer.h"
 
 // Definicion de constantes
 
@@ -38,9 +38,8 @@
 
 //Funciones
 
-int receiveServerSincro (int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
+int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], struct node *LinkedList);
 void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
-int ParserBucles (char Frase[50], char sName[24],	char sData[24]);
 void pleaseSincro (int nFdIn, char sLoginOrigen[7]);
 
 #endif

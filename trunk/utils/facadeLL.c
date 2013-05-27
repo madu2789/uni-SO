@@ -117,7 +117,7 @@ void updateToLL (char sDirPath[MAX], char sLLDate[30], char sName[30], struct no
 	}
 	if (strcmp(sLLDate, sDate) != 0 ) {
 		setDateByName(sName, sDate, nSize, LinkedList);
-	 	printf("updated\n");
+	 	printf("updated: %s\n", sName);
 	 	writeLog (sMyLog, "facadeLL.c", "Element modificat", sName, 1);
 	}
 
@@ -145,10 +145,10 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 		for (j = 0; j < nTotalFiles; j++){
 
-			printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
+			//printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
 
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
-				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
+				//printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
 			}
 		}
@@ -158,7 +158,7 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 			//ALERTAAA NO M'HAGRADA, DEIXA DE SER TANT (elegantment) ESCALABLE
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
-				printf("SER_RM:  Servidor elimina arxiu: %s \n", sNameToRemove);
+				//printf("SER_RM:  Servidor elimina arxiu: %s \n", sNameToRemove);
 				addToLLTx (sNameToRemove, sDateLL, 0, 7, LinkedListToTx);
 			}
 			
