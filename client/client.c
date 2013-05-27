@@ -106,27 +106,29 @@ int main () {
 	createLog (sMyLog);
 
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList(sDirPath, LinkedList, sMyLog);
+	initLinkedList (sDirPath, LinkedList, sMyLog);
 
 	//Socket peticio connexio
-	nSocketFD = clientConnect(nPort, sLogin, sPswd, LinkedList);
+	nSocketFD = clientConnect (nPort, sLogin, sPswd, LinkedList);
 
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		bSincro = 0;
 		display (LinkedList);
-		bSincro = checkRootFiles(sDirPath, LinkedList, LinkedListToTx, sMyLog);
+		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 		if ( bSincro ) {
 			pleaseSincro (nSocketFD, sLogin);
 		} else {
-			write (nSocketFD, "init", 4);
+			write (nSocketFD, "init", 4); 
 		}
 
-		receiveServerSincro (nSocketFD, sLogin, LinkedList);
+		receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList);
+
 
 		sleep(5);
 	}
 
 	return 0;
 }
+

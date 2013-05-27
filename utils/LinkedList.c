@@ -27,6 +27,22 @@ void delnode (char sName[30], struct node *LinkedList) {
 	}
 }
 
+/*THIS FUNCTION Buida La LL
+Nota: els elements en estat Remove no els borra (de moment) */
+void buidaLL (struct node *LinkedList) {
+
+  char sName[24];
+  char sData[24];
+  int nTotalFiles = count (LinkedList);
+  int i = 1;
+
+  for (i = 1; i < nTotalFiles+1; i++) {
+    memset (sName, '\0', 24);
+    showNode (sName, sData, i, LinkedList);
+    delnode(sName, LinkedList);
+  }
+}
+
 
 
 /*THIS FUNCTION ADDS A NODE AT THE LAST OF LINKED LIST */

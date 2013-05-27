@@ -70,11 +70,16 @@ int main () {
 			startSincro (nSocketFD, sLoginUser);
 			//Agafa la info procedent de Client
 			getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
+			
+			//Crearia el thread per la TX de Info
+			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx);
+
 		} else {
 			write (nSocketFD, "init", 4);
 		}
 
 		sleep (5);
+
 	}
 
 

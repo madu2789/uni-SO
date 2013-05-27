@@ -37,7 +37,6 @@
 //Funciones
 int startSincro (int nFdIn, char sLoginDesti[7]);
 void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListToTx);
-int ParserBucles (char Frase[50], char sName[24],	char sData[24]);
 int receiveClientSincro (int nFdIn);
 
 
