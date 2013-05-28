@@ -27,20 +27,23 @@ void delnode (char sName[30], struct node *LinkedList) {
 	}
 }
 
-/*THIS FUNCTION Buida La LL
-Nota: els elements en estat Remove no els borra (de moment) */
+/*THIS FUNCTION Buida La LL */
 void buidaLL (struct node *LinkedList) {
 
-  char sName[24];
-  char sData[24];
-  int nTotalFiles = count (LinkedList);
-  int i = 1;
+  struct node *temp, *r;
 
-  for (i = 1; i < nTotalFiles+1; i++) {
-    memset (sName, '\0', 24);
-    showNode (sName, sData, i, LinkedList);
-    delnode(sName, LinkedList);
+  r = LinkedList;
+
+  while (r != NULL) {
+    temp = r;
+    r = r->next;
+    free(temp);
   }
+
+  LinkedList = (struct node *)malloc(sizeof(struct node));
+  strcpy(LinkedList->sName,"fantasma");
+  LinkedList->next = NULL;
+
 }
 
 

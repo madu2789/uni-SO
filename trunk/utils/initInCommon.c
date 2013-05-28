@@ -90,7 +90,7 @@ int ReadDir (int bIsNull, char sMyLog[20]) {
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
-int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]) {
+int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]) {
 	int bArxiusOk = 0;
 	int i = 0;
 	struct dirent **arxius;
@@ -104,7 +104,7 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, char sMyLog[20]
 		i = nTotalFiles-1;
 
 		while (i >= 0) {
-			addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, sMyLog);
+			addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, LinkedListToTx, sMyLog);
 			free (arxius[i]);
 			i--;
 		}
@@ -152,8 +152,10 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 
 		 	getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 		 	getDateReal (sRealDate, sDirPath, arxius[i]->d_name);	
-
-			if ( strcmp (sLLDate, sRealDate) != 0) {
+//prova
+printf("LinkedListToTx: %d\n", getDateByName(sLLDate, arxius[i]->d_name, LinkedListToTx));
+display(LinkedListToTx);
+			if ( strcmp (sLLDate, sRealDate) != 0 && !getDateByName(sLLDate, arxius[i]->d_name, LinkedListToTx)) {
 				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
 				bSincro = 1;
 			}
@@ -168,7 +170,7 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate != 1 ) {
-				addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, sMyLog);
+				addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, LinkedListToTx, sMyLog);
 				bSincro = 1;
 			}
 			free (arxius[i]);
