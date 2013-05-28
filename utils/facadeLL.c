@@ -49,7 +49,7 @@ void conversorTipus (char sTipus[30], int nToConvert) {
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *LinkedList, char sMyLog[20]) {
+void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]) {
 	struct stat status;
 	char sAdaptedTipus[30];
 	char *sDate;
@@ -70,7 +70,7 @@ void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *Linke
 
 	//afegir a la cua el nou element: ->LinkedList
 	append (sName, sAdaptedTipus, sDate, nSize, 0, LinkedList);
-
+	addToLLTx (sName, sDate, nSize, 1, LinkedListToTx);
 	writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
 
 }
@@ -140,7 +140,8 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 	nLLTotalFiles = count(LinkedList);
 
-	for (i = 1; i < nLLTotalFiles+1; i++) {
+	for (i = 1; i < nLLTotalFiles; i++) {
+		memset(sNameToRemove, '\0', 30);
 		nSize = showNode(sNameToRemove, sDateLL, i, LinkedList);
 
 		for (j = 0; j < nTotalFiles; j++){
@@ -155,13 +156,13 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 		if (bToRemove == 1) {
 			delnode(sNameToRemove, LinkedList);
-
-			//ALERTAAA NO M'HAGRADA, DEIXA DE SER TANT (elegantment) ESCALABLE
-			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
-				//printf("SER_RM:  Servidor elimina arxiu: %s \n", sNameToRemove);
-				addToLLTx (sNameToRemove, sDateLL, 0, 7, LinkedListToTx);
-			}
+			//printf("sNameToRemove a la LL : %s\n", sNameToRemove);
+			display(LinkedList);
 			
+			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
+				printf("CLI_RM: %s", sNameToRemove);
+				addToLLTx (sNameToRemove, sDateLL, 0, 3, LinkedListToTx);
+			}
 		}
 		bToRemove = 1;
 	}

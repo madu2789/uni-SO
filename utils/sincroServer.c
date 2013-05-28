@@ -244,21 +244,16 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 		bTrobat = getDateByName (sDataLL, sName, LinkedList);
 		printf("info: sName %s , sDataTrama %s, sDataLL %s\n", sName, sDataTrama, sDataLL);
 
-		if ( bTrobat == 0) {
-			//no trobat, client ma d'enviar el fitxer
-			printf("SERVER_ADD: que me lenvii!\n");
-			addToLLTx (sName, sDataTrama, nSize, 4, LinkedListToTx);
-
+		if ( bTrobat == 0 ) {
+			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) {
+				//no trobat, client ma d'enviar el fitxer
+				printf("SERVER_ADD: que me lenvii!\n");
+				addToLLTx (sName, sDataTrama, nSize, 4, LinkedListToTx);
+			}
 		} else {
-			//distingir si REMOVE | UPDATE mirant el camp estat pero ala LLTx
-			nEstat = getEstatByName (sName, LinkedList);
+			
+			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) {
 
-			if ( nEstat == 7 ) {
-				//CLI_RM
-				printf("CLI_RM: %s Client envia a Servidor\n", sName);
-				addToLLTx (sName, sDataTrama, nSize, 3, LinkedListToTx);
-
-			} else {
 				//UPDATE
 				nWhoUpdate = decideWhoUpdate (sDataTrama, sDataLL);
 				if ( nWhoUpdate > 0 ) {
@@ -277,15 +272,16 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 	}
 
 	//Inicialitzem vars per la segona comprovacio
+	//que NO rebut pero SI que el tinc: SER_RM 	pendeeeent
 	nNumberOfElements = count(LinkedList);
 	bTrobat = 0;
 
-	for (i = 1; i < nNumberOfElements; i++) {
+	for (i = 1; i < nNumberOfElements+1; i++) {
 		showNode(sName, sDataLL, i, LinkedList);
 		bTrobat = getDateByName (sDataLL, sName, LinkedListToTx);
 		if ( !bTrobat ) {
 			printf("CLI_ADD: %s Servidor envia a Client\n", sName);
-			addToLLTx (sName, sDataTrama, nSize, 1, LinkedListToTx);
+			//addToLLTx (sName, sDataTrama, nSize, 1, LinkedListToTx);
 		}	
 	}
 

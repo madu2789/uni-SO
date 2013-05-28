@@ -53,7 +53,7 @@ int main () {
 	nSocketFD = ServerConection (nPort, sLoginUser);
 
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList (sDirPath, LinkedList, sMyLog);
+	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 
 	//Check al directori si hi ha hagut algun canvi cada 2''

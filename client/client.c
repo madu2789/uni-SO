@@ -106,7 +106,7 @@ int main () {
 	createLog (sMyLog);
 
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList (sDirPath, LinkedList, sMyLog);
+	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 	//Socket peticio connexio
 	nSocketFD = clientConnect (nPort, sLogin, sPswd, LinkedList);
