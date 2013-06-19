@@ -72,7 +72,7 @@ int main () {
 			getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
 			
 			//Crearia el thread per la TX de Info
-			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx);
+			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
 
 		} else {
 			write (nSocketFD, "init", 4);

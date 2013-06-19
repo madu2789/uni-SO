@@ -144,6 +144,7 @@ int getDateByName (char sDate[30], char sName[30], struct node *LinkedList) {
   return bTrobat;
 }
 
+
 /*Canvia la sDate segons el sName*/
 int setDateByName (char sName[30], char sDate[64], int nSize, struct node *LinkedList) {
   struct node *temp;
@@ -160,8 +161,10 @@ int setDateByName (char sName[30], char sDate[64], int nSize, struct node *Linke
       temp = temp->next;
     }
   }
-  return 0;
+  return bTrobat;
 }
+
+
 
 /*RETURN nEstat of a Node*/
 int getEstatByName (char sName[30], struct node *LinkedList) {
@@ -181,6 +184,27 @@ int getEstatByName (char sName[30], struct node *LinkedList) {
   return temp->nEstat;
 }
 
+
+/*Canvia la sDate segons el sName*/
+int setEstatByName (char sName[30], int nEstat, struct node *LinkedList) {
+  struct node *temp;
+  struct node *inici;
+  int bTrobat = 0;
+  temp = LinkedList;
+
+  while (temp != NULL && bTrobat == 0) {
+    if (strcmp(sName, temp->sName) == 0) {
+      bTrobat = 1;
+      temp->nEstat = nEstat;
+    } else {
+      temp = temp->next;
+    }
+  }
+  return bTrobat;
+}
+
+
+
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST
 int count (struct node *LinkedList) {
   struct node *inici;
@@ -197,5 +221,6 @@ int count (struct node *LinkedList) {
   }
 
   LinkedList = inici;
+  
   return nElements;
 }

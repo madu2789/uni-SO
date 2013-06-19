@@ -87,6 +87,7 @@ int ReadDir (int bIsNull, char sMyLog[20]) {
 }
 
 
+
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
@@ -116,6 +117,7 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	}
 	return nTotalFiles;
 }
+
 
 
 /**
@@ -152,10 +154,8 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 
 		 	getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 		 	getDateReal (sRealDate, sDirPath, arxius[i]->d_name);	
-//prova
-printf("LinkedListToTx: %d\n", getDateByName(sLLDate, arxius[i]->d_name, LinkedListToTx));
-display(LinkedListToTx);
-			if ( strcmp (sLLDate, sRealDate) != 0 && !getDateByName(sLLDate, arxius[i]->d_name, LinkedListToTx)) {
+			
+			if ( strcmp (sLLDate, sRealDate) != 0 ) {
 				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
 				bSincro = 1;
 			}

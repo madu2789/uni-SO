@@ -123,7 +123,7 @@ int main () {
 			write (nSocketFD, "init", 4); 
 		}
 
-		receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList);
+		receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 
 
 		sleep(5);

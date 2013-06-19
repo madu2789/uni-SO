@@ -38,7 +38,7 @@
 
 //Funciones
 
-int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], struct node *LinkedList);
+int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx);
 void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
 void pleaseSincro (int nFdIn, char sLoginOrigen[7]);
 

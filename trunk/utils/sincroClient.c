@@ -82,7 +82,7 @@ void creaTramaSincro (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], cha
  * @param  LinkedList {Struct}	Estructura On guardem tota la info
  * @return bCorrect {0 wrong | 1 right}
  */
-int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], struct node *LinkedList) {
+int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx) {
 	char sTrama[MAX_TRAMA];
 	int nBytesRead = 0;
 
@@ -103,7 +103,7 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 	setSincroInfo(nFdIn, sLoginOrigen, LinkedList);
 
 	//AQUI EN REALITAT CREARIEM EL THREAD!!!
-	receiveContent(nFdIn, sDirPath);
+	receiveContent(nFdIn, sDirPath,LinkedList, LinkedListToTx, "LSBox_cli.log.html");
 
 	return 1;
 }
