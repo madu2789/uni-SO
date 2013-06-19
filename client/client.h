@@ -41,7 +41,6 @@
 
 
 //Funciones
-int main();
 void loginUser (char sLogin[MAX], char sPswd[MAX]);
 void conversorTipus (char sTipus[30], int nToConvert);
 

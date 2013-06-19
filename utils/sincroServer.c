@@ -252,20 +252,23 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 			}
 		} else {
 			
-			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) {
-
-				//UPDATE
-				nWhoUpdate = decideWhoUpdate (sDataTrama, sDataLL);
+			//UPDATE
+			nWhoUpdate = decideWhoUpdate (sDataTrama, sDataLL);
+			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) { //sino esta l'afegeixo
 				if ( nWhoUpdate > 0 ) {
 					printf("SER_UPDATE: %s Client envia a Servidor\n", sName);
 					addToLLTx (sName, sDataTrama, nSize, 5, LinkedListToTx);
-
 				} else if ( nWhoUpdate < 0 ) {
 					printf("CLI_UPDATE: %s Servidor envia a client\n", sName);
 					addToLLTx (sName, sDataTrama, nSize, 2, LinkedListToTx);
-
-				} else if (nWhoUpdate == 0)  {
-					printf("ningu envia res! les dates son iguals\n");
+				}
+			} else {																							//si esta actualitzo nEstat
+				if ( nWhoUpdate > 0 ) {
+					printf("SER_UPDATE: %s Client envia a Servidor\n", sName);
+					setEstatByName (sName, 5, LinkedListToTx);
+				} else if ( nWhoUpdate < 0 ) {
+					printf("CLI_UPDATE: %s Servidor envia a client\n", sName);
+					setEstatByName (sName, 2, LinkedListToTx);
 				}
 			}
 		}
@@ -280,7 +283,7 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 		showNode(sName, sDataLL, i, LinkedList);
 		bTrobat = getDateByName (sDataLL, sName, LinkedListToTx);
 		if ( !bTrobat ) {
-			printf("CLI_ADD: %s Servidor envia a Client\n", sName);
+			printf("SER_RM: %s Servidor envia a Client\n", sName);
 			//addToLLTx (sName, sDataTrama, nSize, 1, LinkedListToTx);
 		}	
 	}

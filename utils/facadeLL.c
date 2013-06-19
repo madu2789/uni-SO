@@ -161,7 +161,8 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 			
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
 				printf("CLI_RM: %s", sNameToRemove);
-				addToLLTx (sNameToRemove, sDateLL, 0, 3, LinkedListToTx);
+				//addToLLTx (sNameToRemove, sDateLL, 0, 3, LinkedListToTx);
+				setEstatByName (sNameToRemove, 3, LinkedListToTx);
 			}
 		}
 		bToRemove = 1;

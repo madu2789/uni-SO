@@ -43,6 +43,7 @@ int showNode (char sName[30], char sDate[64], int nLocation, struct node *Linked
 int getDateByName (char sDate[30], char sName[30], struct node *LinkedList);
 int setDateByName (char sName[30], char sDate[64], int nSize, struct node *LinkedList);
 int getEstatByName (char sName[30], struct node *LinkedList);
+int setEstatByName (char sName[30], int nEstat, struct node *LinkedList);
 void buidaLL (struct node *LinkedList);
 int count (struct node *LinkedList);
 
