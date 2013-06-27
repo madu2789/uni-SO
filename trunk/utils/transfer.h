@@ -1,13 +1,13 @@
 /* **********************************************
 *
-* Fitxer de capçalera de SocketsClient
+* Fitxer de capçalera de transfer
 *
 * Daniel Madurell Blanes (is19445)
 * Albert Hilazo Aguilera (se19467)
 *
 * ********************************************** */
-#ifndef __SOCKETCLI_H__
-#define __SOCKETCLI_H__
+#ifndef __TRANSFER_H__
+#define __TRANSFER_H__
 
 // Includes propios
 #define _GNU_SOURCE
@@ -17,8 +17,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+
 
 //Defines
 #define MAX_TRAMA 115
@@ -26,18 +25,19 @@
 #define ERROR -1
 
 // Includes propios
-#include "socketServer.h"
-#include "socketClient.h"
+
 #include "facadeLL.h"
+
 
 // Definicion de constantes
 
 // Definicion de tipos propios
 
 //Funciones
-int startSincro (int nFdIn, char sLoginDesti[7]);
-void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, struct node *LinkedListToTx);
-int receiveClientSincro (int nFdIn);
-
+void transferContent (int nFdIn, char sDirPath[MAX], char sUser[8], struct node *LinkedListToTx, char sMyLog[20]);
+void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]);
+int openFile (char sDirPath[MAX], char sName[30]);
+int removeFile (char sDirPath[MAX], char sName[30]);
+int createFile (char sDirPath[MAX], char sName[30]); 
 
 #endif

@@ -61,6 +61,15 @@ void creaTramaSincro (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], cha
 			sTipus = 'X';
 			strcpy(sData, "'Sincronitzacio finalitzada'");
 		break;
+		case 4:
+			strcpy(sLoginOrigen, sUser);
+			strcpy(sLoginDesti, "LSBox  ");
+			sTipus = 'G';
+			sData[0] = '<';
+			strncat(sData, sName, 20);
+			sData[strlen(sData)] = '>';
+			sData[strlen(sData)] = '\0';
+		break;
 	}
 
 	//creant Trama final que enviarem
@@ -116,6 +125,42 @@ int receiveClientSincro (int nFdIn) {
 
 	return 1;
 }
+
+
+
+
+
+void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx) {
+
+	int nNumberOfElements = count(LinkedListToTx);
+	int i, bTrobat = 0;
+	char sName[24];
+	char sDataLL[24];
+	char sUser[8];
+	int nEstat = 0;
+	char sTrama[MAX_TRAMA];
+
+	strcpy(sUser, sLoginOrigen);
+
+	for (i = 1; i < nNumberOfElements+1; i++) {
+		showNode(sName, sDataLL, i, LinkedListToTx);
+
+		nEstat = getEstatByName(sName, LinkedListToTx);
+		printf("sName: %s, estat: %d\n",sName, nEstat);
+		if (nEstat == 4 || nEstat == 5) {
+			//crea i envia trama G -> 4
+			creaTramaSincro (sTrama, sUser, sName, "  ", 0, 4);
+			printf("sTrama: %s\n", sTrama); 
+			write (nFdIn, sTrama, MAX_TRAMA);
+		}
+	}
+	//trama X
+	creaTramaSincro (sTrama, sUser, " ", " ", 0, 3);
+	printf("sTrama: %s\n", sTrama); 
+	write (nFdIn, sTrama, MAX_TRAMA);
+}
+
+
 
 
 
@@ -197,7 +242,7 @@ int decideWhoUpdate (char sDataTrama[24], char sDataLL[24]) {
  * @param  nFd {Number}	nFile descriptor del socket obert
  * @return bCorrect {0 wrong | 1 right}
  */
-void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListToTx) {
+void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, struct node *LinkedListToTx) {
 	
 	int bFinalSincro, bTrobat, i, nNumberOfSincroElemets, nNumberOfElements, nSize, nWhoUpdate, nEstat;
 	char sTrama[MAX_TRAMA];
@@ -288,9 +333,12 @@ void getSincroInfo (int nFdIn, struct node *LinkedList, struct node *LinkedListT
 		}	
 	}
 
- printf("llistaTx:\n");
- display (LinkedListToTx);
+	//Trames G que envia el servidor al client pk sapigui quins fitxers enviar
+	sendTramesG(nFdIn, sLoginUser, LinkedListToTx);
 
- printf("llista:\n");
- display (LinkedList);
+  printf("llistaTx:\n");
+	display (LinkedListToTx);
+
+	printf("llista:\n");
+	display (LinkedList);
 }

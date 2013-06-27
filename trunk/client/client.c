@@ -125,6 +125,7 @@ int main () {
 
 		receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 
+		printf("aqui arribo?\n");
 
 		sleep(5);
 	}
