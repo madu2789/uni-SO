@@ -91,18 +91,18 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 	memset(sDataTrama, '\0', 100);
 
 
-	memcpy( sLoginOrigen, &sTrama[0], 7 );
+	memcpy (sLoginOrigen, &sTrama[0], 7 );
 	sLoginOrigen[7] = '\0';
 
-	memcpy( sLoginDTrama, &sTrama[7], 7 );
+	memcpy (sLoginDTrama, &sTrama[7], 7 );
 	sLoginDTrama[7] = '\0';
 
   sTypeTrama = sTrama[14];
 
-  strncpy(sDataTrama, sTrama+15, 100);
+  strncpy (sDataTrama, sTrama+15, 100);
   sDataTrama[strlen(sDataTrama)] = '\0';
 
-  memcpy( sPwd, &sDataTrama[8], 32 );
+  memcpy (sPwd, &sDataTrama[8], 32 );
 	sPwd[32] = '\0';
 	bTramaOk = 0;
 
@@ -118,6 +118,14 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 				}
 			}
 
+		break;
+		case 4:
+
+			if (sTypeTrama == 'X'){
+			
+				bTramaOk = 1;
+				
+			}
 		break;
 	}
 
@@ -167,7 +175,8 @@ int socketConnection (int nPort) {
 	stDireccionServidor.sin_port = htons (wPuerto);
 
 	//Extraemos el host
-	stHost = gethostbyname ("cygnus.salle.url.edu");
+	//stHost = gethostbyname ("cygnus.salle.url.edu");
+	stHost = gethostbyname ("vela.salle.url.edu");
 	if (NULL == stHost){
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","No se ha podido resolver la direccion de cygnus!", 0);
 		exit(ERROR);

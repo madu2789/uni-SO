@@ -73,6 +73,37 @@ void creaTramaSincro (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], cha
 }
 
 
+void getTramesG (int nFdIn, char sLoginOrigen[7], struct node *LinkedListToTx) {
+	char sTrama[MAX_TRAMA];
+	char sName[24];
+	char sDataTrama[100];
+	int bFinalSincro = 0, nBytesRead = 0;
+
+	memset (sDataTrama, '\0', 100);
+	memset (sName, '\0', 24);
+
+	while (!bFinalSincro)	{
+		nBytesRead = read (nFdIn, sTrama, MAX_TRAMA);
+		bFinalSincro = checkTrama (sTrama, sLoginOrigen, 4);
+		if (!bFinalSincro) {
+				//Parsejo la part de DataTrama -> sName
+		  	strncpy (sDataTrama, sTrama+15, 100);
+		  	sDataTrama[strlen(sDataTrama)] = '\0';
+		  	ParserNameTx(sDataTrama, sName);
+
+				printf("sTrama G: %s\n", sTrama);
+		  	printf("sName: %s\n", sName);
+
+		  	//canviem el estat de la LlinkedListToTx per enviar-li al servidor
+		  	setEstatByName (sName, 4, LinkedListToTx);
+		  	memset (sName, '\0', 24);
+		  	memset (sDataTrama, '\0', 100);
+		}
+	}
+}
+
+
+
 
 /**
  * Client envia una Trama O|E  i crida a SetSincroInfo
@@ -102,8 +133,15 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 	//Comencem a enviar tota la LL -> trames 'N'
 	setSincroInfo(nFdIn, sLoginOrigen, LinkedList);
 
+	//Llegim les trames G per saber que enviar
+	getTramesG(nFdIn, sLoginOrigen, LinkedListToTx);
+
 	//AQUI EN REALITAT CREARIEM EL THREAD!!!
-	receiveContent(nFdIn, sDirPath,LinkedList, LinkedListToTx, "LSBox_cli.log.html");
+	receiveContent(nFdIn, sDirPath, LinkedList, LinkedListToTx, "LSBox_cli.log.html");
+	//prova:
+	display(LinkedListToTx);
+	//prova
+	transferContent (nFdIn, sDirPath, sLoginOrigen, LinkedListToTx, "LSBox_cli.log.html");
 
 	return 1;
 }
@@ -126,7 +164,7 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
  	int nTotalFiles = count(LinkedList);
 
  	//	REVISAR!!!
- 	//Aixo es raro i sa de ajustar:
+ 	//Aixo es raro i sa d'ajustar:
  	//		 nLocation es 1 pk la primera casella de la llista
  	//		 nTotalFiles+1 per el primer punt i pk el count ens dona -1 casella k la k ens interesa
  	for (nLocation = 1 ; nLocation < nTotalFiles+1 ; nLocation++ ) {

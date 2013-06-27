@@ -69,10 +69,12 @@ int main () {
 			//Sincronitzacio
 			startSincro (nSocketFD, sLoginUser);
 			//Agafa la info procedent de Client
-			getSincroInfo (nSocketFD, LinkedList, LinkedListToTx);
+			getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
 			
 			//Crearia el thread per la TX de Info
 			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
+			//prova
+			receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 		} else {
 			write (nSocketFD, "init", 4);
