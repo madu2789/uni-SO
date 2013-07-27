@@ -138,10 +138,17 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 
 	//AQUI EN REALITAT CREARIEM EL THREAD!!!
 	receiveContent(nFdIn, sDirPath, LinkedList, LinkedListToTx, "LSBox_cli.log.html");
+	
+	printf("Client ja ha rebut dades del servidor!!\n");
 	//prova:
 	display(LinkedListToTx);
 	//prova
+	printf("Ara client enviara al servidor!\n");
+		printf("sDirPath: %s-%zu\n", sDirPath, strlen(sDirPath));
+	    printf("sUser: %s-%zu\n", sLoginOrigen, strlen(sLoginOrigen));
+	  
 	transferContent (nFdIn, sDirPath, sLoginOrigen, LinkedListToTx, "LSBox_cli.log.html");
+	printf("aqui almenys si no??\n");
 
 	return 1;
 }

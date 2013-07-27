@@ -6,7 +6,6 @@
 
 
 
-
 /**
  * main general
  */
@@ -55,7 +54,6 @@ int main () {
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
-
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		bSincro = 0;
@@ -83,7 +81,6 @@ int main () {
 		sleep (5);
 
 	}
-
 
 	return 0;
 }
