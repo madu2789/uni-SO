@@ -71,7 +71,7 @@ int main () {
 			
 			//Crearia el thread per la TX de Info
 			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
-			//prova
+			//I ara rebem
 			receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 		} else {
@@ -79,8 +79,6 @@ int main () {
 		}
 
 		sleep (5);
-
 	}
-
 	return 0;
 }

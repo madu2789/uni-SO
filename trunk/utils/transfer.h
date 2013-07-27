@@ -34,7 +34,7 @@
 // Definicion de tipos propios
 
 //Funciones
-void transferContent (int nFdIn, char sDirPath[MAX], char sUser[7], struct node *LinkedListToTx, char sMyLog[20]);
+int transferContent (int nFdIn, char sDirPath[MAX], char sUser[8], struct node *LinkedListToTx, char sMyLog[40]);
 void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]);
 int openFile (char sDirPath[MAX], char sName[30]);
 int removeFile (char sDirPath[MAX], char sName[30]);
