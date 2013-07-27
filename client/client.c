@@ -65,7 +65,7 @@ void loginUser (char sLogin[7], char sPswd[32]) {
  */
 int main () {
 	int nPort = 0;
-	int bSincro = 0;
+	int bSincro = 0, bTransfer = 0;
 	int nSocketFD = 0;
 
 	char sDirPath[MAX];
@@ -123,8 +123,7 @@ int main () {
 			write (nSocketFD, "init", 4); 
 		}
 
-		receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
-
+		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 		printf("aqui arribo?\n");
 
 		sleep(5);

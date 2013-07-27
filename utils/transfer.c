@@ -230,7 +230,7 @@ int removeFile (char sDirPath[MAX], char sName[30]) {
 
 
 
-void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct node *LinkedListToTx, char sMyLog[20]) {
+void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[7], struct node *LinkedListToTx, char sMyLog[30]) {
 
 	int nTotalFiles = 0;
 	int i = 0;
@@ -294,9 +294,15 @@ void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct n
 	printf ("Trama enviada: %s\n", sTrama);
 
 	//Buidem lo que ja hem transmes
-	buidaLL (LinkedListToTx);
+	//buidaLL (LinkedListToTx);
 
 	printf("hem acabat de transmetre en les dues direccions! :)\n");
+	
+	printf("sDirPath: %s - %zu\n", sDirPath, strlen(sDirPath));
+    printf("sUser: %s - %zu\n", sUser, strlen(sUser));
+    printf("sMyLog: %s - %zu\n", sMyLog, strlen(sMyLog));
+
+
 }
 
 
