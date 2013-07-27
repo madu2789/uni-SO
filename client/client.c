@@ -30,7 +30,7 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 			write (1, sAux, strlen(sAux));
 		}
 	}
-	//sLogin[strlen(sLogin)-1] = '\0';
+	sLogin[strlen(sLogin)] = '\0';
 
 	//Reiniciem variable
 	nValid = 0;
@@ -64,13 +64,14 @@ void loginUser (char sLogin[7], char sPswd[32]) {
  * main general
  */
 int main () {
+
 	int nPort = 0;
 	int bSincro = 0, bTransfer = 0;
 	int nSocketFD = 0;
 
 	char sDirPath[MAX];
 	char sServer[11];
-	char sLogin[7];
+	char sLogin[8];
 	char sPswd[32];
 	char sMyLog[20];
 
@@ -90,7 +91,7 @@ int main () {
 
 	memset(sDirPath, '\0', MAX);
 	memset(sServer, '\0', 11);
-	memset(sLogin, '\0', 7);
+	memset(sLogin, '\0', 8);
 	memset(sPswd, '\0', 32);
 	memset(sMyLog, '\0', 20);
 
@@ -124,7 +125,24 @@ int main () {
 		}
 
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
-		printf("aqui arribo?\n");
+		if ( bTransfer ) {
+
+			//AQUI EN REALITAT CREARIEM EL THREAD!!!
+			receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+			
+			printf("Client ja ha rebut dades del servidor!!\n");
+			display(LinkedListToTx);
+			printf("Ara client enviara al servidor!\n");
+			  
+			transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
+
+			printf("bug arreglaaat!\n");
+	
+			//aqui no arriba...
+			
+			bTransfer = 0;
+		}
+	
 
 		sleep(5);
 	}

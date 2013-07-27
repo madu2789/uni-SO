@@ -15,7 +15,7 @@
  * @param  bEmissor {Integer}	numero que diu si l'emissor es client o servidor
  * @return
  */
-void creaTramaTx (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], char sDate[100], int nSize, int bEmissor) {
+void creaTramaTx (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], char sDate[120], int nSize, int bEmissor) {
 	char sLoginDesti[7];
 	char sLoginOrigen[7];
 	char sTipus = '0';
@@ -230,7 +230,7 @@ int removeFile (char sDirPath[MAX], char sName[30]) {
 
 
 
-void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[7], struct node *LinkedListToTx, char sMyLog[30]) {
+int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct node *LinkedListToTx, char sMyLog[40]) {
 
 	int nTotalFiles = 0;
 	int i = 0;
@@ -240,21 +240,21 @@ void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[7], struct n
 	int bFi = 0;
 	int nEstatPerEnviar1 = 0, nEstatPerEnviar2 = 0;
 
-	char sName[24];
-	char sData[24];
+	char sName[30];
+	char sData[64];
 	char sTrama[MAX_TRAMA];
-	char sInfo[100];
+	char sInfo[105];
 
 	nTotalFiles = count (LinkedListToTx);
 
 	for (i = 1; i < nTotalFiles+1; i++) {
-		memset (sName, '\0', 24);
-		memset (sData, '\0', 24);
+		memset (sName, '\0', 30);
+		memset (sData, '\0', 64);
 
 		nSize = showNode (sName, sData, i, LinkedListToTx);
 		nEstat = getEstatByName (sName, LinkedListToTx);
 
-//Aixo es arriscat i TREPITXEROOOOO!!!!!
+		//Aixo es arriscat i TREPITXEROOOOO!!!!!
 
 		if (!strcmp (sMyLog, "LSBox_cli.log.html")){
 			nEstatPerEnviar1 = 4;
@@ -276,11 +276,11 @@ void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[7], struct n
 			while ( bFi != 0 ) {
 				printf ("Trama enviada: %s\n", sTrama);
 				write (nFdSocket, sTrama, MAX_TRAMA);
-				memset (sInfo, '\0', 100);
+				memset (sInfo, '\0', 104);
 				bFi = read (nFdFitxer, sInfo, 100);
 				creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 2);
 			}
-		} else if (nEstat == 3) { //Si estat == a CLI_RM
+		} else if (nEstat == 3) { //Si estat == CLI_RM
 			//Creo la 1a trama 'R' amb info basica del fitxer
 			creaTramaTx (sTrama, sUser, sName, sData, nSize, 4);
 			printf ("Trama enviada: %s\n", sTrama);
@@ -294,15 +294,11 @@ void transferContent (int nFdSocket, char sDirPath[MAX], char sUser[7], struct n
 	printf ("Trama enviada: %s\n", sTrama);
 
 	//Buidem lo que ja hem transmes
-	//buidaLL (LinkedListToTx);
+	buidaLL (LinkedListToTx);
 
 	printf("hem acabat de transmetre en les dues direccions! :)\n");
-	
-	printf("sDirPath: %s - %zu\n", sDirPath, strlen(sDirPath));
-    printf("sUser: %s - %zu\n", sUser, strlen(sUser));
-    printf("sMyLog: %s - %zu\n", sMyLog, strlen(sMyLog));
 
-
+	return 0;
 }
 
 

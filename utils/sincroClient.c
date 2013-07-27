@@ -136,20 +136,6 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 	//Llegim les trames G per saber que enviar
 	getTramesG(nFdIn, sLoginOrigen, LinkedListToTx);
 
-	//AQUI EN REALITAT CREARIEM EL THREAD!!!
-	receiveContent(nFdIn, sDirPath, LinkedList, LinkedListToTx, "LSBox_cli.log.html");
-	
-	printf("Client ja ha rebut dades del servidor!!\n");
-	//prova:
-	display(LinkedListToTx);
-	//prova
-	printf("Ara client enviara al servidor!\n");
-		printf("sDirPath: %s-%zu\n", sDirPath, strlen(sDirPath));
-	    printf("sUser: %s-%zu\n", sLoginOrigen, strlen(sLoginOrigen));
-	  
-	transferContent (nFdIn, sDirPath, sLoginOrigen, LinkedListToTx, "LSBox_cli.log.html");
-	printf("aqui almenys si no??\n");
-
 	return 1;
 }
 
@@ -171,7 +157,6 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
  	int nTotalFiles = count(LinkedList);
 
  	//	REVISAR!!!
- 	//Aixo es raro i sa d'ajustar:
  	//		 nLocation es 1 pk la primera casella de la llista
  	//		 nTotalFiles+1 per el primer punt i pk el count ens dona -1 casella k la k ens interesa
  	for (nLocation = 1 ; nLocation < nTotalFiles+1 ; nLocation++ ) {
