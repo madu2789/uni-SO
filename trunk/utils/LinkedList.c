@@ -203,6 +203,24 @@ int setEstatByName (char sName[30], int nEstat, struct node *LinkedList) {
   return bTrobat;
 }
 
+/*Canvia la nSize segons el sName*/
+int setSizeByName (char sName[30], int nSize, struct node *LinkedList) {
+  struct node *temp;
+  struct node *inici;
+  int bTrobat = 0;
+  temp = LinkedList;
+
+  while (temp != NULL && bTrobat == 0) {
+    if (strcmp(sName, temp->sName) == 0) {
+      bTrobat = 1;
+      temp->nSize = nSize;
+    } else {
+      temp = temp->next;
+    }
+  }
+  return bTrobat;
+}
+
 
 
 //THIS FUNCTION COUNTS THE NUMBER OF ELEMENTS IN THE LIST

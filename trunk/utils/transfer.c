@@ -314,6 +314,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 	char sData[30];
 	char sTrama[MAX_TRAMA];
 	char sLoginOrigen[8]; char sLoginDesti[8]; char sDataTrama[100];
+	char sRealDirPath[MAX+30];
 
 
 	memset(sTrama, '\0', MAX_TRAMA);
@@ -328,6 +329,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 			case 1:	//trama 'M'	
 				memset(sName, '\0', 24);
 				nSize = ParserBuclesTx (sDataTrama, sName);
+
 				// Intenten Obrim el fitxer per llegir sino, el creem
 				nFileFd = openFile (sDirPath, sName);
 				if ( !nFileFd ) {
@@ -341,14 +343,14 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				memset(sTrama, '\0', MAX_TRAMA);
 				read (nFdIn, sTrama, MAX_TRAMA);
 				printf ("trama rebuda: %s\n", sTrama);
-				bCopiant	= checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
+				bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 	
 				while ( bCopiant == 0) {
 					write (nFileFd, sDataTrama, strlen(sDataTrama));
 					memset(sTrama, '\0', MAX_TRAMA);
 					read (nFdIn, sTrama, MAX_TRAMA);
 					printf ("trama rebuda: %s\n", sTrama);
-					bCopiant	= checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
+					bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 				}
 
 				nTipusTrama = bCopiant;
@@ -357,8 +359,10 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				//Actualitzo les Dates a les LL perque no noti el canvi i torni a demanar una Sincro!
 				memset (sData, '\0', 30);
 				getDateReal(sData, sDirPath, sName);
-				printf("getDateReal: %s\n", sData);
 				setDateByName (sName, sData, 0, LinkedList);
+
+				//Actualitzo tambe el actual tamany del arxiu
+				setSizeByName(sName, nSize, LinkedList);
 	
 			break;
 			case 2: //trama	'R' remove

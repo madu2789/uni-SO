@@ -31,8 +31,6 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 		}
 	}
 	sLogin[strlen(sLogin)] = '\0';
-
-	//Reiniciem variable
 	nValid = 0;
 
 	//Demana contrasenya
@@ -56,6 +54,7 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 	sPswd[strlen(sPswd)] = '\0';
 
 }
+
 
 
 
@@ -89,6 +88,7 @@ int main () {
 	strcpy(LinkedListToTx->sName, "fantasma");
 	LinkedListToTx->next = NULL;
 
+	//Netegem strings
 	memset(sDirPath, '\0', MAX);
 	memset(sServer, '\0', 11);
 	memset(sLogin, '\0', 8);
@@ -128,22 +128,12 @@ int main () {
 		if ( bTransfer ) {
 
 			//AQUI EN REALITAT CREARIEM EL THREAD!!!
+
+			//Primer rebem info, despres enviem
 			receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
-			
-			printf("Client ja ha rebut dades del servidor!!\n");
-			display(LinkedListToTx);
-			printf("Ara client enviara al servidor!\n");
-			  
 			transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
-
-			printf("bug arreglaaat!\n");
-	
-			//aqui no arriba...
-			
 			bTransfer = 0;
-		}
-	
-
+		}	
 		sleep(5);
 	}
 

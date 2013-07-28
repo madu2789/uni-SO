@@ -62,8 +62,8 @@ void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *Linke
 
 	//hora de modificacio del arxiu -> sDate
 	if (stat(sRealDirPath, &status) == 0) {
-    sDate = ((char *)ctime(&status.st_mtime));
-    nSize = status.st_size;
+	  sDate = ((char *)ctime(&status.st_mtime));
+	  nSize = status.st_size;
   }
 
   conversorTipus (sAdaptedTipus, nTipus);
