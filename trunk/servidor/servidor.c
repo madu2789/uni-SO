@@ -6,6 +6,8 @@
 
 
 
+
+
 /**
  * main general
  */
@@ -69,9 +71,13 @@ int main () {
 			//Agafa la info procedent de Client
 			getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
 			
-			//Crearia el THREADS per la TX de Info
+			//Enviar el Port al clientsLoginUser	
+			enviaPort(nSocketFD, nPort+2, sLoginUser, "LSBox  ");
+
+			//Crear Thread
+
+			//Transmissio de dades
 			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
-			//I ara rebem
 			receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 		} else {

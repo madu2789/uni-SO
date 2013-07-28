@@ -35,7 +35,7 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 			sprintf (sData,"'Autentificacio realitzada satisfactoriament'");
 			sTipus = 'O';
 		break;
-			case 4:
+		case 4:
 			sprintf (sData,"'Inici sincronitzacio'");
 			sTipus = 'S';
 		break;
@@ -47,6 +47,38 @@ void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7
 	sTrama[strlen(sTrama)] = sTipus;
 	strcat(sTrama, sData);
 }
+
+
+int enviaPort (int nFdIn, int nPort, char sLoginDesti[7], char sLoginOrigen[7]) {
+
+	char sTrama[MAX_TRAMA];
+	char sTipus = '\0';
+	char sData[100];
+	char sPort[6];
+
+	//Netejant variables
+	memset (sTrama, '\0', MAX_TRAMA);
+	memset (sData, '\0', 100);
+	memset (sPort, '\0', 6);
+
+	//Preparo dades trama
+	sData[0] = '<';
+	sprintf (sPort, "%d", nPort);
+	strcat(sData, sPort);
+	sData[strlen(sData)] = '>';
+	sTipus = 'P';
+
+	//creant Trama final que enviarem
+	strcat(sTrama, sLoginOrigen);
+	strcat(sTrama, sLoginDesti);
+	sTrama[strlen(sTrama)] = sTipus;
+	strcat(sTrama, sData);
+
+	printf("\nenviem port: sTrama: %s \n", sTrama);
+	//Enviar-la Socket
+	write (nFdIn, sTrama, MAX_TRAMA);
+}
+
 
 
 /**
@@ -208,9 +240,7 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
   printf("camp data parsejat:  %s\n", sDataTrama);
   printf("password parsejat:  %s\n", sPwd);
 */
-
 	bTramaOk = 0;
-
 	switch (nType) {
 		//cas autentificacio
 		case 1:
@@ -231,9 +261,9 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
 			}
 		break;
 	}
-
 	return bTramaOk;
 }
+
 
 
 
