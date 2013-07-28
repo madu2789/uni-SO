@@ -64,7 +64,7 @@ void loginUser (char sLogin[7], char sPswd[32]) {
  */
 int main () {
 
-	int nPort = 0;
+	int nPort = 0, nPortTx = 0;
 	int bSincro = 0, bTransfer = 0;
 	int nSocketFD = 0;
 
@@ -127,8 +127,10 @@ int main () {
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 		if ( bTransfer ) {
 
-			//AQUI EN REALITAT CREARIEM EL THREAD!!!
+			//rebem el port on conectarem el thread
+			nPortTx = rebPort(nSocketFD);
 
+			//CREAR EL THREAD!!!
 			//Primer rebem info, despres enviem
 			receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 			transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);

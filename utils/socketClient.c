@@ -68,6 +68,30 @@ void creaTrama (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipus
 }
 
 
+int rebPort (int nFdIn) {
+
+	int nPort = 0;
+
+	char sPort[8];
+	char sTrama[MAX_TRAMA];
+	char sFrase[100];
+
+	memset (sTrama, '\0', MAX_TRAMA);
+	memset (sPort, '\0', 8);
+	memset (sFrase, '\0', 100);
+
+	read ( nFdIn, sTrama, MAX_TRAMA);
+	printf("\nrebem port: sTrama: %s\n", sTrama);
+
+	memcpy (sFrase, &sTrama[15], 99);
+	sFrase[strlen(sFrase)] = '\0';
+
+	ParserNameTx (sFrase, sPort);
+	nPort = atoi (sPort);
+
+	return nPort;
+}
+
 
 
 /**
