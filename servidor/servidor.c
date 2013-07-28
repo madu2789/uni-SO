@@ -69,7 +69,7 @@ int main () {
 			//Agafa la info procedent de Client
 			getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
 			
-			//Crearia el thread per la TX de Info
+			//Crearia el THREADS per la TX de Info
 			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
 			//I ara rebem
 			receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);

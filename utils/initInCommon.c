@@ -157,6 +157,7 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 			
 			if ( strcmp (sLLDate, sRealDate) != 0 ) {
 				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
+				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedListToTx, sMyLog);
 				bSincro = 1;
 			}
 			free (arxius[i]);
