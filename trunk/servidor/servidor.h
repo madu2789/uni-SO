@@ -21,6 +21,7 @@
 #include <fcntl.h>
 #include <time.h>
 #include <signal.h>
+#include <pthread.h>
 
 // Includes propios
 #include "../utils/sincroServer.h"

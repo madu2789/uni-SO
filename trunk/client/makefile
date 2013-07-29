@@ -29,4 +29,4 @@ client.o: client.c client.h
 
 
 client: client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/transfer.o ../utils/sincroClient.o ../utils/initInCommon.o
-	gcc -Wall -Wextra client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/transfer.o ../utils/sincroClient.o ../utils/initInCommon.o -o client.exe
+	gcc -pthread -Wall -Wextra client.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/md5.o ../utils/socketClient.o ../utils/log.o ../utils/transfer.o ../utils/sincroClient.o ../utils/initInCommon.o -o client.exe

@@ -57,6 +57,23 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 
 
 
+void * ThreadTx (void *unused){
+	
+	printf("fill!\n");
+
+	int nSocketFD = socketConnection(5456);
+
+	printf("nSocketFD: %d\n", nSocketFD);
+
+	//Primer rebem info, despres enviem
+	//receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	//transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
+	
+	return NULL;
+
+}
+
+
 
 
 /**
@@ -76,6 +93,9 @@ int main () {
 
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
+
+	pthread_t thread_id;
+	int nEstatThread;
 
 	//INITS
 	//Demanem memoria per la LL
@@ -126,14 +146,13 @@ int main () {
 
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 		if ( bTransfer ) {
-
 			//rebem el port on conectarem el thread
 			nPortTx = rebPort(nSocketFD);
 
-			//CREAR EL THREAD!!!
-			//Primer rebem info, despres enviem
-			receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
-			transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
+			//creem el Thread
+			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, NULL);
+			if (nEstatThread != 0) 	printf("fail al fill!\n");
+
 			bTransfer = 0;
 		}	
 		sleep(5);
