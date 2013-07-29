@@ -26,4 +26,4 @@ servidor.o: servidor.c servidor.h
 
 
 servidor: servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/transfer.o ../utils/sincroServer.o ../utils/initInCommon.o
-	gcc -Wall -Wextra servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/transfer.o ../utils/sincroServer.o ../utils/initInCommon.o -o servidor.exe
+	gcc -pthread -Wall -Wextra servidor.o ../utils/LinkedList.o ../utils/facadeLL.o ../utils/socketServer.o ../utils/log.o ../utils/transfer.o ../utils/sincroServer.o ../utils/initInCommon.o -o servidor.exe

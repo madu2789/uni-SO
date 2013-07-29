@@ -308,7 +308,7 @@ int socketConnnection (int nPort) {
 	}
 
 	//Escuchamos peticiones (1 a la vez)
-	listen (gnSocketFD, 1);
+	listen (gnSocketFD, 2);
 
 	writeLog ("LSBox_svr.log.html", "socketServer.c","Socket Connectat","Socket esperant entrades de clients", 0);
 	sprintf (sFrase, "Servidor connectat!\n");

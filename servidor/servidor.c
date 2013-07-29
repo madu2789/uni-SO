@@ -6,6 +6,26 @@
 
 
 
+void * ThreadTx (void *unused){
+	
+	printf("fill!\n");
+
+	//Creem el socket
+	int nSocketFD = socketConnnection(5456);	
+	
+
+	//Transmissio de dades
+	//transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
+	//receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+
+	printf("nSocketFD: %d\n", nSocketFD);
+
+
+	
+	return NULL;
+
+}
+
 
 
 /**
@@ -25,6 +45,9 @@ int main () {
 
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
+
+	pthread_t thread_id;
+	int nEstatThread;
 
 	//INITS
 	//Demanem memoria per la LL
@@ -75,10 +98,8 @@ int main () {
 			enviaPort(nSocketFD, nPort+2, sLoginUser, "LSBox  ");
 
 			//Crear Thread
-
-			//Transmissio de dades
-			transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
-			receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, NULL);
+			if (nEstatThread != 0) printf("fail al fill!\n");
 
 		} else {
 			write (nSocketFD, "init", 4);
