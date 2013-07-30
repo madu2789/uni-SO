@@ -307,7 +307,7 @@ int socketConnnection (int nPort) {
 		return ERROR;
 	}
 
-	//Escuchamos peticiones (1 a la vez)
+	//Escuchamos peticiones (2 a la vez)
 	listen (gnSocketFD, 2);
 
 	writeLog ("LSBox_svr.log.html", "socketServer.c","Socket Connectat","Socket esperant entrades de clients", 0);

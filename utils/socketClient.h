@@ -10,7 +10,6 @@
 #define __SOCKETCLI_H__
 
 // Includes propios
-#define _GNU_SOURCE
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -37,9 +36,10 @@
 
 
 //Funciones
+int socketConnection (int nPort);
 int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedList);
 int checkTrama (char sTrama[MAX_TRAMA],char sUser[7], int nType);
 void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama);
-int rebPort (int nFdIn) ;
+int rebPort (int nFdIn);
 
 #endif

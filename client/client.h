@@ -15,6 +15,7 @@
 #include <stdio.h>			// sprintf
 #include <stdlib.h>
 #include <string.h>			// strlen, bzero
+#include <string.h>
 #include <dirent.h>			// opendir, readdir...
 #include <sys/stat.h>		//stat, obtenir data modificacio i nSize
 #include <sys/types.h>
@@ -25,10 +26,10 @@
 
 
 // Includes propios
+#include "../utils/socketClient.h"
 #include "../utils/sincroClient.h"
 #include "../utils/initInCommon.h"
 #include "../utils/log.h"
-#include "../utils/socketClient.h"
 #include "../utils/facadeLL.h"
 #include "../utils/md5.h"
 #include "../utils/transfer.h"

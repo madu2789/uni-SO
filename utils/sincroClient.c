@@ -92,7 +92,6 @@ void getTramesG (int nFdIn, char sLoginOrigen[7], struct node *LinkedListToTx) {
 		  	ParserNameTx(sDataTrama, sName);
 
 				printf("sTrama G: %s\n", sTrama);
-		  	printf("sName: %s\n", sName);
 
 		  	//canviem el estat de la LlinkedListToTx per enviar-li al servidor
 		  	setEstatByName (sName, 4, LinkedListToTx);

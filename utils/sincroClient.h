@@ -41,5 +41,6 @@
 int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx);
 void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList);
 void pleaseSincro (int nFdIn, char sLoginOrigen[7]);
+void getTramesG (int nFdIn, char sLoginOrigen[7], struct node *LinkedListToTx);
 
 #endif

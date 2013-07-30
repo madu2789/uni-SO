@@ -57,13 +57,23 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 
 
 
-void * ThreadTx (void *unused){
+void * ThreadTx (void *arg){
 	
-	printf("fill!\n");
+	int nSocketFD = 0;
+	char sTrama[MAX_TRAMA];
+	memset (sTrama, '\0', MAX_TRAMA);
 
-	int nSocketFD = socketConnection(5456);
+	int *nPortTx = (int *) arg;
+	//Creem el socket
+	nSocketFD = socketConnection (nPortTx);
 
-	printf("nSocketFD: %d\n", nSocketFD);
+	read (nSocketFD, sTrama, MAX_TRAMA);
+	printf("strama rebuda: %s\n", sTrama);
+
+	strcpy (sTrama, "hola server fill!!!!!!!!");
+	sTrama[strlen(sTrama)] = '\0';
+
+	write (nSocketFD, sTrama, MAX_TRAMA);
 
 	//Primer rebem info, despres enviem
 	//receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
@@ -150,7 +160,7 @@ int main () {
 			nPortTx = rebPort(nSocketFD);
 
 			//creem el Thread
-			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, NULL);
+			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 			if (nEstatThread != 0) 	printf("fail al fill!\n");
 
 			bTransfer = 0;

@@ -6,22 +6,54 @@
 
 
 
-void * ThreadTx (void *unused){
+void * ThreadTx (void *arg){
 	
-	printf("fill!\n");
+	int nSocketFD = 0;
+	char sTrama[MAX_TRAMA];
+	memset (sTrama, '\0', MAX_TRAMA);
+
+	int nSocketCliente = 0 ;
+	char sFrase[MAX];
+	struct sockaddr_in stDireccionCliente;
+
+	int *nPortTx = (int *) arg;
 
 	//Creem el socket
-	int nSocketFD = socketConnnection(5456);	
+	nSocketFD = socketConnnection(nPortTx);	
+
+	while (nSocketCliente == 0) {
+
+		printf("esperant client...\n");
+
+		//Obtenim un socket al client que es conecti
+		socklen_t c_len = sizeof (stDireccionCliente);
+		nSocketCliente = accept (nSocketFD, (void *) &stDireccionCliente, &c_len);
+		if (nSocketCliente < 0){
+			writeLog ("LSBox_svr.log.html","socketServer.c","[Error] Connexio","En acceptar la peticio del cliente!", 0);
+			sprintf (sFrase,"Error al aceptar la peticion del cliente!\n");
+			write (1,sFrase,strlen (sFrase));
+			//Tanquem socket
+			close (nSocketFD);
+			return ERROR;
+		}
+
+		sprintf (sFrase,"\nClient conectat\n");
+		write (1, sFrase, strlen (sFrase));
+
+		strcpy (sTrama, "hola client fill!!!!!!!!");
+	  sTrama[strlen(sTrama)] = '\0';
+
+		write (nSocketCliente, sTrama, MAX_TRAMA);
+
+		read (nSocketCliente, sTrama, MAX_TRAMA);
+	  printf("strama rebuda: %s\n", sTrama);
 	
+ 	 //Transmissio de dades
+   //transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
+	 //receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
-	//Transmissio de dades
-	//transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
-	//receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	}
 
-	printf("nSocketFD: %d\n", nSocketFD);
-
-
-	
 	return NULL;
 
 }
@@ -96,9 +128,9 @@ int main () {
 			
 			//Enviar el Port al clientsLoginUser	
 			enviaPort(nSocketFD, nPort+2, sLoginUser, "LSBox  ");
-
+			
 			//Crear Thread
-			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, NULL);
+			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPort+2);
 			if (nEstatThread != 0) printf("fail al fill!\n");
 
 		} else {
