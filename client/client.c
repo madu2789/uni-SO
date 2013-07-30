@@ -4,7 +4,12 @@
  */
 #include "client.h"
 
+	char sDirPath[MAX];
+	char sLogin[8];
+	char sMyLog[20];
 
+	struct node *LinkedList;
+	struct node *LinkedListToTx;
 
 /**
  * Demana al usuari sLogin i sPswd
@@ -63,6 +68,7 @@ void * ThreadTx (void *arg){
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
 
+	strcpy(sDirPath, "/home/madu/Repo_SO/trunk/client/root/");
 	int *nPortTx = (int *) arg;
 	//Creem el socket
 	nSocketFD = socketConnection (nPortTx);
@@ -76,8 +82,8 @@ void * ThreadTx (void *arg){
 	write (nSocketFD, sTrama, MAX_TRAMA);
 
 	//Primer rebem info, despres enviem
-	//receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
-	//transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
+	receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
 	
 	return NULL;
 
@@ -95,14 +101,9 @@ int main () {
 	int bSincro = 0, bTransfer = 0;
 	int nSocketFD = 0;
 
-	char sDirPath[MAX];
 	char sServer[11];
-	char sLogin[8];
 	char sPswd[32];
-	char sMyLog[20];
-
-	struct node *LinkedList;
-	struct node *LinkedListToTx;
+	char sDirPath[MAX];
 
 	pthread_t thread_id;
 	int nEstatThread;

@@ -4,6 +4,13 @@
  */
 #include "servidor.h"
 
+//VARS GLOBALS (PROVISIONALS)
+	struct node *LinkedList;
+	struct node *LinkedListToTx;
+	char sDirPath[MAX];
+	char sLoginUser[8];
+	char sMyLog[20];
+
 
 
 void * ThreadTx (void *arg){
@@ -34,7 +41,7 @@ void * ThreadTx (void *arg){
 			write (1,sFrase,strlen (sFrase));
 			//Tanquem socket
 			close (nSocketFD);
-			return ERROR;
+			return NULL;
 		}
 
 		sprintf (sFrase,"\nClient conectat\n");
@@ -49,13 +56,14 @@ void * ThreadTx (void *arg){
 	  printf("strama rebuda: %s\n", sTrama);
 	
  	 //Transmissio de dades
-   //transferContent (nSocketFD, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
-	 //receiveContent(nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
-
+   transferContent (nSocketCliente, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
+	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	 
+	 //Tancar socket
+	 close (nSocketFD);
+	 printf("Mort thread!\n");
 	}
-
 	return NULL;
-
 }
 
 
@@ -71,12 +79,6 @@ int main () {
 	int bSincroPetition = 0;
 
 	char sServer[11];
-	char sDirPath[MAX];
-	char sLoginUser[8];
-	char sMyLog[20];
-
-	struct node *LinkedList;
-	struct node *LinkedListToTx;
 
 	pthread_t thread_id;
 	int nEstatThread;
