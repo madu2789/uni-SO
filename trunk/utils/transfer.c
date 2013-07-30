@@ -296,8 +296,6 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	//Buidem lo que ja hem transmes
 	buidaLL (LinkedListToTx);
 
-	printf("hem acabat de transmetre en les dues direccions! :)\n");
-
 	return 0;
 }
 
