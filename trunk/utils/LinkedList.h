@@ -36,7 +36,7 @@ struct node {
 
 //Funciones
 
-void delnode (char sName[30], struct node *LinkedList);
+int delnode (char sName[30], struct node *LinkedList);
 void append (char sName[30], char sTipus[30], char sDate[64], int nSize, int nEstat, struct node *LinkedList);
 int display (struct node *r);
 int showNode (char sName[30], char sDate[64], int nLocation, struct node *LinkedList) ;

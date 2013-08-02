@@ -147,7 +147,6 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 		for (j = 0; j < nTotalFiles; j++){
 
 			//printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
-
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
 				//printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
@@ -156,12 +155,12 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 		if (bToRemove == 1) {
 			delnode(sNameToRemove, LinkedList);
-			//printf("sNameToRemove a la LL : %s\n", sNameToRemove);
+			printf("sNameToRemove a la LL : %s\n", sNameToRemove);
 			display(LinkedList);
 			
+			//Codi nomes pel servidor, no borrem de la LL, canviem el nEstat per saber qui TX o RX
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
 				printf("CLI_RM: %s", sNameToRemove);
-				//addToLLTx (sNameToRemove, sDateLL, 0, 3, LinkedListToTx);
 				setEstatByName (sNameToRemove, 3, LinkedListToTx);
 			}
 		}

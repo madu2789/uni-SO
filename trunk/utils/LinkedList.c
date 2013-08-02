@@ -3,28 +3,36 @@
 
 
 /*THIS FUNCTION DELETES A NODE */
-void delnode (char sName[30], struct node *LinkedList) {
-  struct node *temp, *m;
-  struct node *inici;
+int delnode (char sName[30], struct node *LinkedList) {
+  struct node *temp, *anterior;
+  int i = 0;
+
+  temp = (struct node *)malloc(sizeof(struct node));
+  anterior = (struct node *)malloc(sizeof(struct node));
+
 	temp = LinkedList;
+  anterior = LinkedList;
 
   while (temp != NULL) {
     if (strcmp(temp->sName, sName) == 0) {
-      if (temp == LinkedList) {
-        printf(" borrant: %s\n", sName);
+      printf("borrant: %s\n", temp->sName);
+      if ( i == 0 ) {
+        printf("primer cabron!\n");
         LinkedList = temp->next;
-        free(temp);
-        return;
       } else {
-        m->next = temp->next;
-        //free(temp);
-        return;
-      }
+        anterior->next = temp->next;
+        temp->next = NULL;
+        temp = NULL;
+        free(temp);
+      }    
+      return 1;
     } else {
-      m = temp;
+      anterior = temp;
       temp = temp->next;
     }
+    i++;
 	}
+  return 1;
 }
 
 /*THIS FUNCTION Buida La LL */

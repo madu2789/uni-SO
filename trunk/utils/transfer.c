@@ -279,7 +279,6 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 				write (nFdSocket, sTrama, MAX_TRAMA);
 				memset (sInfo, '\0', 104);
 				bFi = read (nFdFitxer, sInfo, 100);
-				printf("bFi: %d\n", bFi);
 				memset(sTrama, '\0', MAX_TRAMA);
 				creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 2);
 			}
@@ -353,7 +352,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 	
 				while ( bCopiant == 0) {
 					write (nFileFd, sDataTrama, strlen(sDataTrama));
-					printf("escribim al fitxer: %s\n", sDataTrama);
+
 					memset(sDataTrama, '\0', 101);
 					memset(sTrama, '\0', MAX_TRAMA);
 					read (nFdIn, sTrama, MAX_TRAMA);
