@@ -88,7 +88,7 @@ void creaTramaTx (char sTrama[MAX_TRAMA], char sUser[7], char sName[30], char sD
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTramaTx (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sDataTrama[100]) {
+int checkTramaTx (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sDataTrama[101]) {
 
 	int bTramaOk = 0;
 	//Camps de la trama:
@@ -100,7 +100,7 @@ int checkTramaTx (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti
 	memset(sLoginOrigen, '\0', 8);
 	memset(sLoginDTrama, '\0', 8);
 	memset(sPwd, '\0', 33);
-	memset(sDataTrama, '\0', 100);
+	memset(sDataTrama, '\0', 101);
 
 	//Parseig de la trama
 	memcpy( sLoginOrigen, &sTrama[0], 7 );
@@ -111,10 +111,10 @@ int checkTramaTx (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti
 
   sTypeTrama = sTrama[14];
 
-  strncpy(sDataTrama, sTrama+15, 100);
+  memcpy( sDataTrama, &sTrama[15], 100);
   sDataTrama[strlen(sDataTrama)] = '\0';
 
-  memcpy( sPwd, &sDataTrama[8], 32 );
+  memcpy( sPwd, &sDataTrama[8], 32);
 	sPwd[32] = '\0';
 
 	bTramaOk = -2;
@@ -271,6 +271,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 			nFdFitxer = openFile (sDirPath, sName);
 
 			//Creo la 1a trama 'M' amb info basica del fitxer
+			memset(sTrama, '\0', MAX_TRAMA);
 			creaTramaTx (sTrama, sUser, sName, sData, nSize, 1);
 			
 			while ( bFi != 0 ) {
@@ -278,10 +279,13 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 				write (nFdSocket, sTrama, MAX_TRAMA);
 				memset (sInfo, '\0', 104);
 				bFi = read (nFdFitxer, sInfo, 100);
+				printf("bFi: %d\n", bFi);
+				memset(sTrama, '\0', MAX_TRAMA);
 				creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 2);
 			}
 		} else if (nEstat == 3) { //Si estat == CLI_RM
 			//Creo la 1a trama 'R' amb info basica del fitxer
+			memset(sTrama, '\0', MAX_TRAMA);
 			creaTramaTx (sTrama, sUser, sName, sData, nSize, 4);
 			printf ("Trama enviada: %s\n", sTrama);
 			write (nFdSocket, sTrama, MAX_TRAMA);
@@ -289,6 +293,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	}
 	
 	//creem i enviem trama 'X'
+	memset(sTrama, '\0', MAX_TRAMA);
 	creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 3);
 	write (nFdSocket, sTrama, MAX_TRAMA);
 	printf ("Trama enviada: %s\n", sTrama);
@@ -311,7 +316,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 	char sName[24];
 	char sData[30];
 	char sTrama[MAX_TRAMA];
-	char sLoginOrigen[8]; char sLoginDesti[8]; char sDataTrama[100];
+	char sLoginOrigen[8]; char sLoginDesti[8]; char sDataTrama[101];
 	char sRealDirPath[MAX+30];
 
 
@@ -339,16 +344,22 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 
 				bCopiant = 0;
 				memset(sTrama, '\0', MAX_TRAMA);
+				memset(sDataTrama, '\0', 101);
+
 				read (nFdIn, sTrama, MAX_TRAMA);
 				printf ("trama rebuda: %s\n", sTrama);
 				bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
+				sDataTrama[strlen(sDataTrama)] = '\0';
 	
 				while ( bCopiant == 0) {
 					write (nFileFd, sDataTrama, strlen(sDataTrama));
+					printf("escribim al fitxer: %s\n", sDataTrama);
+					memset(sDataTrama, '\0', 101);
 					memset(sTrama, '\0', MAX_TRAMA);
 					read (nFdIn, sTrama, MAX_TRAMA);
 					printf ("trama rebuda: %s\n", sTrama);
 					bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
+					sDataTrama[strlen(sDataTrama)] = '\0';
 				}
 
 				nTipusTrama = bCopiant;
@@ -365,6 +376,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 			break;
 			case 2: //trama	'R' remove
 				memset(sName, '\0', 24);
+				memset(sDataTrama, '\0', 101);
 			
 				ParserNameTx(sDataTrama, sName);
 				removeFile (sDirPath, sName);
