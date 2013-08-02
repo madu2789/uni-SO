@@ -128,10 +128,10 @@ int main () {
 			//Agafa la info procedent de Client
 			getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
 			
-			//Enviar el Port al clientsLoginUser	
+			//Enviar el Port al client	
 			enviaPort(nSocketFD, nPort+2, sLoginUser, "LSBox  ");
 			
-			//Crear Thread
+			//Crear Thread enviament
 			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPort+2);
 			if (nEstatThread != 0) printf("fail al fill!\n");
 

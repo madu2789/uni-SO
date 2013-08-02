@@ -86,7 +86,6 @@ void * ThreadTx (void *arg){
 	transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
 	
 	return NULL;
-
 }
 
 
@@ -160,7 +159,7 @@ int main () {
 			//rebem el port on conectarem el thread
 			nPortTx = rebPort(nSocketFD);
 
-			//creem el Thread
+			//creem el Thread enviament
 			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 			if (nEstatThread != 0) 	printf("fail al fill!\n");
 
@@ -171,4 +170,3 @@ int main () {
 
 	return 0;
 }
-

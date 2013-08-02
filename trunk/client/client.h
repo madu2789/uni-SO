@@ -15,7 +15,6 @@
 #include <stdio.h>			// sprintf
 #include <stdlib.h>
 #include <string.h>			// strlen, bzero
-#include <string.h>
 #include <dirent.h>			// opendir, readdir...
 #include <sys/stat.h>		//stat, obtenir data modificacio i nSize
 #include <sys/types.h>
