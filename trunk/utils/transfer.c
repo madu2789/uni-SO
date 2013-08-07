@@ -322,6 +322,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 	memset(sTrama, '\0', MAX_TRAMA);
 	read (nFdIn, sTrama, MAX_TRAMA);
 	printf ("trama rebuda: %s\n", sTrama);
+
 	nTipusTrama = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 
 	while ( nTipusTrama != -1 )	{

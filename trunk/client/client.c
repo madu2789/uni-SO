@@ -68,18 +68,12 @@ void * ThreadTx (void *arg){
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
 
-	strcpy(sDirPath, "/home/madu/Repo_SO/trunk/client/root/");
+	//strcpy(sDirPath, "/home/madu/Repo_SO/trunk/client/root/");
+	strcpy(sDirPath, "/users/home/alumnes/IS/is19445/SO/trunk/servidor/root/");
+	
 	int *nPortTx = (int *) arg;
 	//Creem el socket
 	nSocketFD = socketConnection (nPortTx);
-
-	read (nSocketFD, sTrama, MAX_TRAMA);
-	printf("strama rebuda: %s\n", sTrama);
-
-	strcpy (sTrama, "hola server fill!!!!!!!!");
-	sTrama[strlen(sTrama)] = '\0';
-
-	write (nSocketFD, sTrama, MAX_TRAMA);
 
 	//Primer rebem info, despres enviem
 	receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
@@ -146,6 +140,7 @@ int main () {
 	while (1) {
 		bSincro = 0;
 		display (LinkedList);
+
 		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 		if ( bSincro ) {
@@ -165,6 +160,7 @@ int main () {
 
 			bTransfer = 0;
 		}	
+	
 		sleep(5);
 	}
 

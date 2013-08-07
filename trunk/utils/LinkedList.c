@@ -241,6 +241,9 @@ int count (struct node *LinkedList) {
     printf("NO ELEMENT IN THE LIST :\n");
     return;
   }
+  if (strcmp(LinkedList->sName, "fantasma") == 0) {
+    return 0;
+  }
   while (LinkedList != NULL) {
     LinkedList = LinkedList->next;
     nElements++;

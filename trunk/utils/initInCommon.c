@@ -78,8 +78,6 @@ int ReadDir (int bIsNull, char sMyLog[20]) {
 
 	if (bIsNull == 0) {
 		writeLog (sMyLog, "client.c","[Error] scandir","Path incorrecte",0);
-		exit(ERROR);
-		return 0;
 	} else {
 		writeLog (sMyLog, "client.c","scandir","Em escanejat el directori correctament",1);
 	}
@@ -97,6 +95,9 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	struct dirent **arxius;
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+	
+	if (nTotalFiles == 0) return 0;
+
 	if (arxius != NULL) {
 		bArxiusOk = 1;
 		ReadDir(bArxiusOk, sMyLog);
@@ -136,9 +137,11 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	char sRealDate[30];
 
 	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
+
+	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
+
 	if (arxius != NULL) bArxiusOk = 1;
 	ReadDir(bArxiusOk, sMyLog);
-	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 
 	i = nTotalFiles;
 	nLLTotalFiles = count (LinkedList);
@@ -146,6 +149,13 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
 
 	if (nTotalFiles == nLLTotalFiles) {
+		
+		//cas específic
+		if (nTotalFiles == 0 && nLLTotalFiles == 0) {
+			free (arxius);
+			return 0;
+		}
+
 		//update o res
 		while (i--) {
 

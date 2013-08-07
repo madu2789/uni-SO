@@ -46,14 +46,6 @@ void * ThreadTx (void *arg){
 
 		sprintf (sFrase,"\nClient conectat\n");
 		write (1, sFrase, strlen (sFrase));
-
-		strcpy (sTrama, "hola client fill!!!!!!!!");
-	  sTrama[strlen(sTrama)] = '\0';
-
-		write (nSocketCliente, sTrama, MAX_TRAMA);
-
-		read (nSocketCliente, sTrama, MAX_TRAMA);
-	  printf("strama rebuda: %s\n", sTrama);
 	
  	 //Transmissio de dades
    transferContent (nSocketCliente, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
