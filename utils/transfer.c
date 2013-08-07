@@ -212,6 +212,8 @@ int createFile (char sDirPath[MAX], char sName[30]) {
 	strcat (sRealDirPath, sName);
 
 	int nFdIn = open (sRealDirPath, O_CREAT, 0666);
+	printf("sRealDirPath: %s\n", sRealDirPath);
+	printf("creant fitxer: %d\n", nFdIn);
 	close (nFdIn);
 	return nFdIn;
 }
@@ -333,9 +335,14 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				memset(sName, '\0', 24);
 				nSize = ParserBuclesTx (sDataTrama, sName);
 
+				printf("aqui estem sName: %s!!\n", sName);
+				printf("sDirPath: %s\n", sDirPath);
 				// Intenten Obrim el fitxer per llegir sino, el creem
+				nFileFd = 0;
 				nFileFd = openFile (sDirPath, sName);
+				printf("nFileFd: %d\n", nFileFd);
 				if ( !nFileFd ) {
+					printf("aqui nooooo\n");
 					nFileFd = createFile(sDirPath, sName);
 					//l'ageixo ala LL perque no noti canvi i demani sincro!
 					addToLL(sDirPath, sName, 1, LinkedList, LinkedListToTx, sMyLog);

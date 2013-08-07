@@ -69,7 +69,7 @@ void * ThreadTx (void *arg){
 	memset (sTrama, '\0', MAX_TRAMA);
 
 	//strcpy(sDirPath, "/home/madu/Repo_SO/trunk/client/root/");
-	strcpy(sDirPath, "/users/home/alumnes/IS/is19445/SO/trunk/servidor/root/");
+	strcpy(sDirPath, "/users/home/alumnes/IS/is19445/SO/trunk/client/root/");
 	
 	int *nPortTx = (int *) arg;
 	//Creem el socket
@@ -79,6 +79,9 @@ void * ThreadTx (void *arg){
 	receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 	transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
 	
+	 //Tancar socket
+	 close (nSocketFD);
+	 printf("Mort thread!\n");
 	return NULL;
 }
 
