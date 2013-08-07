@@ -65,7 +65,7 @@ void * ThreadTx (void *arg){
  */
 int main () {
 
-	int nPort = 0;
+	int nPort = 0, nPortTx = 0;
 	int nSocketFD = 0;
 	int bSincro = 0;
 	int bSincroPetition = 0;
@@ -121,10 +121,11 @@ int main () {
 			getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
 			
 			//Enviar el Port al client	
-			enviaPort(nSocketFD, nPort+2, sLoginUser, "LSBox  ");
+			nPortTx = nPort + rand() % 400;
+			enviaPort(nSocketFD, nPortTx, sLoginUser, "LSBox  ");
 			
 			//Crear Thread enviament
-			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPort+2);
+			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 			if (nEstatThread != 0) printf("fail al fill!\n");
 
 		} else {
