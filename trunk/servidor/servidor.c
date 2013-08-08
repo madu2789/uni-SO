@@ -11,13 +11,14 @@
 	char sLoginUser[8];
 	char sMyLog[20];
 
+	char sLoginDesti[8];
+	char sLoginOrigen[8];
+
 
 	int nSocketFD = 0;
 	int nPort = 0;
 
 	int bSincro = 0;
-
-
 
 
 
@@ -78,12 +79,14 @@ void * ServerDedicat (void *arg){
 	pthread_t thread_id;
 	int nEstatThread;
 
-	printf("Hola thread dedicat!:\n");
+	printf("Hola thread dedicat!: %d\n", nSocketFD);
 
 	while (1) {
 
 			bSincroPetition = 0;
 			bSincroPetition = receiveClientSincro (nSocketFD);
+
+			printf("aqui arribo??\n");
 
 			if ( bSincro || bSincroPetition) {
 				//Sincronitzacio
@@ -103,7 +106,7 @@ void * ServerDedicat (void *arg){
 				write (nSocketFD, "init", 4);
 			}
 
-			sleep (1);
+			sleep (5);
 		}
 
 
@@ -117,10 +120,14 @@ void * ServerDedicat (void *arg){
  */
 int main () {
 
+	int nSocketCliente = 0 ;
+	struct sockaddr_in stDireccionCliente;
 	char sServer[11];
 
 	pthread_t thread_id;
-	int nEstatThread;
+	int nEstatThread = 0;
+
+	int gnSocketFD = 0;
 
 	//INITS
 	//Demanem memoria per la LL
@@ -147,7 +154,8 @@ int main () {
 	nPort = getConfigInfo (sServer, sDirPath);
 
 	//Socket peticio connexio
-	nSocketFD = ServerConection (nPort, sLoginUser);
+	gnSocketFD = socketConnnection(nPort);
+	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginUser);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
@@ -156,12 +164,24 @@ int main () {
 	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, NULL);
 	if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 
-	//Check al directori si hi ha hagut algun canvi cada 2''
+	socklen_t c_len = sizeof (stDireccionCliente);
+	
 	while (1) {
+
+		//Detecta si al directori si hi ha hagut algun canvi
 		bSincro = 0;
 		display (LinkedList);
 		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
-		sleep (5);
+
+		//Detecta si algun client nou es vol connectar
+		nSocketCliente = 0;
+		nSocketCliente = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
+		if (nSocketCliente > 0){
+			printf("client nou!!!!\n");
+	  	autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+		}
+
+		sleep (4);
 	}
 
 	return 0;
