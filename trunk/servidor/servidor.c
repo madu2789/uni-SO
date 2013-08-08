@@ -19,6 +19,8 @@ void * ThreadTx (void *arg){
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
 
+	printf("Hola thread: %s\n", sDirPath);
+
 	int nSocketCliente = 0 ;
 	char sFrase[MAX];
 	struct sockaddr_in stDireccionCliente;
