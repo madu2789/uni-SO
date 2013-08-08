@@ -19,7 +19,6 @@ int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
 		write(2,"[Error] Error al obrir el fitxer 'config.dat'.\n",47);
 		exit(ERROR);
 	} else {
-		bzero(sDirPath, MAX);
 		read(nFdIn, sServer, 12);
 		read(nFdIn, sPort, 5);
 		read(nFdIn, sDirPath, MAX-1);

@@ -4,12 +4,13 @@
  */
 #include "client.h"
 
-	char sDirPath[MAX];
-	char sLogin[8];
-	char sMyLog[20];
-
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
+	char sLogin[8];
+	char sMyLog[20];
+	char sDirPath[MAX];
+
+
 
 /**
  * Demana al usuari sLogin i sPswd
@@ -67,11 +68,9 @@ void * ThreadTx (void *arg){
 	int nSocketFD = 0;
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
-
-	//strcpy(sDirPath, "/home/madu/Repo_SO/trunk/client/root/");
-	strcpy(sDirPath, "/users/home/alumnes/IS/is19445/SO/trunk/client/root/");
 	
 	int *nPortTx = (int *) arg;
+
 	//Creem el socket
 	nSocketFD = socketConnection (nPortTx);
 
@@ -79,9 +78,9 @@ void * ThreadTx (void *arg){
 	receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 	transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
 	
-	 //Tancar socket
-	 close (nSocketFD);
-	 printf("Mort thread!\n");
+	//Tancar socket
+	close (nSocketFD);
+	printf("Mort thread!\n");
 	return NULL;
 }
 
@@ -99,10 +98,9 @@ int main () {
 
 	char sServer[11];
 	char sPswd[32];
-	char sDirPath[MAX];
 
 	pthread_t thread_id;
-	int nEstatThread;
+	int nEstatThread = 0;
 
 	//INITS
 	//Demanem memoria per la LL
@@ -122,16 +120,16 @@ int main () {
 	memset(sPswd, '\0', 32);
 	memset(sMyLog, '\0', 20);
 
-	//Llegir "config.dat"
-	nPort = getConfigInfo(sServer, sDirPath);
-
-	//Guardem -> sLogin, sPswd
-	loginUser (sLogin, sPswd);
-
 	//Crear/Obrir fitxer de Log
 	strcpy (sMyLog, "LSBox_cli.log.html");
 	sMyLog[strlen(sMyLog)] = '\0';
 	createLog (sMyLog);
+
+	//Guardem -> sLogin, sPswd
+	loginUser (sLogin, sPswd);
+
+	//Llegir "config.dat"
+	nPort = getConfigInfo(sServer, sDirPath);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
