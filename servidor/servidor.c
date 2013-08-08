@@ -12,6 +12,14 @@
 	char sMyLog[20];
 
 
+	int nSocketFD = 0;
+	int nPort = 0;
+
+	int bSincro = 0;
+
+
+
+
 
 void * ThreadTx (void *arg){
 	
@@ -55,22 +63,59 @@ void * ThreadTx (void *arg){
 	 
 	 //Tancar socket
 	 close (nSocketFD);
-	 printf("Mort thread!\n");
+	 printf("Mort thread TX!\n");
 	}
 	return NULL;
 }
 
 
 
+
+void * ServerDedicat (void *arg){
+	
+	int nPortTx = 0;
+	int bSincroPetition = 0;
+	pthread_t thread_id;
+	int nEstatThread;
+
+	printf("Hola thread dedicat!:\n");
+
+	while (1) {
+
+			bSincroPetition = 0;
+			bSincroPetition = receiveClientSincro (nSocketFD);
+
+			if ( bSincro || bSincroPetition) {
+				//Sincronitzacio
+				startSincro (nSocketFD, sLoginUser);
+				//Agafa la info procedent de Client
+				getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
+				
+				//Enviar el Port al client	
+				nPortTx = nPort + rand() % 400;
+				enviaPort(nSocketFD, nPortTx, sLoginUser, "LSBox  ");
+				
+				//Crear Thread enviament
+				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
+				if (nEstatThread != 0) printf("fail al fill!\n");
+
+			} else {
+				write (nSocketFD, "init", 4);
+			}
+
+			sleep (1);
+		}
+
+
+
+	return NULL;
+}
+
+
 /**
  * main general
  */
 int main () {
-
-	int nPort = 0, nPortTx = 0;
-	int nSocketFD = 0;
-	int bSincro = 0;
-	int bSincroPetition = 0;
 
 	char sServer[11];
 
@@ -101,40 +146,23 @@ int main () {
 	//Llegir "config.dat"
 	nPort = getConfigInfo (sServer, sDirPath);
 
-	//Socket peticio connexio	//que aqui em retoni tambe el login del client per posarlo a la sincro
+	//Socket peticio connexio
 	nSocketFD = ServerConection (nPort, sLoginUser);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
+	//Crear Thread enviament
+	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, NULL);
+	if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		bSincro = 0;
-		bSincroPetition = 0;
-
 		display (LinkedList);
 		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
-		bSincroPetition = receiveClientSincro (nSocketFD);
-
-		if ( bSincro || bSincroPetition) {
-			//Sincronitzacio
-			startSincro (nSocketFD, sLoginUser);
-			//Agafa la info procedent de Client
-			getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
-			
-			//Enviar el Port al client	
-			nPortTx = nPort + rand() % 400;
-			enviaPort(nSocketFD, nPortTx, sLoginUser, "LSBox  ");
-			
-			//Crear Thread enviament
-			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
-			if (nEstatThread != 0) printf("fail al fill!\n");
-
-		} else {
-			write (nSocketFD, "init", 4);
-		}
-
 		sleep (5);
 	}
+
 	return 0;
 }
