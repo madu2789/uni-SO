@@ -115,6 +115,24 @@ void * ServerDedicat (void *arg){
 }
 
 
+
+
+void RSIInt (void){
+	char sAux[MAX];
+	
+	sprintf (sAux,"Tancant LSBox server!\n");
+	write (1,sAux,strlen (sAux));
+
+	exit(0);
+	//TODO
+	//Cerramos la memoria compartida
+	// shmdt (gpnPIDS);
+	// shmctl (gnMemoria, IPC_RMID, NULL);
+}
+
+
+
+
 /**
  * main general
  */
@@ -139,6 +157,9 @@ int main () {
 	LinkedListToTx = (struct node *) malloc (sizeof(struct node));
 	strcpy(LinkedListToTx->sName, "fantasma");
 	LinkedListToTx->next = NULL;
+
+	//Assignem la RSI al signal de Ctrl+C
+	signal (SIGINT, (void*) RSIInt);
 
 	memset(sServer, '\0', 11);
 	memset(sDirPath, '\0', MAX);
