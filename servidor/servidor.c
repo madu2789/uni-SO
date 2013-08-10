@@ -14,10 +14,7 @@
 	char sLoginDesti[8];
 	char sLoginOrigen[8];
 
-
-	int nSocketFD = 0;
 	int nPort = 0;
-
 	int bSincro = 0;
 
 
@@ -27,13 +24,9 @@ void * ThreadTx (void *arg){
 	int nSocketFD = 0;
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
-
-	printf("Hola thread: %s\n", sDirPath);
-
 	int nSocketCliente = 0 ;
 	char sFrase[MAX];
 	struct sockaddr_in stDireccionCliente;
-
 	int *nPortTx = (int *) arg;
 
 	//Creem el socket
@@ -79,31 +72,33 @@ void * ServerDedicat (void *arg){
 	pthread_t thread_id;
 	int nEstatThread;
 
-	printf("Hola thread dedicat!: %d\n", nSocketFD);
+	int *nFdSocketClient = (int *) arg;
+
+	printf("Hola thread dedicat!: socket: %d\n", nFdSocketClient);
 
 	while (1) {
 
 			bSincroPetition = 0;
-			bSincroPetition = receiveClientSincro (nSocketFD);
+			bSincroPetition = receiveClientSincro (nFdSocketClient);
 
 			printf("aqui arribo??\n");
 
 			if ( bSincro || bSincroPetition) {
 				//Sincronitzacio
-				startSincro (nSocketFD, sLoginUser);
+				startSincro (nFdSocketClient, sLoginUser);
 				//Agafa la info procedent de Client
-				getSincroInfo (nSocketFD, sLoginUser, LinkedList, LinkedListToTx);
+				getSincroInfo (nFdSocketClient, sLoginUser, LinkedList, LinkedListToTx);
 				
 				//Enviar el Port al client	
 				nPortTx = nPort + rand() % 400;
-				enviaPort(nSocketFD, nPortTx, sLoginUser, "LSBox  ");
+				enviaPort(nFdSocketClient, nPortTx, sLoginUser, "LSBox  ");
 				
 				//Crear Thread enviament
 				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 				if (nEstatThread != 0) printf("fail al fill!\n");
 
 			} else {
-				write (nSocketFD, "init", 4);
+				write (nFdSocketClient, "init", 4);
 			}
 
 			sleep (5);
@@ -144,7 +139,7 @@ int main () {
 
 	pthread_t thread_id;
 	int nEstatThread = 0;
-
+	int nSocketFD = 0;
 	int gnSocketFD = 0;
 
 	//INITS
@@ -182,7 +177,8 @@ int main () {
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 	//Crear Thread enviament
-	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, NULL);
+	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketFD);
+	printf("id thread: %d\n", thread_id);
 	if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 
 	socklen_t c_len = sizeof (stDireccionCliente);
@@ -200,6 +196,10 @@ int main () {
 		if (nSocketCliente > 0){
 			printf("client nou!!!!\n");
 	  	autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+
+	  	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketCliente);
+	  	printf("id thread: %d\n", thread_id);
+			if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 		}
 
 		sleep (4);
