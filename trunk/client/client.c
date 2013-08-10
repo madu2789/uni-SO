@@ -163,6 +163,8 @@ int main () {
 
 		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
+		printf("em checked\n");
+
 		if ( bSincro ) {
 			pleaseSincro (nSocketFD, sLogin);
 		} else {
@@ -170,6 +172,7 @@ int main () {
 		}
 
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
+
 		if ( bTransfer ) {
 			//rebem el port on conectarem el thread
 			nPortTx = rebPort(nSocketFD);
