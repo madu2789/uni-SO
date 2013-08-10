@@ -44,7 +44,9 @@
 
 //Funciones
 void loginUser (char sLogin[MAX], char sPswd[MAX]);
-void conversorTipus (char sTipus[30], int nToConvert);
+void * ThreadTx (void *arg);
+void RSIInt (void);
+int main ();
 
 
 #endif
