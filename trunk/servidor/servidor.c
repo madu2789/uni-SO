@@ -8,9 +8,10 @@
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
 	char sDirPath[MAX];
-	char sLoginUser[8];
 	char sMyLog[20];
 
+//lio amb Logins de la PARRA
+	char sLoginUser[8];
 	char sLoginDesti[8];
 	char sLoginOrigen[8];
 
@@ -52,7 +53,7 @@ void * ThreadTx (void *arg){
 		write (1, sFrase, strlen (sFrase));
 	
  	 //Transmissio de dades
-   transferContent (nSocketCliente, sDirPath, sLoginUser, LinkedListToTx, sMyLog);
+   transferContent (nSocketCliente, sDirPath, sLoginDesti, LinkedListToTx, sMyLog);
 	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 	 
 	 //Tancar socket
@@ -71,10 +72,10 @@ void * ServerDedicat (void *arg){
 	int bSincroPetition = 0;
 	pthread_t thread_id;
 	int nEstatThread;
-
 	int *nFdSocketClient = (int *) arg;
 
 	printf("Hola thread dedicat!: socket: %d\n", nFdSocketClient);
+	printf("sLogin del meu client: %s\n", sLoginDesti);
 
 	while (1) {
 
@@ -85,13 +86,13 @@ void * ServerDedicat (void *arg){
 
 			if ( bSincro || bSincroPetition) {
 				//Sincronitzacio
-				startSincro (nFdSocketClient, sLoginUser);
+				startSincro (nFdSocketClient, sLoginDesti);
 				//Agafa la info procedent de Client
-				getSincroInfo (nFdSocketClient, sLoginUser, LinkedList, LinkedListToTx);
+				getSincroInfo (nFdSocketClient, sLoginDesti, LinkedList, LinkedListToTx);
 				
 				//Enviar el Port al client	
 				nPortTx = nPort + rand() % 400;
-				enviaPort(nFdSocketClient, nPortTx, sLoginUser, "LSBox  ");
+				enviaPort (nFdSocketClient, nPortTx, sLoginDesti, "LSBox  ");
 				
 				//Crear Thread enviament
 				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
@@ -103,7 +104,6 @@ void * ServerDedicat (void *arg){
 
 			sleep (5);
 		}
-
 
 
 	return NULL;
@@ -170,8 +170,9 @@ int main () {
 	nPort = getConfigInfo (sServer, sDirPath);
 
 	//Socket peticio connexio
-	gnSocketFD = socketConnnection(nPort);
-	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginUser);
+	gnSocketFD = socketConnnection (nPort);
+	//nSocketFD = ServerConection (nPort, gnSocketFD, sLoginUser);
+	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginDesti);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
@@ -189,6 +190,7 @@ int main () {
 		bSincro = 0;
 		display (LinkedList);
 		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+		printf("canvii??? %d\n", bSincro);
 
 		//Detecta si algun client nou es vol connectar
 		nSocketCliente = 0;
