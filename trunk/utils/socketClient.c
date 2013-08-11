@@ -270,8 +270,10 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 		printf("2a trama rebuda: %s\n", sTrama);
 		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda", sTrama, 1);
 	} else {
-		printf("error trama incorrecte\n");
+		sprintf (sFrase,"'Error en el procediment d'autentificació. Procedim a desconnexio'");
+		write (1, sFrase, strlen(sFrase));
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] Trama rebuda incorrecte", sTrama, 0);
+		exit(1);
 	}
 
 	return nSocketFD;

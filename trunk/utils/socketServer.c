@@ -379,7 +379,7 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 
 		}
 
-	return bValidAuth+bValidTrama;
+	return bValidAuth && bValidTrama;
 }
 
 
@@ -393,6 +393,7 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 int ServerConection (int nPort, int gnSocketFD, char sLoginDesti[8]) {
 
 	int nSocketCliente = 0 ;
+	int bAuth = 0;
 	char sFrase[MAX], sTrama[MAX_TRAMA];
 	struct sockaddr_in stDireccionCliente;
 	char sLoginOrigen[8];
@@ -416,7 +417,8 @@ int ServerConection (int nPort, int gnSocketFD, char sLoginDesti[8]) {
 		sprintf (sFrase,"\nClient conectat\n");
 		write (1, sFrase, strlen (sFrase));
 
-	  autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+	  bAuth = autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+	  if (!bAuth) return ERROR;
 	}
 	return nSocketCliente;
 }
