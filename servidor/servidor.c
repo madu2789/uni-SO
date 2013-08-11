@@ -128,6 +128,7 @@ void RSIInt (void){
 
 void RSIAlarm(void) {
 	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	alarm(15);
 }
 
 
@@ -193,15 +194,15 @@ printf("nSocketFD: %d\n", nSocketFD);
 
 	socklen_t c_len = sizeof (stDireccionCliente);
 	
-	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
-
+	//bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+alarm(15);
 	while (1) {
 
 		//Detecta si al directori si hi ha hagut algun canvi
 		display (LinkedList);
 		printf("canvii??? %d\n", bSincro);
 
-		alarm(15);
+		
 
 		//Detecta si algun client nou es vol connectar
 		nSocketCliente = 0;
