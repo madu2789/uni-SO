@@ -134,6 +134,7 @@ void RSIInt (void){
 int main () {
 
 	int nSocketCliente = 0 ;
+	int bAuth = 0;
 	struct sockaddr_in stDireccionCliente;
 	char sServer[11];
 
@@ -171,16 +172,17 @@ int main () {
 
 	//Socket peticio connexio
 	gnSocketFD = socketConnnection (nPort);
-	//nSocketFD = ServerConection (nPort, gnSocketFD, sLoginUser);
 	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginDesti);
-
+printf("nSocketFD: %d\n", nSocketFD);
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 	//Crear Thread enviament
-	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketFD);
-	printf("id thread: %d\n", thread_id);
-	if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+	if ( nSocketFD != -1 ) {
+		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketFD);
+		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+	}
+
 
 	socklen_t c_len = sizeof (stDireccionCliente);
 	
@@ -197,11 +199,13 @@ int main () {
 		nSocketCliente = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
 		if (nSocketCliente > 0){
 			printf("client nou!!!!\n");
-	  	autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+	  	bAuth = autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+	  	if ( bAuth ){
+		  	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketCliente);
+				if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+				bAuth = 0;
+	  	}
 
-	  	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketCliente);
-	  	printf("id thread: %d\n", thread_id);
-			if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 		}
 
 		sleep (4);
