@@ -211,28 +211,24 @@ int ParserBucles (char Frase[50], char sName[24],	char sData[24]) {
 
 /**
  * Server Mira les dates i decideix quin es mes recent
- * @param  nFd {Number}	nFile descriptor del socket obert
- * @param  sLoginOrigen {String}	Login d'usuari que inclourem
- * @param  LinkedList {Struct}	Estructura On guardem tota la info
- * @return bCorrect {0 wrong | 1 right}
+ * @param  sDataTrama {String}	Data client
+ * @param  sDataLL {String}		Data servidor
+ * @return {-1 servidor | 0 iguals | 1 client}
  */
 int decideWhoUpdate (char sDataTrama[24], char sDataLL[24]) {
+	struct tm tmDataTrama, tmDataLL;
+	time_t tDataTrama, tDataLL;
 
-	char sDataTramaShort[24];
-	char sDataLLShort[24];
-	int nResult = 0;
+	// Passem de string a time_t per comparar les dates
+	strptime(sDataTrama, "%A %b %d %H:%M:%S %Y", &tmDataTrama);
+	tDataTrama = mktime(&tmDataTrama);
 
-	memset(sDataTramaShort, '\0', 24);
-	memset(sDataLLShort, '\0', 24);
+	strptime(sDataLL, "%A %b %d %H:%M:%S %Y", &tmDataLL);
+	tDataLL = mktime(&tmDataLL);
 
-	strncpy (sDataTramaShort, sDataTrama+3, 21);
-	strncpy (sDataLLShort, sDataLL+3, 21);
-	sDataTramaShort [strlen (sDataTramaShort)] = '\0';
-	sDataLLShort [strlen (sDataLLShort)] = '\0';
-
-	nResult = strcmp (sDataTramaShort, sDataLLShort);
-
-	return nResult;
+	if( tDataTrama > tDataLL )			return 1;
+	else if( tDataTrama < tDataLL )		return -1;
+	else								return 0;
 }
 
 
