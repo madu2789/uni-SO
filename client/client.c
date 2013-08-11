@@ -9,6 +9,7 @@
 	char sLogin[8];
 	char sMyLog[20];
 	char sDirPath[MAX];
+	int nSocketFD = 0;
 
 
 
@@ -65,14 +66,14 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 
 void * ThreadTx (void *arg){
 	
-	int nSocketFD = 0;
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
 	
 	int *nPortTx = (int *) arg;
+	nSocketFD = 0;
 
 	//Creem el socket
-	nSocketFD = socketConnection (nPortTx);
+	nSocketFD = socketConnectionClient (nPortTx);
 
 	//Primer rebem info, despres enviem
 	receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
@@ -103,14 +104,29 @@ void RSIInt (void){
 
 
 
+void RSIAlarm(void) {
+	int bSincro = 0;
+
+	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+
+	if ( bSincro ) {
+		pleaseSincro (nSocketFD, sLogin);
+	} else {
+		write (nSocketFD, "init", 4); 
+	}
+}
+
+
+
+
 /**
  * main general
  */
 int main () {
 
 	int nPort = 0, nPortTx = 0;
-	int bSincro = 0, bTransfer = 0;
-	int nSocketFD = 0;
+	int bTransfer = 0;
+	int bSincro = 0;
 
 	char sServer[11];
 	char sPswd[32];
@@ -120,6 +136,7 @@ int main () {
 
 	//INITS
 	//Demanem memoria per la LL
+	nSocketFD = 0;
 	LinkedList = (struct node *)malloc(sizeof(struct node));
 	strcpy(LinkedList->sName,"fantasma");
 	LinkedList->next = NULL;
@@ -131,6 +148,8 @@ int main () {
 
 	//Assignem la RSI al signal de Ctrl+C
 	signal (SIGINT, (void*) RSIInt);
+	//Assignem la RSI al signal Alarm
+	signal(SIGALRM, (void*)RSIAlarm);
 
 	//Netegem strings
 	memset(sDirPath, '\0', MAX);
@@ -156,18 +175,13 @@ int main () {
 	//Socket peticio connexio
 	nSocketFD = clientConnect (nPort, sLogin, sPswd, LinkedList);
 
+	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
-		bSincro = 0;
 		display (LinkedList);
 
-		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
-
-		if ( bSincro ) {
-			pleaseSincro (nSocketFD, sLogin);
-		} else {
-			write (nSocketFD, "init", 4); 
-		}
+		alarm(5);
 
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 
@@ -181,8 +195,6 @@ int main () {
 
 			bTransfer = 0;
 		}	
-	
-		sleep(5);
 	}
 
 	return 0;

@@ -11,7 +11,7 @@
  * @param  sPwd {String}	Password amb md5 que inclourem
  * @return
  */
-void creaTrama (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama) {
+void creaTramaClient (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama) {
 	char sLoginDesti[7];
 	char sLoginOrigen[7];
 	char sTipus;
@@ -99,7 +99,7 @@ int rebPort (int nFdIn) {
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
+int checkTramaClient (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 
 	int bTramaOk = 0;
 	//Camps de la trama:
@@ -172,7 +172,7 @@ int checkTrama (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return nSocketFD {Integer} Id del socket associat
  */
-int socketConnection (int nPort) {
+int socketConnectionClient (int nPort) {
 	struct sockaddr_in stDireccionServidor;
 	struct hostent *stHost;
 	uint16_t wPuerto;
@@ -233,14 +233,14 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 	int nTipusTrama = 0;
 
 	//Ens conectamem al servidor
-	nSocketFD = socketConnection (nPort);
+	nSocketFD = socketConnectionClient (nPort);
 
 	//Protocol d'establiment de connexio
 	//Llegim la primera trama del servidor de P
 	read (nSocketFD, sTrama, MAX_TRAMA);
 
 	//Comprovem si la Trama es correcte
-	if (checkTrama(sTrama, sUser, 1)) {
+	if (checkTramaClient(sTrama, sUser, 1)) {
 		writeLog ("LSBox_cli.log.html","socketClient.c", "[Error] Trama rebuda incorrecte",sTrama, 0);
 		printf("error trama incorrecte\n");
 		nTipusTrama = 2;
@@ -252,7 +252,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 	}
 
 	//Formem trama per la petició
-	creaTrama(sTrama, sUser, sPwd, nTipusTrama);
+	creaTramaClient(sTrama, sUser, sPwd, nTipusTrama);
 
 	//Enviem la trama de peticio
 	write (nSocketFD, sTrama, MAX_TRAMA);
@@ -262,7 +262,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 	//Llegim la Trama d'autoritzacio del
 	read (nSocketFD, sTrama, MAX_TRAMA);
 
-	bTramaOk = checkTrama(sTrama, sUser, 1);
+	bTramaOk = checkTramaClient(sTrama, sUser, 1);
 	printf("trama correcte? %d \n", bTramaOk);
 
 	//Comprovem si la Trama es correcte

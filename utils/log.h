@@ -26,7 +26,6 @@
 #define ERROR -1
 
 // Includes propios
-#include "log.h"
 
 // Definicion de constantes
 

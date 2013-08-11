@@ -21,6 +21,12 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#ifdef _KERNEL
+#include <sys/systm.h>
+#else
+#include <string.h>
+#endif
+
 #include "log.h"
 
 /* MD5 context. */

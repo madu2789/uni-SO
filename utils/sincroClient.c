@@ -84,7 +84,7 @@ void getTramesG (int nFdIn, char sLoginOrigen[7], struct node *LinkedListToTx) {
 
 	while (!bFinalSincro)	{
 		nBytesRead = read (nFdIn, sTrama, MAX_TRAMA);
-		bFinalSincro = checkTrama (sTrama, sLoginOrigen, 4);
+		bFinalSincro = checkTramaClient (sTrama, sLoginOrigen, 4);
 		if (!bFinalSincro) {
 				//Parsejo la part de DataTrama -> sName
 		  	strncpy (sDataTrama, sTrama+15, 100);
@@ -124,7 +124,7 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 	writeLog ("LSBox_cli.log.html","sincro.c","Trama Rebuda", sTrama, 1);
 
 	//Enviem la trama 'O' o 'E' sincronitzacio confirmada
-	creaTrama(sTrama, sLoginOrigen, "LsBox  ", 4);
+	creaTramaClient(sTrama, sLoginOrigen, "LsBox  ", 4);
 	write (nFdIn, sTrama, MAX_TRAMA);
 	printf("trama enviada: %s\n", sTrama);
 	writeLog ("LSBox_cli.log.html","sincro.c","Trama 'O' Enviada", sTrama, 1);

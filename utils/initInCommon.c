@@ -187,12 +187,12 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		}
 		free (arxius);
 
-		} else if (nTotalFiles < nLLTotalFiles) {
-			removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog);
-			bSincro = 1;
-		}
-
-	return bSincro;
+	} else if (nTotalFiles < nLLTotalFiles) {
+		removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog);
+		bSincro = 1;
 	}
+
+return bSincro;
+}
 
 

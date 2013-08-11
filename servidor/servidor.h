@@ -29,6 +29,7 @@
 #include "../utils/log.h"
 #include "../utils/facadeLL.h"
 #include "../utils/socketServer.h"
+#include "../utils/transfer.h"
 
 
 // Definicion de constantes
