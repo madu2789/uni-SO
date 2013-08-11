@@ -94,7 +94,7 @@ int startSincro (int nFdIn, char sLoginDesti[7]) {
 	char sTrama[MAX_TRAMA];
 
 	//Creem la Trama 'S'
-	creaTrama(sTrama, "LsBox  ", sLoginDesti, 4);
+	creaTramaServidor(sTrama, "LsBox  ", sLoginDesti, 4);
 
 	//Enviem la trama de peticio d'autentificacio
 	write (nFdIn, sTrama, MAX_TRAMA);
@@ -266,7 +266,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 		//Rebem Trames de Sincro amb les dades del client
 		read (nFdIn, sTrama, MAX_TRAMA);
 		printf ("trama rebuda: %s\n", sTrama);
-		bFinalSincro = checkTrama (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
+		bFinalSincro = checkTramaServidor (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
 
 	  strncpy (ArrayInfo[nNumberOfSincroElemets], sTrama+15, 100);
 	  ArrayInfo[nNumberOfSincroElemets][strlen(ArrayInfo[nNumberOfSincroElemets])] = '\0';

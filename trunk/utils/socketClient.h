@@ -25,9 +25,9 @@
 #define ERROR -1
 
 // Includes propios
-#include "socketClient.h"
 #include "log.h"
 #include "facadeLL.h"
+#include "transfer.h"
 
 // Definicion de constantes
 
@@ -36,9 +36,9 @@
 
 
 //Funciones
-int socketConnection (int nPort);
+int socketConnectionClient (int nPort);
 int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedList);
-int checkTrama (char sTrama[MAX_TRAMA],char sUser[7], int nType);
+int checkTramaClient (char sTrama[MAX_TRAMA],char sUser[7], int nType);
 void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama);
 int rebPort (int nFdIn);
 

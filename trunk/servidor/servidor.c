@@ -31,7 +31,7 @@ void * ThreadTx (void *arg){
 	int *nPortTx = (int *) arg;
 
 	//Creem el socket
-	nSocketFD = socketConnnection(nPortTx);	
+	nSocketFD = socketConnectionServidor(nPortTx);	
 
 	while (nSocketCliente == 0) {
 
@@ -79,17 +79,17 @@ void * ServerDedicat (void *arg){
 
 	while (1) {
 
-			bSincroPetition = 0;
-			bSincroPetition = receiveClientSincro (nFdSocketClient);
+		bSincroPetition = 0;
+		bSincroPetition = receiveClientSincro (nFdSocketClient);
 
-			printf("aqui arribo??\n");
+		printf("aqui arribo??\n");
 
 			if ( bSincro || bSincroPetition) {
 				//Sincronitzacio
 				startSincro (nFdSocketClient, sLoginDesti);
 				//Agafa la info procedent de Client
 				getSincroInfo (nFdSocketClient, sLoginDesti, LinkedList, LinkedListToTx);
-				
+				bSincro = 0;
 				//Enviar el Port al client	
 				nPortTx = nPort + rand() % 400;
 				enviaPort (nFdSocketClient, nPortTx, sLoginDesti, "LSBox  ");
@@ -98,12 +98,10 @@ void * ServerDedicat (void *arg){
 				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 				if (nEstatThread != 0) printf("fail al fill!\n");
 
-			} else {
-				write (nFdSocketClient, "init", 4);
-			}
-
-			sleep (5);
+		} else {
+			write (nFdSocketClient, "init", 4);
 		}
+	}
 
 
 	return NULL;
@@ -123,6 +121,13 @@ void RSIInt (void){
 	//Cerramos la memoria compartida
 	// shmdt (gpnPIDS);
 	// shmctl (gnMemoria, IPC_RMID, NULL);
+}
+
+
+
+
+void RSIAlarm(void) {
+	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 }
 
 
@@ -156,6 +161,8 @@ int main () {
 
 	//Assignem la RSI al signal de Ctrl+C
 	signal (SIGINT, (void*) RSIInt);
+	//Assignem la RSI al signal Alarm
+	signal(SIGALRM, (void*)RSIAlarm);
 
 	memset(sServer, '\0', 11);
 	memset(sDirPath, '\0', MAX);
@@ -171,7 +178,7 @@ int main () {
 	nPort = getConfigInfo (sServer, sDirPath);
 
 	//Socket peticio connexio
-	gnSocketFD = socketConnnection (nPort);
+	gnSocketFD = socketConnectionServidor (nPort);
 	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginDesti);
 printf("nSocketFD: %d\n", nSocketFD);
 	//Init LL posant tots els ele. trobats al directori root
@@ -186,13 +193,15 @@ printf("nSocketFD: %d\n", nSocketFD);
 
 	socklen_t c_len = sizeof (stDireccionCliente);
 	
+	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+
 	while (1) {
 
 		//Detecta si al directori si hi ha hagut algun canvi
-		bSincro = 0;
 		display (LinkedList);
-		bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 		printf("canvii??? %d\n", bSincro);
+
+		alarm(15);
 
 		//Detecta si algun client nou es vol connectar
 		nSocketCliente = 0;
@@ -208,7 +217,6 @@ printf("nSocketFD: %d\n", nSocketFD);
 
 		}
 
-		sleep (4);
 	}
 
 	return 0;

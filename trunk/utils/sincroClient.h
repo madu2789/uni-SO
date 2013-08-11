@@ -26,8 +26,6 @@
 #define ERROR -1
 
 // Includes propios
-#include "sincroClient.h"
-//#include "socketServer.h"
 #include "socketClient.h"
 #include "facadeLL.h"
 #include "transfer.h"

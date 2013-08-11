@@ -15,7 +15,7 @@
  * @param  nType {Integer}	Tipus de trama que enviarem
  * @return sTrama Ja formada
  */
-void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType){
+void creaTramaServidor (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType){
 
 	char sTipus = '0';
 	char sData[100];
@@ -206,7 +206,7 @@ int checkAuthentication (char sUser[7], char sPswd[32]) {
  * @param  sTrama {String}	Trama rebuda que analitzarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[33], int nType) {
+int checkTramaServidor (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[33], int nType) {
 
 	int bTramaOk = 0;
 	//Camps de la trama:
@@ -275,7 +275,7 @@ int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return nSocketFD {Integer} Id del socket associat
  */
-int socketConnnection (int nPort) {
+int socketConnectionServidor (int nPort) {
 
 	char sFrase[MAX];
 	uint16_t wPuerto;
@@ -336,7 +336,7 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 	//Protocol de trames d'establiment de connexio
 
 	//Creem la primera trama de peticio d'autentificacio
- 	creaTrama(sTrama, "LSBox  ", "client ", 1);
+ 	creaTramaServidor(sTrama, "LSBox  ", "client ", 1);
 
 	//Enviem la trama de peticio d'autentificacio
 	write (nSocketCliente, sTrama, MAX_TRAMA);
@@ -348,7 +348,7 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 	printf("trama rebuda: %s\n", sTrama);
 
 
-	bValidTrama = checkTrama(sTrama, sLoginOrigen, sLoginDesti, sPwd, 1);
+	bValidTrama = checkTramaServidor(sTrama, sLoginOrigen, sLoginDesti, sPwd, 1);
 	bValidAuth = checkAuthentication (sLoginDesti, sPwd);
 	printf("trama correcte? %d - %d\n", bValidTrama, bValidAuth);
 
@@ -358,7 +358,7 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Rebuda", sTrama, 1);
 
 			//Creem la trama de resposta OK peticio d'autentificacio
- 			creaTrama (sTrama, "LSBox  ", sLoginDesti, 3);
+ 			creaTramaServidor (sTrama, "LSBox  ", sLoginDesti, 3);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
@@ -370,7 +370,7 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 
 			writeLog ("LSBox_svr.log.html", "socketServer.c", "[Error]Trama Rebuda", sTrama, 0);
 			//Creem la trama de resposta KO peticio d'autentificacio
- 			creaTrama (sTrama, "LSBox  ", sLoginOrigen, 2);
+ 			creaTramaServidor (sTrama, "LSBox  ", sLoginOrigen, 2);
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);

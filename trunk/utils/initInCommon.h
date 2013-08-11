@@ -26,8 +26,7 @@
 #define ERROR -1
 
 // Includes propios
-#include "initInCommon.h"
-#include "../utils/facadeLL.h"
+#include "facadeLL.h"
 
 // Definicion de constantes
 

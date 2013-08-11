@@ -3,16 +3,7 @@
 // md5c.c -- from /usr/src/lib/libmd/md5c.c, FreeBSD 6.2
 // 27 NOV 2007 -- 19:29
 
-#include <sys/cdefs.h>
-//__FBSDID("$FreeBSD: src/lib/libmd/md5c.c,v 1.16 2003/06/05 13:17:32 markm Exp $"); // <=== suprimit
 
-#include <sys/types.h>
-
-#ifdef _KERNEL
-#include <sys/systm.h>
-#else
-#include <string.h>
-#endif
 
 //#include <machine/endian.h>   // <=== suprimit
 //#include <sys/endian.h>       // <=== suprimit

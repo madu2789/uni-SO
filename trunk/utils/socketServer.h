@@ -25,7 +25,6 @@
 #define ERROR -1
 
 // Includes propios
-#include "socketServer.h"
 #include "log.h"
 #include "facadeLL.h"
 #include "../servidor/servidor.h"
@@ -35,12 +34,12 @@
 // Definicion de tipos propios
 
 //Funciones
-void creaTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType);
+void creaTramaServidor (char sTrama[MAX_TRAMA], char sLoginOrigen[7], char sLoginDesti[7], int nType);
 int getNumUsers(int nFdIn);
 int checkUserInfo (int nFdIn, char sUser[7], char sPswd[32]);
 int checkAuthentication (char sUser[32], char sPswd[32]);
-int checkTrama (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[33], int nType);
-int socketConnnection (int nPort);
+int checkTramaServidor (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLoginDesti[8], char sPwd[33], int nType);
+int socketConnectionServidor (int nPort);
 int ServerConection (int nPort, int gnSocketFD, char sLoginDesti[8]);
 int enviaPort (int nFdIn, int nPort, char sLoginDesti[7], char sLoginOrigen[7]);
 
