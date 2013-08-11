@@ -301,8 +301,8 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	write (nFdSocket, sTrama, MAX_TRAMA);
 	printf ("Trama enviada: %s\n", sTrama);
 
-	//Buidem lo que ja hem transmes
-	buidaLL (LinkedListToTx);
+	//Buidem lo que ja hem transmes, i les altres???
+	//buidaLL (LinkedListToTx);
 
 	return 0;
 }
