@@ -74,35 +74,40 @@ void * ServerDedicat (void *arg){
 	int nEstatThread;
 	int *nFdSocketClient = (int *) arg;
 
-	printf("Hola thread dedicat!: socket: %d\n", nFdSocketClient);
+
 	printf("sLogin del meu client: %s\n", sLoginDesti);
 
-	while (1) {
 
+	while (1) {
+		bSincro = 0;
 		bSincroPetition = 0;
 		bSincroPetition = receiveClientSincro (nFdSocketClient);
 
-		printf("aqui arribo??\n");
+		printf("server dedicat de: %s\n", sLoginDesti);
 
 			if ( bSincro || bSincroPetition) {
 				//Sincronitzacio
 				startSincro (nFdSocketClient, sLoginDesti);
 				//Agafa la info procedent de Client
 				getSincroInfo (nFdSocketClient, sLoginDesti, LinkedList, LinkedListToTx);
-				bSincro = 0;
+				
 				//Enviar el Port al client	
 				nPortTx = nPort + rand() % 400;
 				enviaPort (nFdSocketClient, nPortTx, sLoginDesti, "LSBox  ");
 				
+				alarm(0);
 				//Crear Thread enviament
 				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 				if (nEstatThread != 0) printf("fail al fill!\n");
+				nEstatThread = pthread_join(thread_id, NULL);
+				if (nEstatThread != 0) 	printf("fail al fill!\n");
+
+				alarm(15);
 
 		} else {
 			write (nFdSocketClient, "init", 4);
 		}
 	}
-
 
 	return NULL;
 }
@@ -181,7 +186,7 @@ int main () {
 	//Socket peticio connexio
 	gnSocketFD = socketConnectionServidor (nPort);
 	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginDesti);
-printf("nSocketFD: %d\n", nSocketFD);
+
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
@@ -191,11 +196,10 @@ printf("nSocketFD: %d\n", nSocketFD);
 		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 	}
 
-
 	socklen_t c_len = sizeof (stDireccionCliente);
 	
 	//bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
-alarm(15);
+	alarm(15);
 	while (1) {
 
 		//Detecta si al directori si hi ha hagut algun canvi

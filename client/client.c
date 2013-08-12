@@ -70,18 +70,19 @@ void * ThreadTx (void *arg){
 	memset (sTrama, '\0', MAX_TRAMA);
 	
 	int *nPortTx = (int *) arg;
-	nSocketFD = 0;
+	int nSocketFDTx = 0;
 
 	//Creem el socket
-	nSocketFD = socketConnectionClient (nPortTx);
+	nSocketFDTx = socketConnectionClient (nPortTx);
 
 	//Primer rebem info, despres enviem
-	receiveContent (nSocketFD, sDirPath, LinkedList, LinkedListToTx, sMyLog);
-	transferContent (nSocketFD, sDirPath, sLogin, LinkedListToTx, sMyLog);
+	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog);
 	
 	//Tancar socket
-	close (nSocketFD);
+	close (nSocketFDTx);
 	printf("Mort thread!\n");
+
 	return NULL;
 }
 
@@ -114,6 +115,7 @@ void RSIAlarm(void) {
 	} else {
 		write (nSocketFD, "init", 4); 
 	}
+	alarm(5);
 }
 
 
@@ -130,7 +132,7 @@ int main () {
 
 	char sServer[11];
 	char sPswd[32];
-
+  pthread_attr_t attr;
 	pthread_t thread_id;
 	int nEstatThread = 0;
 
@@ -177,11 +179,10 @@ int main () {
 
 	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
+	alarm(5);
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
 		display (LinkedList);
-
-		alarm(5);
 
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 
@@ -189,12 +190,22 @@ int main () {
 			//rebem el port on conectarem el thread
 			nPortTx = rebPort(nSocketFD);
 
+			alarm(0);
+
 			//creem el Thread enviament
 			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 			if (nEstatThread != 0) 	printf("fail al fill!\n");
+			nEstatThread = pthread_join(thread_id, NULL);
+			if (nEstatThread != 0) 	printf("fail al fill!\n");
+			
+			alarm(5);
+
+			printf("em acabat de tx!! \n");
 
 			bTransfer = 0;
 		}	
+		printf("2 \n");
+		sleep(1);
 	}
 
 	return 0;
