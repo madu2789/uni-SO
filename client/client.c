@@ -176,7 +176,6 @@ int main () {
 
 	//Socket peticio connexio
 	nSocketFD = clientConnect (nPort, sLogin, sPswd, LinkedList);
-
 	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 	alarm(5);
@@ -191,7 +190,6 @@ int main () {
 			nPortTx = rebPort(nSocketFD);
 
 			alarm(0);
-
 			//creem el Thread enviament
 			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
 			if (nEstatThread != 0) 	printf("fail al fill!\n");
@@ -204,7 +202,6 @@ int main () {
 
 			bTransfer = 0;
 		}	
-		printf("2 \n");
 		sleep(1);
 	}
 

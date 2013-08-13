@@ -7,16 +7,21 @@
 //VARS GLOBALS (PROVISIONALS)
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
-	char sDirPath[MAX];
-	char sMyLog[20];
+	int bSincro = 0;
 
-//lio amb Logins de la PARRA
+	char sDirPath[MAX];
 	char sLoginUser[8];
-	char sLoginDesti[8];
 	char sLoginOrigen[8];
 
 	int nPort = 0;
-	int bSincro = 0;
+	
+
+	// prova Estructura Molongui
+	int nIdClient = 0;
+	int nFdSockClient[7];
+	int nPortTx[7];
+	char sLoginDesti[7][8];
+	char sMyLog[20];
 
 
 
@@ -28,10 +33,13 @@ void * ThreadTx (void *arg){
 	int nSocketCliente = 0 ;
 	char sFrase[MAX];
 	struct sockaddr_in stDireccionCliente;
-	int *nPortTx = (int *) arg;
+	
+	int nIdMyClient = (int ) arg;
+	printf("tx-> nIdMyClient: %d \n", nIdMyClient);
+	int nMyPortTx = nPortTx[nIdMyClient];
 
 	//Creem el socket
-	nSocketFD = socketConnectionServidor(nPortTx);	
+	nSocketFD = socketConnectionServidor (nMyPortTx);	
 
 	while (nSocketCliente == 0) {
 
@@ -53,7 +61,7 @@ void * ThreadTx (void *arg){
 		write (1, sFrase, strlen (sFrase));
 	
  	 //Transmissio de dades
-   transferContent (nSocketCliente, sDirPath, sLoginDesti, LinkedListToTx, sMyLog);
+   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog);
 	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog);
 	 
 	 //Tancar socket
@@ -68,36 +76,33 @@ void * ThreadTx (void *arg){
 
 void * ServerDedicat (void *arg){
 	
-	int nPortTx = 0;
 	int bSincroPetition = 0;
 	pthread_t thread_id;
 	int nEstatThread;
-	int *nFdSocketClient = (int *) arg;
-
-
-	printf("sLogin del meu client: %s\n", sLoginDesti);
-
+	
+	int nIdMyClient = (int ) arg;
+	int nFdSocketClient = nFdSockClient[nIdMyClient];
 
 	while (1) {
 		bSincro = 0;
 		bSincroPetition = 0;
 		bSincroPetition = receiveClientSincro (nFdSocketClient);
 
-		printf("server dedicat de: %s\n", sLoginDesti);
+		printf("server dedicat de: %s\n", sLoginDesti[nIdMyClient]);
 
 			if ( bSincro || bSincroPetition) {
 				//Sincronitzacio
-				startSincro (nFdSocketClient, sLoginDesti);
+				startSincro (nFdSocketClient, sLoginDesti[nIdMyClient]);
 				//Agafa la info procedent de Client
-				getSincroInfo (nFdSocketClient, sLoginDesti, LinkedList, LinkedListToTx);
+				getSincroInfo (nFdSocketClient, sLoginDesti[nIdMyClient], LinkedList, LinkedListToTx);
 				
 				//Enviar el Port al client	
-				nPortTx = nPort + rand() % 400;
-				enviaPort (nFdSocketClient, nPortTx, sLoginDesti, "LSBox  ");
+				nPortTx[nIdMyClient] = nPort + rand() % 400;
+				enviaPort (nFdSocketClient, nPortTx[nIdMyClient], sLoginDesti[nIdMyClient], "LSBox  ");
 				
 				alarm(0);
 				//Crear Thread enviament
-				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
+				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nIdMyClient);
 				if (nEstatThread != 0) printf("fail al fill!\n");
 				nEstatThread = pthread_join(thread_id, NULL);
 				if (nEstatThread != 0) 	printf("fail al fill!\n");
@@ -185,15 +190,25 @@ int main () {
 
 	//Socket peticio connexio
 	gnSocketFD = socketConnectionServidor (nPort);
-	nSocketFD = ServerConection (nPort, gnSocketFD, sLoginDesti);
+
+	nFdSockClient[nIdClient] = ServerConection (nPort, gnSocketFD, sLoginDesti[nIdClient]);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 	//Crear Thread enviament
-	if ( nSocketFD != -1 ) {
-		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketFD);
+	if ( nFdSockClient[nIdClient] != -1 ) {
+		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nIdClient);
 		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+
+		//Crear/Obrir fitxer de Log
+		strcpy (sMyLog, sLoginDesti[nIdClient]);
+		strcat (sMyLog, ".log.html");
+		sMyLog[strlen(sMyLog)] = '\0';
+		createLog (sMyLog);
+
+		//Incrementem el Id pel proper client
+		nIdClient++;
 	}
 
 	socklen_t c_len = sizeof (stDireccionCliente);
@@ -204,24 +219,28 @@ int main () {
 
 		//Detecta si al directori si hi ha hagut algun canvi
 		display (LinkedList);
-		printf("canvii??? %d\n", bSincro);
-
-		
 
 		//Detecta si algun client nou es vol connectar
-		nSocketCliente = 0;
-		nSocketCliente = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
-		if (nSocketCliente > 0){
-			printf("client nou!!!!\n");
-	  	bAuth = autentificacioClient (nSocketCliente, sLoginDesti, sLoginOrigen);	
+		nFdSockClient[nIdClient] = 0;
+		nFdSockClient[nIdClient] = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
+		if (nFdSockClient[nIdClient] > 0){
+			printf("client nou!!\n");
+	  	bAuth = autentificacioClient (nFdSockClient[nIdClient], sLoginDesti[nIdClient], sLoginOrigen);	
 	  	if ( bAuth ){
-		  	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nSocketCliente);
+		  	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nIdClient);
 				if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+				
+				//Crear/Obrir fitxer de Log
+				strcpy (sMyLog, sLoginDesti[nIdClient]);
+				strcat (sMyLog, ".log.html");
+				sMyLog[strlen(sMyLog)] = '\0';
+				createLog (sMyLog);
+				
+				//Incrementem el Id pel proper client
+				nIdClient++;
 				bAuth = 0;
 	  	}
-
 		}
-
 	}
 
 	return 0;
