@@ -4,24 +4,23 @@
  */
 #include "servidor.h"
 
-//VARS GLOBALS (PROVISIONALS)
+	//VARS GLOBALS
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
 	int bSincro = 0;
-
 	char sDirPath[MAX];
+
+	//Hi ha que fer un maxambrat d'aquests dos
 	char sLoginUser[8];
 	char sLoginOrigen[8];
 
-	int nPort = 0;
-	
-
 	// prova Estructura Molongui
-	int nIdClient = 0;
+	int nIdClient = 1;
 	int nFdSockClient[7];
+	// A la casella nPortTx[0] guarda el port del pare(avi)
 	int nPortTx[7];
 	char sLoginDesti[7][8];
-	char sMyLog[20];
+	char sMyLog[7][20];
 
 
 
@@ -29,14 +28,15 @@ void * ThreadTx (void *arg){
 	
 	int nSocketFD = 0;
 	char sTrama[MAX_TRAMA];
-	memset (sTrama, '\0', MAX_TRAMA);
 	int nSocketCliente = 0 ;
 	char sFrase[MAX];
 	struct sockaddr_in stDireccionCliente;
 	
 	int nIdMyClient = (int ) arg;
-	printf("tx-> nIdMyClient: %d \n", nIdMyClient);
 	int nMyPortTx = nPortTx[nIdMyClient];
+
+	memset (sTrama, '\0', MAX_TRAMA);
+	memset (sFrase, '\0', MAX);
 
 	//Creem el socket
 	nSocketFD = socketConnectionServidor (nMyPortTx);	
@@ -61,8 +61,8 @@ void * ThreadTx (void *arg){
 		write (1, sFrase, strlen (sFrase));
 	
  	 //Transmissio de dades
-   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog);
-	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog);
+   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog[nIdMyClient]);
+	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient]);
 	 
 	 //Tancar socket
 	 close (nSocketFD);
@@ -97,7 +97,7 @@ void * ServerDedicat (void *arg){
 				getSincroInfo (nFdSocketClient, sLoginDesti[nIdMyClient], LinkedList, LinkedListToTx);
 				
 				//Enviar el Port al client	
-				nPortTx[nIdMyClient] = nPort + rand() % 400;
+				nPortTx[nIdMyClient] = nPortTx[0] + rand() % 400;
 				enviaPort (nFdSocketClient, nPortTx[nIdMyClient], sLoginDesti[nIdMyClient], "LSBox  ");
 				
 				alarm(0);
@@ -178,23 +178,22 @@ int main () {
 	memset(sServer, '\0', 11);
 	memset(sDirPath, '\0', MAX);
 	memset(sLoginUser, '\0', 7);
-	memset(sMyLog, '\0', 20);
 
 	//Crear/Obrir fitxer de Log
-	strcpy (sMyLog, "LSBox_svr.log.html");
-	sMyLog[strlen(sMyLog)] = '\0';
-	createLog (sMyLog);
+	strcpy (sMyLog[0], "LSBox_svr.log.html");
+	sMyLog[0][strlen(sMyLog[0])] = '\0';
+	createLog (sMyLog[0]);
 
 	//Llegir "config.dat"
-	nPort = getConfigInfo (sServer, sDirPath);
+	nPortTx[0] = getConfigInfo (sServer, sDirPath);
 
 	//Socket peticio connexio
-	gnSocketFD = socketConnectionServidor (nPort);
+	gnSocketFD = socketConnectionServidor (nPortTx[0]);
 
-	nFdSockClient[nIdClient] = ServerConection (nPort, gnSocketFD, sLoginDesti[nIdClient]);
+	nFdSockClient[nIdClient] = ServerConection (nPortTx[0], gnSocketFD, sLoginDesti[nIdClient]);
 
 	//Init LL posant tots els ele. trobats al directori root
-	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog[0]);
 
 	//Crear Thread enviament
 	if ( nFdSockClient[nIdClient] != -1 ) {
@@ -202,10 +201,10 @@ int main () {
 		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 
 		//Crear/Obrir fitxer de Log
-		strcpy (sMyLog, sLoginDesti[nIdClient]);
-		strcat (sMyLog, ".log.html");
-		sMyLog[strlen(sMyLog)] = '\0';
-		createLog (sMyLog);
+		strcpy (sMyLog[nIdClient], sLoginDesti[nIdClient]);
+		strcat (sMyLog[nIdClient], ".log.html");
+		sMyLog[nIdClient][strlen(sMyLog[nIdClient])] = '\0';
+		createLog (sMyLog[nIdClient]);
 
 		//Incrementem el Id pel proper client
 		nIdClient++;
@@ -213,7 +212,6 @@ int main () {
 
 	socklen_t c_len = sizeof (stDireccionCliente);
 	
-	//bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 	alarm(15);
 	while (1) {
 
@@ -231,10 +229,10 @@ int main () {
 				if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 				
 				//Crear/Obrir fitxer de Log
-				strcpy (sMyLog, sLoginDesti[nIdClient]);
-				strcat (sMyLog, ".log.html");
-				sMyLog[strlen(sMyLog)] = '\0';
-				createLog (sMyLog);
+				strcpy (sMyLog[nIdClient], sLoginDesti[nIdClient]);
+				strcat (sMyLog[nIdClient], ".log.html");
+				sMyLog[nIdClient][strlen(sMyLog[nIdClient])] = '\0';
+				createLog (sMyLog[nIdClient]);
 				
 				//Incrementem el Id pel proper client
 				nIdClient++;
