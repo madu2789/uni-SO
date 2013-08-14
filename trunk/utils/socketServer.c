@@ -285,6 +285,7 @@ int socketConnectionServidor (int nPort) {
 	//Comprovem que el port estigui en el marge correcte
 	if ( nPort < 1024 || nPort > 65535){
 		writeLog ("LSBox_svr.log.html","socketServer.c","[Error] socket","Port invalid!", 0);
+		exit(-1);
 		return ERROR;
 	}
 	wPuerto = nPort;
@@ -293,6 +294,7 @@ int socketConnectionServidor (int nPort) {
 	gnSocketFD = socket (AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (gnSocketFD < 0){
 		writeLog ("LSBox_svr.log.html", "socketServer.c","[Error] socket","Error al crear el socket!", 0);
+		exit(-1);
 		return ERROR;
 	}
 
@@ -307,6 +309,7 @@ int socketConnectionServidor (int nPort) {
 		writeLog ("LSBox_svr.log.html", "socketServer.c","[Error] socket","Error al vincular el socket y la direccion!", 0);
 		//Cerramos el socket
 		close (gnSocketFD);
+		exit(-1);
 		return ERROR;
 	}
 
