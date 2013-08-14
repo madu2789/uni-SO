@@ -13,22 +13,26 @@
 	char sLoginUser[8];
 	char sLoginOrigen[8];
 
-	// prova Estructura Molongui
+	// prova Estructura Molongui (a la [0] guarda info del pare)
 	int nIdClient = 1;
 	int nFdSockClient[7];
-	// A la casella nPortTx[0] guarda el port del pare(avi)
+	// A nPortTx[0] guarda el port del pare(avi)
 	int nPortTx[7];
 	int bSincro[7];
 	char sLoginDesti[7][8];
 	char sMyLog[7][20];
 
 
-
+/**
+ * Thread creat a partir del Server dedicat, només Tx i Rx el
+ * que li diuen
+ * @param arg [Id del client dedicat]
+ */
 void * ThreadTx (void *arg){
 	
 	int nSocketFD = 0;
-	char sTrama[MAX_TRAMA];
 	int nSocketCliente = 0 ;
+	char sTrama[MAX_TRAMA];
 	char sFrase[MAX];
 	struct sockaddr_in stDireccionCliente;
 	
@@ -73,7 +77,11 @@ void * ThreadTx (void *arg){
 
 
 
-
+/**
+ * Procés creat per thread del pare, dedicat a un sol client,
+ *  i pendent de sincroClient o sincro del Pare
+ * @param arg [Id del client dedicat]
+ */
 void * ServerDedicat (void *arg){
 	
 	int bSincroPetition = 0;
@@ -140,6 +148,7 @@ void RSIInt (void){
 void RSIAlarm(void) {
 	int bMySincro = 0;
 	int i = 0;
+
 	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 	if (bMySincro) {
 		for ( i = 0; i <= nIdClient; i++) {
@@ -147,8 +156,28 @@ void RSIAlarm(void) {
 		} 
 	}
 
-
 	alarm(15);
+}
+
+
+/**
+ * [creaServidorDedicat crea el thread dedicat al client ja autenticat]
+ * @param nIdClient [Id del client dedicat al Server]
+ */
+void creaServidorDedicat (int nIdClient) {
+
+		pthread_t thread_id;
+	  int nEstatThread = 0;
+
+		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nIdClient);
+		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+
+		//Crear/Obrir fitxer de Log
+		strcpy (sMyLog[nIdClient], sLoginDesti[nIdClient]);
+		strcat (sMyLog[nIdClient], ".log.html");
+		sMyLog[nIdClient][strlen(sMyLog[nIdClient])] = '\0';
+		createLog (sMyLog[nIdClient]);
+
 }
 
 
@@ -164,8 +193,7 @@ int main () {
 	struct sockaddr_in stDireccionCliente;
 	char sServer[11];
 
-	pthread_t thread_id;
-	int nEstatThread = 0;
+
 	int nSocketFD = 0;
 	int gnSocketFD = 0;
 
@@ -185,6 +213,7 @@ int main () {
 	//Assignem la RSI al signal Alarm
 	signal(SIGALRM, (void*)RSIAlarm);
 
+	//Inits strings
 	memset(sServer, '\0', 11);
 	memset(sDirPath, '\0', MAX);
 	memset(sLoginUser, '\0', 7);
@@ -199,33 +228,25 @@ int main () {
 
 	//Socket peticio connexio
 	gnSocketFD = socketConnectionServidor (nPortTx[0]);
-
 	nFdSockClient[nIdClient] = ServerConection (nPortTx[0], gnSocketFD, sLoginDesti[nIdClient]);
 
-	//Init LL posant tots els ele. trobats al directori root
+	//Posa tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog[0]);
 
-	//Crear Thread enviament
+	//Crear Thread de servidor dedicat
 	if ( nFdSockClient[nIdClient] != -1 ) {
-		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nIdClient);
-		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+		
+		creaServidorDedicat(nIdClient);
 
-		//Crear/Obrir fitxer de Log
-		strcpy (sMyLog[nIdClient], sLoginDesti[nIdClient]);
-		strcat (sMyLog[nIdClient], ".log.html");
-		sMyLog[nIdClient][strlen(sMyLog[nIdClient])] = '\0';
-		createLog (sMyLog[nIdClient]);
-
-		//Incrementem el Id pel proper client
+		//Incrementem Id pel proper client
 		nIdClient++;
 	}
 
 	socklen_t c_len = sizeof (stDireccionCliente);
-	
 	alarm(15);
-	while (1) {
 
-		//Detecta si al directori si hi ha hagut algun canvi
+	while (1) {
+		//Mostra LL
 		display (LinkedList);
 
 		//Detecta si algun client nou es vol connectar
@@ -235,16 +256,9 @@ int main () {
 			printf("client nou!!\n");
 	  	bAuth = autentificacioClient (nFdSockClient[nIdClient], sLoginDesti[nIdClient], sLoginOrigen);	
 	  	if ( bAuth ){
-		  	nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nIdClient);
-				if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+				creaServidorDedicat(nIdClient);
 				
-				//Crear/Obrir fitxer de Log
-				strcpy (sMyLog[nIdClient], sLoginDesti[nIdClient]);
-				strcat (sMyLog[nIdClient], ".log.html");
-				sMyLog[nIdClient][strlen(sMyLog[nIdClient])] = '\0';
-				createLog (sMyLog[nIdClient]);
-				
-				//Incrementem el Id pel proper client
+				//Incrementem Id pel proper client
 				nIdClient++;
 				bAuth = 0;
 	  	}
