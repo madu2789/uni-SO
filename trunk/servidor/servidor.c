@@ -7,7 +7,6 @@
 	//VARS GLOBALS
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
-	int bSincro = 0;
 	char sDirPath[MAX];
 
 	//Hi ha que fer un maxambrat d'aquests dos
@@ -19,6 +18,7 @@
 	int nFdSockClient[7];
 	// A la casella nPortTx[0] guarda el port del pare(avi)
 	int nPortTx[7];
+	int bSincro[7];
 	char sLoginDesti[7][8];
 	char sMyLog[7][20];
 
@@ -84,13 +84,13 @@ void * ServerDedicat (void *arg){
 	int nFdSocketClient = nFdSockClient[nIdMyClient];
 
 	while (1) {
-		bSincro = 0;
+		
 		bSincroPetition = 0;
 		bSincroPetition = receiveClientSincro (nFdSocketClient);
 
 		printf("server dedicat de: %s\n", sLoginDesti[nIdMyClient]);
 
-			if ( bSincro || bSincroPetition) {
+			if ( 	bSincro[nIdMyClient] || bSincroPetition) {
 				//Sincronitzacio
 				startSincro (nFdSocketClient, sLoginDesti[nIdMyClient]);
 				//Agafa la info procedent de Client
@@ -107,6 +107,7 @@ void * ServerDedicat (void *arg){
 				nEstatThread = pthread_join(thread_id, NULL);
 				if (nEstatThread != 0) 	printf("fail al fill!\n");
 
+				bSincro[nIdMyClient] = 0;
 				alarm(15);
 
 		} else {
@@ -137,7 +138,16 @@ void RSIInt (void){
 
 
 void RSIAlarm(void) {
-	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	int bMySincro = 0;
+	int i = 0;
+	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	if (bMySincro) {
+		for ( i = 0; i <= nIdClient; i++) {
+				bSincro[i] = 1;
+		} 
+	}
+
+
 	alarm(15);
 }
 
