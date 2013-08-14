@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <semaphore.h>
 
 //Defines
 #define MAX_TRAMA 115
@@ -36,7 +37,7 @@
 static int triar (const struct dirent *arg);
 int getConfigInfo (char sServer[11], char sDirPath[MAX]);
 int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]);
-int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]);
+int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20], sem_t *semLL);
 int ReadDir (int bIsNull, char sMyLog[20]);
 void getDateReal (char sRealDate[30], char sDirPath[MAX], char sName[30]);
 

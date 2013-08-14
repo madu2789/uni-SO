@@ -7,6 +7,7 @@
 	//VARS GLOBALS
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
+	sem_t *semLL;
 	char sDirPath[MAX];
 
 	//Hi ha que fer un maxambrat d'aquests dos
@@ -149,7 +150,8 @@ void RSIAlarm(void) {
 	int bMySincro = 0;
 	int i = 0;
 
-	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
+
 	if (bMySincro) {
 		for ( i = 0; i <= nIdClient; i++) {
 				bSincro[i] = 1;
@@ -208,10 +210,13 @@ int main () {
 	strcpy(LinkedListToTx->sName, "fantasma");
 	LinkedListToTx->next = NULL;
 
-	//Assignem la RSI al signal de Ctrl+C
-	signal (SIGINT, (void*) RSIInt);
-	//Assignem la RSI al signal Alarm
+	// Assignem la RSI al signal de Ctrl+C
+	signal(SIGINT, (void*) RSIInt);
+	// Assignem la RSI al signal Alarm
 	signal(SIGALRM, (void*)RSIAlarm);
+
+	// Creem el semafor
+	sem_init(&semLL, 0, 1);
 
 	//Inits strings
 	memset(sServer, '\0', 11);

@@ -123,7 +123,7 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 /**
  * Mira al directori si hi ha hagut alguna modificacio i ho gestiona la LL
  */
-int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]) {
+int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20], sem_t *semLL) {
 
 	struct dirent **arxius;
 	int i = 0;
@@ -143,7 +143,11 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	ReadDir(bArxiusOk, sMyLog);
 
 	i = nTotalFiles;
+// sem_getvalue (&semLL, &bla);
+// printf("count.1: %d\n", bla);
+	sem_wait(&semLL);
 	nLLTotalFiles = count (LinkedList);
+	sem_post(&semLL);
 
 	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
 
@@ -165,8 +169,11 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		 	getDateReal (sRealDate, sDirPath, arxius[i]->d_name);	
 			
 			if ( strcmp (sLLDate, sRealDate) != 0 ) {
+				sem_wait(&semLL);
 				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedList, sMyLog);
 				updateToLL(sDirPath, sLLDate, arxius[i]->d_name, LinkedListToTx, sMyLog);
+				sem_post(&semLL);
+
 				bSincro = 1;
 			}
 			free (arxius[i]);
@@ -180,7 +187,9 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
 			if( bUpdate != 1 ) {
+				sem_wait(&semLL);
 				addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, LinkedListToTx, sMyLog);
+				sem_post(&semLL);
 				bSincro = 1;
 			}
 			free (arxius[i]);
@@ -188,7 +197,10 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		free (arxius);
 
 	} else if (nTotalFiles < nLLTotalFiles) {
+		sem_wait(&semLL);
 		removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog);
+		sem_post(&semLL);
+
 		bSincro = 1;
 	}
 

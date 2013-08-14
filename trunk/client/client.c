@@ -6,6 +6,7 @@
 
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
+	sem_t *semLL;
 	char sLogin[8];
 	char sMyLog[20];
 	char sDirPath[MAX];
@@ -108,7 +109,7 @@ void RSIInt (void){
 void RSIAlarm(void) {
 	int bSincro = 0;
 
-	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
 
 	if ( bSincro ) {
 		pleaseSincro (nSocketFD, sLogin);
@@ -153,6 +154,9 @@ int main () {
 	//Assignem la RSI al signal Alarm
 	signal(SIGALRM, (void*)RSIAlarm);
 
+	// Creem el semafor
+	sem_init(&semLL, 0, 1);
+
 	//Netegem strings
 	memset(sDirPath, '\0', MAX);
 	memset(sServer, '\0', 11);
@@ -176,8 +180,8 @@ int main () {
 
 	//Socket peticio connexio
 	nSocketFD = clientConnect (nPort, sLogin, sPswd, LinkedList);
-	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
+	sem_post(&semLL);
 	alarm(5);
 	//Check al directori si hi ha hagut algun canvi cada 2''
 	while (1) {
@@ -202,7 +206,6 @@ int main () {
 
 			bTransfer = 0;
 		}	
-		sleep(1);
 	}
 
 	return 0;
