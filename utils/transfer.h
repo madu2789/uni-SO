@@ -17,6 +17,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <semaphore.h>
+
 
 
 //Defines
@@ -34,8 +36,8 @@
 // Definicion de tipos propios
 
 //Funciones
-int transferContent (int nFdIn, char sDirPath[MAX], char sUser[8], struct node *LinkedListToTx, char sMyLog[40]);
-void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]);
+int transferContent (int nFdIn, char sDirPath[MAX], char sUser[8], struct node *LinkedListToTx, char sMyLog[40], sem_t *semLL);
+void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20], sem_t *semLL);
 int openFile (char sDirPath[MAX], char sName[30]);
 int removeFile (char sDirPath[MAX], char sName[30]);
 int createFile (char sDirPath[MAX], char sName[30]); 

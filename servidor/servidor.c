@@ -66,8 +66,8 @@ void * ThreadTx (void *arg){
 		write (1, sFrase, strlen (sFrase));
 	
  	 //Transmissio de dades
-   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog[nIdMyClient]);
-	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient]);
+   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog[nIdMyClient], semLL);
+	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient], semLL);
 	 
 	 //Tancar socket
 	 close (nSocketFD);
