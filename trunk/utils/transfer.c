@@ -283,6 +283,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 			while ( bFi != 0 ) {
 				printf ("Trama enviada: %s\n", sTrama);
 				write (nFdSocket, sTrama, MAX_TRAMA);
+				writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
 				memset (sInfo, '\0', 104);
 				bFi = read (nFdFitxer, sInfo, 100);
 				memset(sTrama, '\0', MAX_TRAMA);
@@ -294,6 +295,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 			creaTramaTx (sTrama, sUser, sName, sData, nSize, 4);
 			printf ("Trama enviada: %s\n", sTrama);
 			write (nFdSocket, sTrama, MAX_TRAMA);
+			writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
 		}
 	}
 	
@@ -302,6 +304,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 3);
 	write (nFdSocket, sTrama, MAX_TRAMA);
 	printf ("Trama enviada: %s\n", sTrama);
+	writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
 
 	//Buidem lo que ja hem transmes, i les altres???
 	//buidaLL (LinkedListToTx);
@@ -327,6 +330,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 	memset(sTrama, '\0', MAX_TRAMA);
 	read (nFdIn, sTrama, MAX_TRAMA);
 	printf ("trama rebuda: %s\n", sTrama);
+	writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 
 
 	nTipusTrama = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
@@ -358,6 +362,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 
 				read (nFdIn, sTrama, MAX_TRAMA);
 				printf ("trama rebuda: %s\n", sTrama);
+				writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 				bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 				sDataTrama[strlen(sDataTrama)] = '\0';
 	
@@ -368,6 +373,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 					memset(sTrama, '\0', MAX_TRAMA);
 					read (nFdIn, sTrama, MAX_TRAMA);
 					printf ("trama rebuda: %s\n", sTrama);
+					writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 					bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 					sDataTrama[strlen(sDataTrama)] = '\0';
 				}
@@ -401,6 +407,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				memset(sTrama, '\0', MAX_TRAMA);
 				read (nFdIn, sTrama, MAX_TRAMA);
 				printf ("trama rebuda: %s\n", sTrama);
+				writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 				nTipusTrama	= checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 
 			break;
