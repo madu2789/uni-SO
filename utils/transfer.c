@@ -249,19 +249,19 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	char sTrama[MAX_TRAMA];
 	char sInfo[105];
 
-	sem_wait(&semLL);
+	sem_wait(semLL);
 	nTotalFiles = count (LinkedListToTx);
-	sem_post(&semLL);
+	sem_post(semLL);
 	for (i = 1; i < nTotalFiles+1; i++) {
 		memset (sName, '\0', 30);
 		memset (sData, '\0', 64);
 
-		sem_wait(&semLL);
+		sem_wait(semLL);
 		nSize = showNode (sName, sData, i, LinkedListToTx);
 		nEstat = getEstatByName (sName, LinkedListToTx);
-		sem_post(&semLL);
-		//Aixo es arriscat i TREPITXEROOOOO!!!!!
+		sem_post(semLL);
 
+		//Aixo es arriscat i TREPITXEROOOOO!!!!!
 		if (!strcmp (sMyLog, "LSBox_cli.log.html")){
 			nEstatPerEnviar1 = 4;
 			nEstatPerEnviar2 = 5;
@@ -350,9 +350,9 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 					nFileFd = createFile(sDirPath, sName);
 					//l'ageixo ala LL perque no noti canvi i demani sincro!
 
-					sem_wait(&semLL);
+					sem_wait(semLL);
 					addToLL(sDirPath, sName, 1, LinkedList, LinkedListToTx, sMyLog);
-					sem_post(&semLL);
+					sem_post(semLL);
 					nFileFd = openFile (sDirPath, sName);
 				}
 
@@ -384,13 +384,13 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				//Actualitzo les Dates a les LL perque no noti el canvi i torni a demanar una Sincro!
 				memset (sData, '\0', 30);
 
-				sem_wait(&semLL);
+				sem_wait(semLL);
 				getDateReal(sData, sDirPath, sName);
 				setDateByName (sName, sData, 0, LinkedList);
 
 				//Actualitzo tambe el actual tamany del arxiu
 				setSizeByName(sName, nSize, LinkedList);
-				sem_post(&semLL);
+				sem_post(semLL);
 			break;
 			case 2: //trama	'R' remove
 				memset(sName, '\0', 24);
@@ -400,9 +400,9 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				printf("abans de cridar el remove, sDirPath: %s\n", sDirPath);
 				removeFile (sDirPath, sName);
 
-				sem_wait(&semLL);
+				sem_wait(semLL);
 				delnode(sName, LinkedList);
-				sem_post(&semLL);
+				sem_post(semLL);
 
 				memset(sTrama, '\0', MAX_TRAMA);
 				read (nFdIn, sTrama, MAX_TRAMA);

@@ -6,7 +6,7 @@
 
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
-	sem_t *semLL;
+	sem_t semLL;
 	char sLogin[8];
 	char sMyLog[20];
 	char sDirPath[MAX];
@@ -77,8 +77,8 @@ void * ThreadTx (void *arg){
 	nSocketFDTx = socketConnectionClient ((int)nPortTx);
 
 	//Primer rebem info, despres enviem
-	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
-	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog, semLL);
+	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog, &semLL);
+	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog, &semLL);
 	
 	//Tancar socket
 	close (nSocketFDTx);
@@ -109,7 +109,7 @@ void RSIInt (void){
 void RSIAlarm(void) {
 	int bSincro = 0;
 
-	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
+	bSincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog, &semLL);
 
 	if ( bSincro ) {
 		pleaseSincro (nSocketFD, sLogin);

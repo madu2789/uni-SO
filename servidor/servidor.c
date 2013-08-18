@@ -7,7 +7,7 @@
 	//VARS GLOBALS
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
-	sem_t *semLL;
+	sem_t semLL;
 	char sDirPath[MAX];
 
 	//Hi ha que fer un maxambrat d'aquests dos
@@ -66,8 +66,8 @@ void * ThreadTx (void *arg){
 		write (1, sFrase, strlen (sFrase));
 	
  	 //Transmissio de dades
-   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog[nIdMyClient], semLL);
-	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient], semLL);
+   transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog[nIdMyClient], &semLL);
+	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient], &semLL);
 	 
 	 //Tancar socket
 	 close (nSocketFD);
@@ -153,7 +153,7 @@ void RSIAlarm(void) {
 	int bMySincro = 0;
 	int i = 0;
 
-	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog[0], semLL);
+	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog[0], &semLL);
 
 	if (bMySincro) {
 		for ( i = 0; i <= nIdClient; i++) {
