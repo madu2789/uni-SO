@@ -115,7 +115,7 @@ int writeLog (char sIdLog[20], char sOrigen[32], char sFunction[32], char sExpla
 
 
 			write (nFdInBackUp, sAux, strlen(sAux));
-			write (nFdInBackUp, 26, 1);
+			//write (nFdInBackUp, 26, 1);
 
 			//Tornem a formar el arxiu sencer de log
 
