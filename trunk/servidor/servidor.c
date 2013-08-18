@@ -111,7 +111,7 @@ void * ServerDedicat (void *arg){
 				
 				alarm(0);
 				//Crear Thread enviament
-				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nIdMyClient);
+				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, (void *)nIdMyClient);
 				if (nEstatThread != 0) printf("fail al fill!\n");
 				nEstatThread = pthread_join(thread_id, NULL);
 				if (nEstatThread != 0) 	printf("fail al fill!\n");
@@ -153,7 +153,7 @@ void RSIAlarm(void) {
 	int bMySincro = 0;
 	int i = 0;
 
-	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
+	bMySincro = checkRootFiles (sDirPath, LinkedList, LinkedListToTx, sMyLog[0], semLL);
 
 	if (bMySincro) {
 		for ( i = 0; i <= nIdClient; i++) {
@@ -174,7 +174,7 @@ void creaServidorDedicat (int nIdClient) {
 		pthread_t thread_id;
 	  int nEstatThread = 0;
 
-		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, nIdClient);
+		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, (void *)nIdClient);
 		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
 
 		//Crear/Obrir fitxer de Log

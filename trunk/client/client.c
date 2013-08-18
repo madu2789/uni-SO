@@ -74,7 +74,7 @@ void * ThreadTx (void *arg){
 	int nSocketFDTx = 0;
 
 	//Creem el socket
-	nSocketFDTx = socketConnectionClient (nPortTx);
+	nSocketFDTx = socketConnectionClient ((int)nPortTx);
 
 	//Primer rebem info, despres enviem
 	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
@@ -195,7 +195,7 @@ int main () {
 
 			alarm(0);
 			//creem el Thread enviament
-			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, nPortTx);
+			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, (void *)nPortTx);
 			if (nEstatThread != 0) 	printf("fail al fill!\n");
 			nEstatThread = pthread_join(thread_id, NULL);
 			if (nEstatThread != 0) 	printf("fail al fill!\n");
