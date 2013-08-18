@@ -36,7 +36,7 @@
 
 //Funciones
 int startSincro (int nFdIn, char sLoginDesti[7]);
-void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, struct node *LinkedListToTx);
+void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, struct node *LinkedListToTx, int nIdMyClient);
 int receiveClientSincro (int nFdIn);
 
 

@@ -130,7 +130,7 @@ int receiveClientSincro (int nFdIn) {
 
 
 
-void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx) {
+void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx, int nIdMyClient) {
 
 	int nNumberOfElements = count(LinkedListToTx);
 	int i, bTrobat = 0;
@@ -152,12 +152,15 @@ void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx) 
 			creaTramaSincro (sTrama, sUser, sName, "  ", 0, 4);
 			printf("sTrama: %s\n", sTrama); 
 			write (nFdIn, sTrama, MAX_TRAMA);
+			writeLog ("LSBox_svr.log.html", "sincroServer.c","Trama enviada", sTrama, 1);
 		}
 	}
 	//trama X
 	creaTramaSincro (sTrama, sUser, " ", " ", 0, 3);
 	printf("sTrama: %s\n", sTrama); 
 	write (nFdIn, sTrama, MAX_TRAMA);
+	writeLog ("LSBox_svr.log.html", "sincroServer.c","Trama enviada", sTrama, 1);
+
 }
 
 
@@ -238,7 +241,7 @@ int decideWhoUpdate (char sDataTrama[24], char sDataLL[24]) {
  * @param  nFd {Number}	nFile descriptor del socket obert
  * @return bCorrect {0 wrong | 1 right}
  */
-void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, struct node *LinkedListToTx) {
+void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, struct node *LinkedListToTx, int nIdMyClient) {
 	
 	int bFinalSincro, bTrobat, i, nNumberOfSincroElemets, nNumberOfElements, nSize, nWhoUpdate, nEstat;
 	char sTrama[MAX_TRAMA];
@@ -262,6 +265,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 		//Rebem Trames de Sincro amb les dades del client
 		read (nFdIn, sTrama, MAX_TRAMA);
 		printf ("trama rebuda: %s\n", sTrama);
+		writeLog ("LSBox_svr.log.html", "sincroServer.c","Trama rebuda", sTrama, 1);
 		bFinalSincro = checkTramaServidor (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
 
 	  strncpy (ArrayInfo[nNumberOfSincroElemets], sTrama+15, 100);
@@ -317,7 +321,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 
 	//Inicialitzem vars per la segona comprovacio
 	//que NO rebut pero SI que el tinc: SER_RM 	pendeeeent
-	nNumberOfElements = count(LinkedList);
+	nNumberOfElements = count (LinkedList);
 	bTrobat = 0;
 
 	for (i = 1; i < nNumberOfElements+1; i++) {
@@ -325,12 +329,12 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 		bTrobat = getDateByName (sDataLL, sName, LinkedListToTx);
 		if ( !bTrobat ) {
 			printf("SER_RM: %s Servidor envia a Client\n", sName);
-			//addToLLTx (sName, sDataTrama, nSize, 1, LinkedListToTx);
+			setEstatByName (sName, 6, LinkedListToTx);
 		}	
 	}
 
 	//Trames G que envia el servidor al client pk sapigui quins fitxers enviar
-	sendTramesG(nFdIn, sLoginUser, LinkedListToTx);
+	sendTramesG(nFdIn, sLoginUser, LinkedListToTx, nIdMyClient);
 
   printf("llistaTx:\n");
 	display (LinkedListToTx);

@@ -92,6 +92,7 @@ void getTramesG (int nFdIn, char sLoginOrigen[7], struct node *LinkedListToTx) {
 		  	ParserNameTx(sDataTrama, sName);
 
 				printf("sTrama G: %s\n", sTrama);
+				writeLog ("LSBox_cli.log.html","sincroClient.c","Trama G Enviada", sTrama, 1);
 
 		  	//canviem el estat de la LlinkedListToTx per enviar-li al servidor
 		  	setEstatByName (sName, 4, LinkedListToTx);
@@ -121,13 +122,13 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 	if (nBytesRead <= 4) return 0;
 
 	printf("trama rebuda:  %s\n", sTrama);
-	writeLog ("LSBox_cli.log.html","sincro.c","Trama Rebuda", sTrama, 1);
+	writeLog ("LSBox_cli.log.html","sincroClient.c","Trama Rebuda", sTrama, 1);
 
 	//Enviem la trama 'O' o 'E' sincronitzacio confirmada
 	creaTramaClient(sTrama, sLoginOrigen, "LsBox  ", 4);
 	write (nFdIn, sTrama, MAX_TRAMA);
 	printf("trama enviada: %s\n", sTrama);
-	writeLog ("LSBox_cli.log.html","sincro.c","Trama 'O' Enviada", sTrama, 1);
+	writeLog ("LSBox_cli.log.html","sincroClient.c","Trama 'O' Enviada", sTrama, 1);
 
 	//Comencem a enviar tota la LL -> trames 'N'
 	setSincroInfo(nFdIn, sLoginOrigen, LinkedList);
@@ -207,4 +208,5 @@ void pleaseSincro (int nFdIn, char sLoginOrigen[7]) {
 	//Enviem Trama
 	write (nFdIn, sTrama, MAX_TRAMA);
 	printf("sTrama : %s\n", sTrama);
+	writeLog ("LSBox_cli.log.html", "sincroClient.c", "Peticio de Sincronitzacio", sTrama, 1);
 }

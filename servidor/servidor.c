@@ -14,7 +14,7 @@
 	char sLoginUser[8];
 	char sLoginOrigen[8];
 
-	// prova Estructura Molongui (a la [0] guarda info del pare)
+	// Estructura Molongui (a la [0] guarda info del pare)
 	int nIdClient = 1;
 	int nFdSockClient[7];
 	// A nPortTx[0] guarda el port del pare(avi)
@@ -54,9 +54,9 @@ void * ThreadTx (void *arg){
 		socklen_t c_len = sizeof (stDireccionCliente);
 		nSocketCliente = accept (nSocketFD, (void *) &stDireccionCliente, &c_len);
 		if (nSocketCliente < 0){
-			writeLog ("LSBox_svr.log.html","socketServer.c","[Error] Connexio","En acceptar la peticio del cliente!", 0);
+			writeLog ("LSBox_svr.log.html","servidor.c","[Error] Connexio","En acceptar la peticio del cliente!", 0);
 			sprintf (sFrase,"Error al aceptar la peticion del cliente!\n");
-			write (1,sFrase,strlen (sFrase));
+			write (1, sFrase, strlen (sFrase));
 			//Tanquem socket
 			close (nSocketFD);
 			return NULL;
@@ -103,7 +103,7 @@ void * ServerDedicat (void *arg){
 				//Sincronitzacio
 				startSincro (nFdSocketClient, sLoginDesti[nIdMyClient]);
 				//Agafa la info procedent de Client
-				getSincroInfo (nFdSocketClient, sLoginDesti[nIdMyClient], LinkedList, LinkedListToTx);
+				getSincroInfo (nFdSocketClient, sLoginDesti[nIdMyClient], LinkedList, LinkedListToTx, nIdMyClient);
 				
 				//Enviar el Port al client	
 				nPortTx[nIdMyClient] = nPortTx[0] + rand() % 400;
@@ -115,6 +115,7 @@ void * ServerDedicat (void *arg){
 				if (nEstatThread != 0) printf("fail al fill!\n");
 				nEstatThread = pthread_join(thread_id, NULL);
 				if (nEstatThread != 0) 	printf("fail al fill!\n");
+				writeLog (sMyLog[nIdMyClient], "servidor.c","Nou Thread","crea ThreadTx", 1);
 
 				bSincro[nIdMyClient] = 0;
 				alarm(15);
@@ -135,6 +136,8 @@ void RSIInt (void){
 	
 	sprintf (sAux,"Tancant LSBox server!\n");
 	write (1,sAux,strlen (sAux));
+
+	writeLog ("LSBox_svr.log.html","servidor.c","Tancament aplicació","Hem rebut una INT", 1);
 
 	exit(0);
 	//TODO
@@ -179,6 +182,8 @@ void creaServidorDedicat (int nIdClient) {
 		strcat (sMyLog[nIdClient], ".log.html");
 		sMyLog[nIdClient][strlen(sMyLog[nIdClient])] = '\0';
 		createLog (sMyLog[nIdClient]);
+
+		writeLog ("LSBox_svr.log.html","servidor.c","Nou Thread","crea ServerDedicat", 1);
 
 }
 
