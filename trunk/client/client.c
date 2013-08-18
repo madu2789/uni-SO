@@ -77,8 +77,8 @@ void * ThreadTx (void *arg){
 	nSocketFDTx = socketConnectionClient (nPortTx);
 
 	//Primer rebem info, despres enviem
-	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog);
-	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog);
+	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog, semLL);
+	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog, semLL);
 	
 	//Tancar socket
 	close (nSocketFDTx);
