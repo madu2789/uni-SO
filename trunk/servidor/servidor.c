@@ -100,7 +100,7 @@ void * ServerDedicat (void *arg){
 				//Sincronitzacio
 				startSincro (nFdSocketClient, sLoginDesti[nIdMyClient]);
 				//Agafa la info procedent de Client
-				getSincroInfo (nFdSocketClient, sLoginDesti[nIdMyClient], LinkedList, LinkedListToTx, nIdMyClient);
+				getSincroInfo (nFdSocketClient, sLoginDesti[nIdMyClient], LinkedList, LinkedListToTx, nIdMyClient, sDirPath);
 				
 				//Enviar el Port al client	
 				nPortTx[nIdMyClient] = nPortTx[0] + rand() % 400;
