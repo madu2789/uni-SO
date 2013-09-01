@@ -129,7 +129,7 @@ void updateToLL (char sDirPath[MAX], char sLLDate[30], char sName[30], struct no
  * @param  sTipus {String} on es guardara el resultat,(ref)
  * @param  nToConvert {Integer} Codi
  */
-void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20]) {
+void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20], char sDirPath[MAX]) {
 	int i = 0;
 	int j= 0;
 	int nSize = 0;
@@ -147,6 +147,7 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 		for (j = 0; j < nTotalFiles; j++){
 
 			printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
+
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
 				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
@@ -154,13 +155,20 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 		}
 
 		if (bToRemove == 1) {
-			delnode(sNameToRemove, LinkedList);
-			printf("sNameToRemove a la LL : %s\n", sNameToRemove);
-			display(LinkedList);
+
+	printf("sNameToRemove a la LL : %s\n", sNameToRemove);
+
+			buidaLL(LinkedList);
+			buidaLL(LinkedListToTx);
+			initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+			//delnode(sNameToRemove, LinkedList);
+		
+			//display(LinkedList);
 			
 			//Codi nomes pel servidor, no borrem de la LL, canviem el nEstat per saber qui TX o RX
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
 				printf("CLI_RM: %s", sNameToRemove);
+				//addToLLTx(sNameToRemove, "fake", 1, 3, LinkedListToTx);
 				setEstatByName (sNameToRemove, 3, LinkedListToTx);
 			}
 		}

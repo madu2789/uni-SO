@@ -221,10 +221,10 @@ int createFile (char sDirPath[MAX], char sName[30]) {
 
 
 int removeFile (char sDirPath[MAX], char sName[30]) {
-	char sRealDirPath[MAX+30];
+	char sRealDirPath[MAX+80];
 
 //prova
-printf("sDirPath %s\n", sDirPath);
+printf("sDirPath %s \n", sDirPath);
 
 	memset (sRealDirPath, '\0', MAX+80);
 	strcat (sRealDirPath, sDirPath);
