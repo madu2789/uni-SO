@@ -85,6 +85,25 @@ int ReadDir (int bIsNull, char sMyLog[20]) {
 
 
 
+
+/**
+ * Comprova di existeix el root, si no existeix el crea
+ * @param  sDirPath {String} Path a la carpeta root
+ * @param  sMyLog {String} Log al que escrius
+ */
+int pathExists (char sDirPath[MAX], char sMyLog[40]) {
+
+	int bError = 0;
+  bError = mkdir(sDirPath, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
+	if ( !bError ) {
+		writeLog (sMyLog, "initInCommon.c","[Error] No existeix carpeta root","Creant carpeta root",0);
+	}
+	return bError;
+}
+
+
+
+
 /**
  * Inicialitza la LinkedList posant tos els elements del directori a la LL
  */
@@ -92,6 +111,8 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	int bArxiusOk = 0;
 	int i = 0;
 	struct dirent **arxius;
+
+	pathExists (sDirPath, sMyLog);
 
 	int nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 	
@@ -134,6 +155,8 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	int nLLTotalFiles = 0;
 	char sLLDate[30];
 	char sRealDate[30];
+
+	pathExists (sDirPath, sMyLog);
 
 	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 

@@ -187,12 +187,14 @@ int ParserBuclesTx (char Frase[100], char sName[24]) {
 
 
 
-int openFile (char sDirPath[MAX], char sName[30]) {
+int openFile (char sDirPath[MAX], char sName[30], char sMyLog[40]) {
 
 	char sRealDirPath[MAX+30];
 	memset (sRealDirPath, '\0', MAX+30);
 	strcat (sRealDirPath, sDirPath);
 	strcat (sRealDirPath, sName);
+
+	pathExists (sDirPath, sMyLog);
 
 	int nFdIn = open (sRealDirPath, O_RDWR);
 
@@ -252,6 +254,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	sem_wait(semLL);
 	nTotalFiles = count (LinkedListToTx);
 	sem_post(semLL);
+	
 	for (i = 1; i < nTotalFiles+1; i++) {
 		memset (sName, '\0', 30);
 		memset (sData, '\0', 64);
@@ -274,7 +277,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 		//Si estat == a CLI_ADD o CLI_UPDATE
 		if (nEstat == nEstatPerEnviar1 || nEstat == nEstatPerEnviar2) {
 			bFi = 1;
-			nFdFitxer = openFile (sDirPath, sName);
+			nFdFitxer = openFile (sDirPath, sName, sMyLog);
 
 			//Creo la 1a trama 'M' amb info basica del fitxer
 			memset(sTrama, '\0', MAX_TRAMA);
@@ -345,7 +348,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 
 				// Intenten Obrim el fitxer per llegir sino, el creem
 				nFileFd = 0;
-				nFileFd = openFile (sDirPath, sName);
+				nFileFd = openFile (sDirPath, sName, sMyLog);
 				if ( !nFileFd ) {
 					nFileFd = createFile(sDirPath, sName);
 					//l'ageixo ala LL perque no noti canvi i demani sincro!
@@ -353,7 +356,7 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 					sem_wait(semLL);
 					addToLL(sDirPath, sName, 1, LinkedList, LinkedListToTx, sMyLog);
 					sem_post(semLL);
-					nFileFd = openFile (sDirPath, sName);
+					nFileFd = openFile (sDirPath, sName, sMyLog);
 				}
 
 				bCopiant = 0;

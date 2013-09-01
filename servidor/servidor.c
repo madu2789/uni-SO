@@ -9,9 +9,6 @@
 	struct node *LinkedListToTx;
 	sem_t semLL;
 	char sDirPath[MAX];
-
-	//Hi ha que fer un maxambrat d'aquests dos
-	char sLoginUser[8];
 	char sLoginOrigen[8];
 
 	// Estructura Molongui (a la [0] guarda info del pare)
@@ -226,7 +223,6 @@ int main () {
 	//Inits strings
 	memset(sServer, '\0', 11);
 	memset(sDirPath, '\0', MAX);
-	memset(sLoginUser, '\0', 7);
 
 	//Crear/Obrir fitxer de Log
 	strcpy (sMyLog[0], "LSBox_svr.log.html");

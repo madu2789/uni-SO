@@ -166,8 +166,6 @@ void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx, 
 
 
 
-
-
 /**
  * Server parseja les trames per Sincro
  * @param  Frase {String}	cadena que enviarem
@@ -229,9 +227,10 @@ int decideWhoUpdate (char sDataTrama[24], char sDataLL[24]) {
 	strptime(sDataLL, "%A %b %d %H:%M:%S %Y", &tmDataLL);
 	tDataLL = mktime(&tmDataLL);
 
-	if( tDataTrama > tDataLL )			return 1;
-	else if( tDataTrama < tDataLL )		return -1;
-	else								return 0;
+	if(  abs(tDataTrama-tDataLL) <= 35 )	return 0;
+	if( tDataTrama > tDataLL )						return 1;
+	else if( tDataTrama < tDataLL )				return -1;
+	else																	return 0;
 }
 
 
@@ -300,6 +299,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 			//UPDATE
 			nWhoUpdate = decideWhoUpdate (sDataTrama, sDataLL);
 			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) { //sino esta l'afegeixo
+				if ( nWhoUpdate == 0 ) 	setEstatByName (sName, 8, LinkedListToTx);
 				if ( nWhoUpdate > 0 ) {
 					printf("SER_UPDATE: %s Client envia a Servidor\n", sName);
 					addToLLTx (sName, sDataTrama, nSize, 5, LinkedListToTx);
@@ -307,7 +307,8 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 					printf("CLI_UPDATE: %s Servidor envia a client\n", sName);
 					addToLLTx (sName, sDataTrama, nSize, 2, LinkedListToTx);
 				}
-			} else {																							//si esta actualitzo nEstat
+			} else {	
+				if ( nWhoUpdate == 0 ) 	setEstatByName (sName, 8, LinkedListToTx);																						//si esta actualitzo nEstat
 				if ( nWhoUpdate > 0 ) {
 					printf("SER_UPDATE: %s Client envia a Servidor\n", sName);
 					setEstatByName (sName, 5, LinkedListToTx);
