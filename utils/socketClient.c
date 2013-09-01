@@ -209,7 +209,7 @@ int socketConnectionClient (int nPort) {
 	//Copiem les dades a la estructura
 	bcopy (stHost->h_addr, &stDireccionServidor.sin_addr.s_addr, stHost->h_length);
 
-	if (connect (nSocketFD, &stDireccionServidor, sizeof (stDireccionServidor)) < 0){
+	if (connect (nSocketFD, (struct sockaddr *)&stDireccionServidor, sizeof (stDireccionServidor)) < 0){
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","Error al intentarnos conectar al servidor!", 0);
 		exit(ERROR);
 	}
