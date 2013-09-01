@@ -40,5 +40,6 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *LinkedListToTx, char sMyLog[20], sem_t *semLL);
 int ReadDir (int bIsNull, char sMyLog[20]);
 void getDateReal (char sRealDate[30], char sDirPath[MAX], char sName[30]);
+int pathExists (char sDirPath[MAX], char sMyLog[40]);
 
 #endif
