@@ -40,7 +40,10 @@ int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
  * @param  arg {struct dirent} path al directori
  */
 static int triar (const struct dirent *arg) {
-	if ( arg->d_name[0] == "." || strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0 ) return 0;
+	if ( (char)arg->d_name[0] == (char)'.' ) {
+	 	return 0;
+	} 
+	if ( strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0 ) return 0;
 	return 1;
 }
 
