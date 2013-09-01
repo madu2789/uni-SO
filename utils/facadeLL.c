@@ -140,15 +140,15 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 	nLLTotalFiles = count(LinkedList);
 
-	for (i = 1; i < nLLTotalFiles; i++) {
+	for (i = 1; i < nLLTotalFiles+1; i++) {
 		memset(sNameToRemove, '\0', 30);
 		nSize = showNode(sNameToRemove, sDateLL, i, LinkedList);
 
 		for (j = 0; j < nTotalFiles; j++){
 
-			//printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
+			printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
-				//printf("NO hem de borrar : %s\n", arxius[j]->d_name);
+				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
 			}
 		}
