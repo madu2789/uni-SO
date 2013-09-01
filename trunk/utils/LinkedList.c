@@ -4,21 +4,32 @@
 
 /*THIS FUNCTION DELETES A NODE */
 int delnode (char sName[30], struct node *LinkedList) {
-  struct node *temp, *anterior;
+  struct node *temp, *anterior, *inici, *r, *temp2;
   int i = 0;
 
-  temp = (struct node *)malloc(sizeof(struct node));
-  anterior = (struct node *)malloc(sizeof(struct node));
+
 
 	temp = LinkedList;
   anterior = LinkedList;
 
+
   while (temp != NULL) {
     if (strcmp(temp->sName, sName) == 0) {
       printf("borrant: %s\n", temp->sName);
+
       if ( i == 0 ) {
-        printf("primer cabron!\n");
-        LinkedList = temp->next;
+    
+    printf("primer cabron!%s\n", LinkedList->sName);
+
+    temp2 = LinkedList;
+    LinkedList = LinkedList->next;
+  
+    printf("segon cabron!%s\n", LinkedList->sName);
+
+    temp2->next = NULL;
+    temp2 = NULL;
+    free(temp2);
+  return 1;
       } else {
         anterior->next = temp->next;
         temp->next = NULL;

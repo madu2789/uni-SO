@@ -221,7 +221,7 @@ int createFile (char sDirPath[MAX], char sName[30]) {
 
 
 int removeFile (char sDirPath[MAX], char sName[30]) {
-	char sRealDirPath[MAX+80];
+	char sRealDirPath[MAX+30];
 
 //prova
 printf("sDirPath %s\n", sDirPath);

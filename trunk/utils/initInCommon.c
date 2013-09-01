@@ -40,9 +40,11 @@ int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
  * @param  arg {struct dirent} path al directori
  */
 static int triar (const struct dirent *arg) {
-	if (strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0 ) return 0;
+	if ( arg->d_name[0] == "." || strcmp (arg->d_name, ".") == 0 || strcmp (arg->d_name, "..") == 0 ) return 0;
 	return 1;
 }
+
+
 
 
 /**
@@ -219,8 +221,11 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		free (arxius);
 
 	} else if (nTotalFiles < nLLTotalFiles) {
+		write(2, "cal borrar el nou arxiu\n", 25);
 		sem_wait(semLL);
-		removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog);
+		//removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog);
+		buidaLL(LinkedList);
+		initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 		sem_post(semLL);
 
 		bSincro = 1;
