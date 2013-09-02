@@ -221,14 +221,13 @@ int createFile (char sDirPath[MAX], char sName[30]) {
 
 
 int removeFile (char sDirPath[MAX], char sName[30]) {
-	char sRealDirPath[MAX+80];
+	char sRealDirPath[MAX+100];
 
-//prova
-printf("sDirPath %s \n", sDirPath);
-
-	memset (sRealDirPath, '\0', MAX+80);
+	memset (sRealDirPath, '\0', MAX+100);
 	strcat (sRealDirPath, sDirPath);
-	strcat (sRealDirPath, sName);
+  strcat (sRealDirPath, sName);
+
+	//printf("sRealDirPath: %s\n", sRealDirPath);
 
 	return remove(sRealDirPath);
 }
@@ -263,7 +262,6 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 		sem_wait(semLL);
 		nSize = showNode (sName, sData, i, LinkedListToTx);
 		nEstat = getEstatByName (sName, LinkedListToTx);
-		printf("nEstat: %d\n", nEstat);
 		sem_post(semLL);
 
 		//Aixo es arriscat i TREPITXEROOOOO!!!!!
@@ -332,11 +330,15 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 	char sLoginOrigen[8]; char sLoginDesti[8]; char sDataTrama[101];
 	char sRealDirPath[MAX+30];
 
+	char sSpecialPath[MAX];
+
 	memset(sTrama, '\0', MAX_TRAMA);
 	read (nFdIn, sTrama, MAX_TRAMA);
 	printf ("trama rebuda: %s\n", sTrama);
 	writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 
+	memset(sSpecialPath, '\0', MAX);
+	strcpy(sSpecialPath, sDirPath);
 
 	nTipusTrama = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 
@@ -399,15 +401,17 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 			break;
 			case 2: //trama	'R' remove
 				memset(sName, '\0', 24);
-				memset(sDataTrama, '\0', 101);
+				//memset(sDataTrama, '\0', 101);
 			
 				ParserNameTx(sDataTrama, sName);
-				printf("abans de cridar el remove, sDirPath: %s\n", sDirPath);
-				removeFile (sDirPath, sName);
+				printf("abans de cridar el remove, sDirPath: %s\n", sSpecialPath);
+				printf("sName: %s\n", sName);
+				
+				removeFile (sSpecialPath, sName);
 
-				sem_wait(semLL);
-				delnode(sName, LinkedList);
-				sem_post(semLL);
+				//sem_wait(semLL);
+				//delnode(sName, LinkedList);
+				//sem_post(semLL);
 
 				memset(sTrama, '\0', MAX_TRAMA);
 				read (nFdIn, sTrama, MAX_TRAMA);

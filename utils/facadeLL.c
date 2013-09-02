@@ -70,7 +70,7 @@ void addToLL (char sDirPath[MAX], char sName[30], int nTipus, struct node *Linke
 
 	//afegir a la cua el nou element: ->LinkedList
 	append (sName, sAdaptedTipus, sDate, nSize, 0, LinkedList);
-	addToLLTx (sName, sDate, nSize, 1, LinkedListToTx);
+	addToLLTx (sName, sDate, nSize, 8, LinkedListToTx);
 	writeLog (sMyLog, "facadeLL.c", "Nou element afegit", sName, 1);
 
 }

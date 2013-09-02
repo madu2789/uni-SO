@@ -282,7 +282,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 	for (i = 1; i < nNumberOfElements+1; i++) {
 		memset(sName, '\0', 24);
 		showNode(sName, sDataLL, i, LinkedListToTx);
-		if ( 3 != getEstatByName (sName, LinkedListToTx) ){
+		if ( 3 != getEstatByName (sName, LinkedListToTx) && 1 != getEstatByName (sName, LinkedListToTx) ){
 			setEstatByName (sName, 6, LinkedListToTx);
 		}
 	}
