@@ -193,7 +193,7 @@ int main () {
 
 		bTransfer = receiveServerSincro (nSocketFD, sLogin, sDirPath, LinkedList, LinkedListToTx);
 
-		if ( bTransfer ) {
+		if ( 1 == bTransfer ) {
 			//rebem el port on conectarem el thread
 			nPortTx = rebPort(nSocketFD);
 
