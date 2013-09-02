@@ -6,30 +6,18 @@
 int delnode (char sName[30], struct node *LinkedList) {
   struct node *temp, *anterior, *inici, *r, *temp2;
   int i = 0;
-
-
-
 	temp = LinkedList;
   anterior = LinkedList;
 
-
   while (temp != NULL) {
     if (strcmp(temp->sName, sName) == 0) {
-      printf("borrant: %s\n", temp->sName);
-
       if ( i == 0 ) {
-    
-    printf("primer cabron!%s\n", LinkedList->sName);
-
-    temp2 = LinkedList;
-    LinkedList = LinkedList->next;
-  
-    printf("segon cabron!%s\n", LinkedList->sName);
-
-    temp2->next = NULL;
-    temp2 = NULL;
-    free(temp2);
-  return 1;
+        temp2 = LinkedList;
+        LinkedList = LinkedList->next;
+        temp2->next = NULL;
+        temp2 = NULL;
+        free(temp2);
+        return 1;
       } else {
         anterior->next = temp->next;
         temp->next = NULL;
@@ -46,11 +34,11 @@ int delnode (char sName[30], struct node *LinkedList) {
   return 1;
 }
 
+
 /*THIS FUNCTION Buida La LL */
 void buidaLL (struct node *LinkedList) {
 
   struct node *temp, *r;
-
   r = LinkedList;
 
   while (r != NULL) {
@@ -62,7 +50,6 @@ void buidaLL (struct node *LinkedList) {
   LinkedList = (struct node *)malloc(sizeof(struct node));
   strcpy(LinkedList->sName,"fantasma");
   LinkedList->next = NULL;
-
 }
 
 
@@ -99,21 +86,25 @@ void append (char sName[30], char sTipus[30], char sDate[64], int nSize, int nEs
 /* THIS FUNCTION DISPLAYS THE CONTENTS OF THE LINKED LIST */
 int display (struct node *r) {
   struct node *inici;
+  char sFrase[MAX];
   inici = r;
   //r = p;
   int nElements = 0;
   if (r == NULL) {
-    printf("NO ELEMENT IN THE LIST :\n");
-    return;
+    return 0;
   }
-  printf("\t sName \t sTipus \t sDate \t nSize \t nEstat \n");
+  sprintf (sFrase,"\t sName:\n \t");
+  write (1, sFrase, strlen (sFrase));
   while (r != NULL) {
-    printf(" -> %s \t %s \t %s \t %d \t %d \n", r->sName, r->sTipus, r->sDate, r->nSize, r->nEstat );
+
+    sprintf (sFrase, r->sName);
+    write (1, sFrase, strlen (sFrase));
+    sprintf (sFrase,"\n \t");
+    write (1, sFrase, strlen (sFrase));
     r = r->next;
     nElements++;
   }
 
-  //printf("num total delements: %d ", nElements-1);
   r = inici;
   return nElements;
 }
@@ -158,7 +149,6 @@ int getDateByName (char sDate[30], char sName[30], struct node *LinkedList) {
     } else {
       temp= temp->next;
     }
-    //printf(" ELEMENT %s FOUND!\n", temp->sName);
   }
   return bTrobat;
 }
@@ -249,8 +239,7 @@ int count (struct node *LinkedList) {
   //r = p;
   int nElements = 0;
   if (LinkedList == NULL) {
-    printf("NO ELEMENT IN THE LIST :\n");
-    return;
+    return 0;
   }
   if (strcmp(LinkedList->sName, "fantasma") == 0) {
     return 0;
