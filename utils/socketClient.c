@@ -172,7 +172,7 @@ int checkTramaClient (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return nSocketFD {Integer} Id del socket associat
  */
-int socketConnectionClient (int nPort) {
+int socketConnectionClient (char **psServer, int nPort) {
 	struct sockaddr_in stDireccionServidor;
 	struct hostent *stHost;
 	uint16_t wPuerto;
@@ -199,8 +199,8 @@ int socketConnectionClient (int nPort) {
 	stDireccionServidor.sin_port = htons (wPuerto);
 
 	//Extraemos el host
-	//stHost = gethostbyname ("cygnus.salle.url.edu");
-	stHost = gethostbyname ("vela.salle.url.edu");
+	//stHost = gethostbyname ("vela.salle.url.edu");
+	stHost = gethostbyname (*psServer);
 	if (NULL == stHost){
 		writeLog ("LSBox_cli.log.html","socketClient.c","[Error] socket","No se ha podido resolver la direccion de cygnus!", 0);
 		exit(ERROR);
@@ -225,7 +225,7 @@ int socketConnectionClient (int nPort) {
  * @param  nPort {Integer}	Number of Port al que ens conectarem
  * @return bTramaOk {Boolean} Rebrem: [correcte = 1 | incorrecte = 0]
  */
-int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedList) {
+int clientConnect (char **psServer, int nPort, char sUser[7], char sPwd[32], struct node *LinkedList) {
 
 	int nSocketFD;
 	char sFrase[MAX], sTrama[MAX_TRAMA];
@@ -233,7 +233,7 @@ int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedL
 	int nTipusTrama = 0;
 
 	//Ens conectamem al servidor
-	nSocketFD = socketConnectionClient (nPort);
+	nSocketFD = socketConnectionClient (psServer, nPort);
 
 	//Protocol d'establiment de connexio
 	//Llegim la primera trama del servidor de P

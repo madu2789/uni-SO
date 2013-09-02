@@ -7,9 +7,10 @@
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
 	sem_t semLL;
+	char *psServer;
 	char sLogin[8];
 	char sMyLog[20];
-	char sDirPath[MAX];
+	char sDirPath[MAX_LONG];
 	int nSocketFD = 0;
 
 
@@ -69,17 +70,17 @@ void * ThreadTx (void *arg){
 	
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
-	
+
 	int *nPortTx = (int *) arg;
 	int nSocketFDTx = 0;
 
 	//Creem el socket
-	nSocketFDTx = socketConnectionClient ((int)nPortTx);
+	nSocketFDTx = socketConnectionClient (&psServer, (int)nPortTx);
 
 	//Primer rebem info, despres enviem
 	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog, &semLL);
 	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog, &semLL);
-	
+
 	buidaLL(LinkedList);
 	buidaLL(LinkedListToTx);
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
@@ -135,9 +136,8 @@ int main () {
 	int bTransfer = 0;
 	int bSincro = 0;
 
-	char sServer[11];
 	char sPswd[32];
-  pthread_attr_t attr;
+	pthread_attr_t attr;
 	pthread_t thread_id;
 	int nEstatThread = 0;
 
@@ -162,8 +162,8 @@ int main () {
 	sem_init(&semLL, 0, 1);
 
 	//Netegem strings
-	memset(sDirPath, '\0', MAX);
-	memset(sServer, '\0', 11);
+	memset(sDirPath, '\0', MAX_LONG);
+	//memset(sServer, '\0', 11);
 	memset(sLogin, '\0', 8);
 	memset(sPswd, '\0', 32);
 	memset(sMyLog, '\0', 20);
@@ -177,13 +177,13 @@ int main () {
 	loginUser (sLogin, sPswd);
 
 	//Llegir "config.dat"
-	nPort = getConfigInfo(sServer, sDirPath);
+	nPort = getConfigInfo(&psServer, sDirPath);
 
 	//Init LL posant tots els ele. trobats al directori root
 	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
 
 	//Socket peticio connexio
-	nSocketFD = clientConnect (nPort, sLogin, sPswd, LinkedList);
+	nSocketFD = clientConnect (&psServer, nPort, sLogin, sPswd, LinkedList);
 
 	sem_post(&semLL);
 	alarm(5);

@@ -36,8 +36,8 @@
 
 
 //Funciones
-int socketConnectionClient (int nPort);
-int clientConnect (int nPort, char sUser[7], char sPwd[32], struct node *LinkedList);
+int socketConnectionClient (char **psServer, int nPort);
+int clientConnect (char **psServer, int nPort, char sUser[7], char sPwd[32], struct node *LinkedList);
 int checkTramaClient (char sTrama[MAX_TRAMA],char sUser[7], int nType);
 void petitionConection (char sTrama[MAX_TRAMA], char sUser[7], char sPwd[20], int nTipusTrama);
 int rebPort (int nFdIn);
