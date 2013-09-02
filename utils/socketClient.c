@@ -81,7 +81,8 @@ int rebPort (int nFdIn) {
 	memset (sFrase, '\0', 100);
 
 	read ( nFdIn, sTrama, MAX_TRAMA);
-	printf("\nrebem port: sTrama: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 
 	memcpy (sFrase, &sTrama[15], 99);
 	sFrase[strlen(sFrase)] = '\0';
@@ -109,11 +110,9 @@ int checkTramaClient (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 	char sTypeTrama;
 	char sDataTrama[100];
 
-
 	memset(sLoginOrigen, '\0', 7);
 	memset(sLoginDTrama, '\0', 7);
 	memset(sDataTrama, '\0', 100);
-
 
 	memcpy (sLoginOrigen, &sTrama[0], 7 );
 	sLoginOrigen[7] = '\0';
@@ -152,15 +151,6 @@ int checkTramaClient (char sTrama[MAX_TRAMA], char sUser[7], int nType) {
 			}
 		break;
 	}
-
-/* // Comprovacio que parseja be la trama:
-  printf("camp login origen parsejat:  %s\n", sLoginOrigen);
-  printf("camp login desti parsejat:  %s\n", sLoginDTrama);
-  printf("camp trama parsejat:  %c\n", sTypeTrama);
-  printf("camp data parsejat:  %s\n", sDataTrama);
-  printf("password parsejat:  %s\n", sPwd);
-*/
-
 	return bTramaOk;
 }
 
@@ -242,12 +232,13 @@ int clientConnect (char **psServer, int nPort, char sUser[7], char sPwd[32], str
 	//Comprovem si la Trama es correcte
 	if (checkTramaClient(sTrama, sUser, 1)) {
 		writeLog ("LSBox_cli.log.html","socketClient.c", "[Error] Trama rebuda incorrecte",sTrama, 0);
-		printf("error trama incorrecte\n");
+		write (1, "Error Trama\n", 13);
 		nTipusTrama = 2;
 		//peticio again??
 	} else {
 		writeLog ("LSBox_cli.log.html", "socketClient.c", "Trama rebuda", sTrama, 1);
-		printf("trama rebuda: %s\n", sTrama);
+		write (1, sTrama, strlen (sTrama));
+		write (1, "\n ", strlen ("\n "));
 		nTipusTrama = 3;
 	}
 
@@ -257,17 +248,17 @@ int clientConnect (char **psServer, int nPort, char sUser[7], char sPwd[32], str
 	//Enviem la trama de peticio
 	write (nSocketFD, sTrama, MAX_TRAMA);
 	writeLog ("LSBox_cli.log.html","socketClient.c","Trama enviada",sTrama, 1);
-	printf("trama enviada: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 
 	//Llegim la Trama d'autoritzacio del
 	read (nSocketFD, sTrama, MAX_TRAMA);
-
 	bTramaOk = checkTramaClient(sTrama, sUser, 1);
-	printf("trama correcte? %d \n", bTramaOk);
 
 	//Comprovem si la Trama es correcte
 	if (bTramaOk) {
-		printf("2a trama rebuda: %s\n", sTrama);
+		write (1, sTrama, strlen (sTrama));
+		write (1, "\n ", strlen ("\n "));
 		writeLog ("LSBox_cli.log.html","socketClient.c","Trama rebuda", sTrama, 1);
 	} else {
 		sprintf (sFrase,"'Error en el procediment d'autentificació. Procedim a desconnexio'");

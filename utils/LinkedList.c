@@ -88,18 +88,18 @@ int display (struct node *r) {
   struct node *inici;
   char sFrase[MAX];
   inici = r;
-  //r = p;
+
   int nElements = 0;
   if (r == NULL) {
     return 0;
   }
-  sprintf (sFrase,"\t sName:\n \t");
+  sprintf (sFrase,"\nLinkedList:\n\tsName:\n \t\t");
   write (1, sFrase, strlen (sFrase));
   while (r != NULL) {
 
     sprintf (sFrase, r->sName);
     write (1, sFrase, strlen (sFrase));
-    sprintf (sFrase,"\n \t");
+    sprintf (sFrase,"\n \t\t");
     write (1, sFrase, strlen (sFrase));
     r = r->next;
     nElements++;
@@ -121,7 +121,7 @@ int showNode (char sName[30], char sDate[64], int nLocation, struct node *Linked
     while (temp != NULL && bTrobat == 0) {
         if (i == nLocation-1) {
           bTrobat = 1;
-          //printf(" ELEMENT %s FOUND!\n", temp->sName);
+  
           strcpy(sName, temp->sName);
           strcpy(sDate, temp->sDate);
           nSize = temp->nSize;
@@ -236,7 +236,7 @@ int setSizeByName (char sName[30], int nSize, struct node *LinkedList) {
 int count (struct node *LinkedList) {
   struct node *inici;
   inici = LinkedList;
-  //r = p;
+
   int nElements = 0;
   if (LinkedList == NULL) {
     return 0;

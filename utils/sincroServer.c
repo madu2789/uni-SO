@@ -98,12 +98,12 @@ int startSincro (int nFdIn, char sLoginDesti[7]) {
 
 	//Enviem la trama de peticio d'autentificacio
 	write (nFdIn, sTrama, MAX_TRAMA);
-	printf("trama enviada: %s\n", sTrama);
+	write (1, "\n ", strlen ("\n "));
+	write (1, sTrama, strlen (sTrama));
 	writeLog ("LSBox_svr.log.html","sincro.c","Trama Enviada", sTrama, 1);
 
 	return 0;
 }
-
 
 
 
@@ -132,8 +132,6 @@ int receiveClientSincro (int nFdIn) {
 
 
 
-
-
 void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx, int nIdMyClient) {
 
 	int nNumberOfElements = count(LinkedListToTx);
@@ -148,20 +146,21 @@ void sendTramesG (int nFdIn, char sLoginOrigen[8], struct node *LinkedListToTx, 
 
 	for (i = 1; i < nNumberOfElements+1; i++) {
 		showNode(sName, sDataLL, i, LinkedListToTx);
-
 		nEstat = getEstatByName(sName, LinkedListToTx);
-		printf("sName: %s, estat: %d\n",sName, nEstat);
+
 		if (nEstat == 4 || nEstat == 5) {
 			//crea i envia trama G -> 4
 			creaTramaSincro (sTrama, sUser, sName, "  ", 0, 4);
-			printf("sTrama: %s\n", sTrama); 
+			write (1, "\n ", strlen ("\n "));
+			write (1, sTrama, strlen (sTrama));
 			write (nFdIn, sTrama, MAX_TRAMA);
 			writeLog ("LSBox_svr.log.html", "sincroServer.c","Trama enviada", sTrama, 1);
 		}
 	}
 	//trama X
 	creaTramaSincro (sTrama, sUser, " ", " ", 0, 3);
-	printf("sTrama: %s\n", sTrama); 
+	write (1, "\n ", strlen ("\n "));
+	write (1, sTrama, strlen (sTrama));
 	write (nFdIn, sTrama, MAX_TRAMA);
 	writeLog ("LSBox_svr.log.html", "sincroServer.c","Trama enviada", sTrama, 1);
 
@@ -269,7 +268,8 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 
 		//Rebem Trames de Sincro amb les dades del client
 		read (nFdIn, sTrama, MAX_TRAMA);
-		printf ("trama rebuda: %s\n", sTrama);
+		write (1, "\n ", strlen ("\n "));
+		write (1, sTrama, strlen (sTrama));
 		writeLog ("LSBox_svr.log.html", "sincroServer.c","Trama rebuda", sTrama, 1);
 		bFinalSincro = checkTramaServidor (sTrama, sLoginOrigen, sLoginDesti, sPwd, 4);
 
@@ -278,9 +278,6 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 
 	  nNumberOfSincroElemets++;
 	}
-  
-   printf("llistaTx:\n");
-	display (LinkedListToTx);
 
 	nNumberOfElements = count (LinkedListToTx);
 	for (i = 1; i < nNumberOfElements+1; i++) {
@@ -290,9 +287,6 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 			setEstatByName (sName, 6, LinkedListToTx);
 		}
 	}
-
-   printf("llistaTx:\n");
-	 display (LinkedListToTx);
 
   //var i comença a 1 per saltarnos la trama de inici sincro
   //nNumberOfSincroElements -1 per saltarnos la trama final sincro
@@ -306,12 +300,10 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 
  		//Buscar la nostra Data del element Rebut
 		bTrobat = getDateByName (sDataLL, sName, LinkedList);
-		printf("info: sName %s , sDataTrama %s, sDataLL %s\n", sName, sDataTrama, sDataLL);
 
 		if ( bTrobat == 0 ) {
 			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) {
-				//no trobat, client ma d'enviar el fitxer
-				printf("SERVER_ADD: que me lenvii!\n");
+				//no trobat, client ma d'enviar el fitxer al servidor
 				addToLLTx (sName, sDataTrama, nSize, 4, LinkedListToTx);
 
 			}
@@ -322,46 +314,35 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 			if ( !getDateByName(sDataLL, sName, LinkedListToTx)) { 
 				if ( nWhoUpdate == 0 ) 	setEstatByName (sName, 8, LinkedListToTx);
 				if ( nWhoUpdate > 0 ) {  //sino esta l'afegeixo
-					printf("SER_UPDATE1: %s Client envia a Servidor\n", sName);
+					//SER_UPDATE1: %s Client envia a Servidor\n", sName);
 					addToLLTx (sName, sDataTrama, nSize, 5, LinkedListToTx);
 				} else if ( nWhoUpdate < 0 ) {
-					printf("CLI_UPDATE: %s Servidor envia a client\n", sName);
+					//CLI_UPDATE: %s Servidor envia a client\n", sName);
 					addToLLTx (sName, sDataTrama, nSize, 2, LinkedListToTx);
 				}
 			} else {	
 				if ( nWhoUpdate == 0 ) 	setEstatByName (sName, 8, LinkedListToTx);																						
 				//si esta actualitzo nEstat
 				if ( nWhoUpdate > 0 ) {
-					printf("SER_UPDATE2: %s Client envia a Servidor\n", sName);
+					//SER_UPDATE2: %s Client envia a Servidor\n", sName);
 					setEstatByName (sName, 5, LinkedListToTx);
-					
 				} else if ( nWhoUpdate < 0 ) {
-					printf("CLI_UPDATE: %s Servidor envia a client\n", sName);
+					//CLI_UPDATE: %s Servidor envia a client\n", sName);
 					setEstatByName (sName, 2, LinkedListToTx);
 				}
 			}
-			printf("surto?\n");
 		}
 	}
-printf("anem a borrar\n");
 	nNumberOfElements = count (LinkedListToTx);
 	for (i = 1; i < nNumberOfElements+1; i++) {
 		memset(sName, '\0', 24);
 		showNode(sName, sDataLL, i, LinkedListToTx);
 		if ( 6 == getEstatByName (sName, LinkedListToTx) ){
-			printf("borra cabroo\n");
 			removeFile (sDirPath, sName) ;
 		}
 	}
 
-printf("enviem tames g?\n");
-
 	//Trames G que envia el servidor al client pk sapigui quins fitxers enviar
 	sendTramesG(nFdIn, sLoginUser, LinkedListToTx, nIdMyClient);
-
-  printf("llistaTx:\n");
-	display (LinkedListToTx);
-
-	printf("llista:\n");
 	display (LinkedList);
 }

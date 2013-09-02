@@ -156,7 +156,6 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 			
 			//Codi nomes pel servidor, no borrem de la LL, canviem el nEstat per saber qui TX o RX
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
-				printf("CLI_RM: %s", sNameToRemove);
 				addToLLTx(sNameToRemove, "fake", 1, 3, LinkedListToTx);
 			}
 		}

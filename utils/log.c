@@ -17,7 +17,6 @@ int createLog (char sIdLog[20]) {
 	//Obrim el fitxer per llegir
 	nFdIn = open(sIdLog, O_WRONLY);
 	if (-1 == nFdIn) {
-		printf("creant log!\n");
 		// Creem els fitxers de log i backup
 		nFdIn = open (sIdLog, O_CREAT, 0666);
 		close (nFdIn);
@@ -55,18 +54,19 @@ int writeLog (char sIdLog[20], char sOrigen[32], char sFunction[32], char sExpla
 
 	int nFdInLog, nFdInBackUp;
 	char sAux[450], sAuxInit[250], sAuxFi[250];
-
-	//printf("sIdLog al writeLog: %s\n", sIdLog);
+	char sFrase[MAX];
 
 	//Obrim el fitxer per llegir
 	nFdInLog = open(sIdLog, O_WRONLY | O_TRUNC );
 	if (-1 == nFdInLog) {
-		printf("error al obrir log!\n");
+		sprintf (sFrase,"error al obrir log!\n");
+		write (1, sFrase, strlen (sFrase));
 		exit(-1);
 	} else {
 		nFdInBackUp = open("backup", O_RDWR | O_APPEND);
 		if (-1 == nFdInBackUp) {
-			printf("error al obrir backup!\n");
+			sprintf (sFrase,"error al obrir log!\n");
+			write (1, sFrase, strlen (sFrase));
 			exit(-1);
 
 		} else {
@@ -129,7 +129,8 @@ int writeLog (char sIdLog[20], char sOrigen[32], char sFunction[32], char sExpla
 
 			nFdInBackUp = open("backup", O_RDWR);
 			if (-1 == nFdInBackUp) {
-				printf("error al obrir backup!\n");
+				sprintf (sFrase,"error al obrir log!\n");
+				write (1, sFrase, strlen (sFrase));
 				exit(-1);
 			} else {
 

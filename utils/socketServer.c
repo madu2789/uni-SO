@@ -77,7 +77,6 @@ int enviaPort (int nFdIn, int nPort, char sLoginDesti[7], char sLoginOrigen[7]) 
 	sTrama[strlen(sTrama)] = sTipus;
 	strcat(sTrama, sData);
 
-	printf("\nenviem port: sTrama: %s \n", sTrama);
 	//Enviar-la Socket
 	write (nFdIn, sTrama, MAX_TRAMA);
 }
@@ -235,14 +234,6 @@ int checkTramaServidor (char sTrama[MAX_TRAMA], char sLoginOrigen[8], char sLogi
   memcpy( sPwd, &sDataTrama[8], 32 );
 	sPwd[32] = '\0';
 
-
- /* // Comprovacio que parseja be la trama:
-  printf("camp login origen parsejat:  %s\n", sLoginOrigen);
-  printf("camp login desti parsejat:  %s\n", sLoginDTrama);
-  printf("camp trama parsejat:  %c\n", sTypeTrama);
-  printf("camp data parsejat:  %s\n", sDataTrama);
-  printf("password parsejat:  %s\n", sPwd);
-*/
 	bTramaOk = 0;
 	switch (nType) {
 		//cas autentificacio
@@ -320,9 +311,7 @@ int socketConnectionServidor (int nPort) {
 	sprintf (sFrase, "Servidor connectat!\n");
 	write (1, sFrase, strlen (sFrase));
 
-
 	return gnSocketFD;
-
 }
 
 
@@ -343,17 +332,18 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 
 	//Enviem la trama de peticio d'autentificacio
 	write (nSocketCliente, sTrama, MAX_TRAMA);
-	printf("trama enviada: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 	writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
 	//Rebem Trama amb les dades del client
 	read(nSocketCliente, sTrama, MAX_TRAMA);
-	printf("trama rebuda: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 
 
 	bValidTrama = checkTramaServidor(sTrama, sLoginOrigen, sLoginDesti, sPwd, 1);
 	bValidAuth = checkAuthentication (sLoginDesti, sPwd);
-	printf("trama correcte? %d - %d\n", bValidTrama, bValidAuth);
 
 //Comprovem que la trama rebuda es correcte
 		if ( bValidAuth && bValidTrama ) {
@@ -365,7 +355,8 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
-			printf ("trama enviada: %s\n", sTrama);
+			write (1, sTrama, strlen (sTrama));
+		  write (1, "\n ", strlen ("\n "));
 			//Escribim al Log
 			writeLog ("LSBox_svr.log.html","socketServer.c","Trama Enviada", sTrama, 1);
 
@@ -377,7 +368,8 @@ int autentificacioClient (int nSocketCliente, char sLoginDesti[8],	char sLoginOr
 
  			//Enviem la trama de de connexio correcta
 			write (nSocketCliente, sTrama, MAX_TRAMA);
-			printf ("[desconnexio] trama enviada: %s\n", sTrama);
+			write (1, sTrama, strlen (sTrama));
+			write (1, "\n ", strlen ("\n "));
 			writeLog ("LSBox_svr.log.html", "socketServer.c", "Trama Enviada", sTrama, 1);
 
 		}
@@ -403,7 +395,8 @@ int ServerConection (int nPort, int gnSocketFD, char sLoginDesti[8]) {
 
 	while (nSocketCliente == 0) {
 
-		printf("esperant client...\n");
+		sprintf (sFrase,"esperant client...\n");
+		write (1, sFrase, strlen (sFrase));
 
 		//Obtenim un socket al client que es conecti
 		socklen_t c_len = sizeof (stDireccionCliente);
