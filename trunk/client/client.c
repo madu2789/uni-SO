@@ -87,7 +87,7 @@ void * ThreadTx (void *arg){
 
 	//Tancar socket
 	close (nSocketFDTx);
-	printf (sFrase,"\nMort thread TX!\n");
+	sprintf (sFrase,"\nMort thread TX!\n");
 	write (1, sFrase, strlen (sFrase));
 
 	return NULL;
@@ -156,6 +156,8 @@ int main () {
 
 	//Assignem la RSI al signal de Ctrl+C
 	signal (SIGINT, (void*) RSIInt);
+	// Assignem la RSI al signal de kill -9
+	signal(SIGKILL, (void*) RSIInt);
 	//Assignem la RSI al signal Alarm
 	signal(SIGALRM, (void*)RSIAlarm);
 

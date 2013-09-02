@@ -91,7 +91,8 @@ void getTramesG (int nFdIn, char sLoginOrigen[7], struct node *LinkedListToTx) {
 		  	sDataTrama[strlen(sDataTrama)] = '\0';
 		  	ParserNameTx(sDataTrama, sName);
 
-				printf("sTrama G: %s\n", sTrama);
+				write (1, sTrama, strlen (sTrama));
+				write (1, "\n ", strlen ("\n "));
 				writeLog ("LSBox_cli.log.html","sincroClient.c","Trama G Enviada", sTrama, 1);
 
 		  	//canviem el estat de la LlinkedListToTx per enviar-li al servidor
@@ -128,13 +129,15 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 	}
 	if (nBytesRead <= 4) return 0;
 
-	printf("trama rebuda:  %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 	writeLog ("LSBox_cli.log.html","sincroClient.c","Trama Rebuda", sTrama, 1);
 
 	//Enviem la trama 'O' o 'E' sincronitzacio confirmada
 	creaTramaClient(sTrama, sLoginOrigen, "LsBox  ", 4);
 	write (nFdIn, sTrama, MAX_TRAMA);
-	printf("trama enviada: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 	writeLog ("LSBox_cli.log.html","sincroClient.c","Trama 'O' Enviada", sTrama, 1);
 
 	//Comencem a enviar tota la LL -> trames 'N'
@@ -172,14 +175,15 @@ void setSincroInfo (int nFdIn, char sLoginOrigen[7], struct node *LinkedList) {
 
  		//creaTramaSincro
  		creaTramaSincro(sTrama, sLoginOrigen, sName, sDate, nSize, 1);
- 		printf("trama N enviades: %s\n", sTrama);
+ 		write (1, sTrama, strlen (sTrama));
  		write (nFdIn, sTrama, MAX_TRAMA);
  		writeLog ("LSBox_cli.log.html","sincro.c","Trama 'N' Enviada", sTrama, 1);
  	}
 
 	//creaTrama a "manija"
  	creaTramaSincro(sTrama, sLoginOrigen, sName, sDate, nSize, 3);
- 	printf("trama X enviada: %s\n", sTrama);
+ 	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
  	write (nFdIn, sTrama, MAX_TRAMA);
  	writeLog ("LSBox_cli.log.html","sincro.c","Trama 'X' Enviada", sTrama, 1);
 
@@ -214,6 +218,7 @@ void pleaseSincro (int nFdIn, char sLoginOrigen[7]) {
 
 	//Enviem Trama
 	write (nFdIn, sTrama, MAX_TRAMA);
-	printf("sTrama : %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 	writeLog ("LSBox_cli.log.html", "sincroClient.c", "Peticio de Sincronitzacio", sTrama, 1);
 }

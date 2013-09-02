@@ -101,7 +101,8 @@ void * ServerDedicat (void *arg){
 		bSincroPetition = 0;
 		bSincroPetition = receiveClientSincro (nFdSocketClient);
 
-		sprintf (sFrase,"server dedicat de: ");
+		display (LinkedList);
+		sprintf (sFrase,"\nserver dedicat de: ");
 	  write (1, sFrase, strlen (sFrase));
 		write (1, sLoginDesti[nIdMyClient], strlen (sLoginDesti[nIdMyClient]));
 
@@ -222,6 +223,8 @@ int main () {
 
 	// Assignem la RSI al signal de Ctrl+C
 	signal(SIGINT, (void*) RSIInt);
+	// Assignem la RSI al signal de kill -9
+	signal(SIGKILL, (void*) RSIInt);
 	// Assignem la RSI al signal Alarm
 	signal(SIGALRM, (void*)RSIAlarm);
 
@@ -260,7 +263,7 @@ int main () {
 
 	while (1) {
 		//Mostra LL
-		display (LinkedList);
+		//display (LinkedList);
 
 		//Detecta si algun client nou es vol connectar
 		nFdSockClient[nIdClient] = 0;

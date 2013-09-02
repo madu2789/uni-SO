@@ -181,7 +181,6 @@ int initLinkedList (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	if (arxius != NULL) {
 		bArxiusOk = 1;
 		ReadDir(bArxiusOk, sMyLog);
-		printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
 
 		i = nTotalFiles-1;
 
@@ -220,8 +219,6 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 
 	nTotalFiles = scandir (sDirPath, &arxius, triar, alphasort);
 
-	printf ("Hi ha %d entrades de directori: %s \n", nTotalFiles, sDirPath);
-
 	if (arxius != NULL) bArxiusOk = 1;
 	ReadDir(bArxiusOk, sMyLog);
 
@@ -230,8 +227,6 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 	sem_wait(semLL);
 	nLLTotalFiles = count (LinkedList);
 	sem_post(semLL);
-
-	printf("%d -- %d\n",nTotalFiles, nLLTotalFiles);
 
 	if (nTotalFiles == nLLTotalFiles) {
 		
@@ -264,7 +259,7 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 
 	} else if (nTotalFiles > nLLTotalFiles) {
 
-	 	write(2, "cal afegir el nou arxiu\n", 25);
+	 	write(1, "cal afegir el nou arxiu\n", 25);
 
 		while (i--) {
 			bUpdate = getDateByName(sLLDate, arxius[i]->d_name, LinkedList);
@@ -280,7 +275,7 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 		free (arxius);
 
 	} else if (nTotalFiles < nLLTotalFiles) {
-		write(2, "cal borrar un arxiu\n", 25);
+		write(1, "cal borrar un arxiu\n", 25);
 
 		//cas específic
 		if (nTotalFiles == 0 && nLLTotalFiles == 1) {

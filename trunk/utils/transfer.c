@@ -227,8 +227,6 @@ int removeFile (char sDirPath[MAX], char sName[30]) {
 	strcat (sRealDirPath, sDirPath);
   strcat (sRealDirPath, sName);
 
-	//printf("sRealDirPath: %s\n", sRealDirPath);
-
 	return remove(sRealDirPath);
 }
 
@@ -294,7 +292,8 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 			creaTramaTx (sTrama, sUser, sName, sData, nSize, 1);
 			
 			while ( bFi != 0 ) {
-				printf ("Trama enviada: %s\n", sTrama);
+				write (1, sTrama, strlen (sTrama));
+				write (1, "\n ", strlen ("\n "));
 				write (nFdSocket, sTrama, MAX_TRAMA);
 				writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
 				memset (sInfo, '\0', 104);
@@ -306,7 +305,8 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 			//Creo la 1a trama 'R' amb info basica del fitxer
 			memset(sTrama, '\0', MAX_TRAMA);
 			creaTramaTx (sTrama, sUser, sName, sData, nSize, 4);
-			printf ("Trama enviada: %s\n", sTrama);
+			write (1, sTrama, strlen (sTrama));
+			write (1, "\n ", strlen ("\n "));
 			write (nFdSocket, sTrama, MAX_TRAMA);
 			writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
 		}
@@ -316,7 +316,8 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	memset(sTrama, '\0', MAX_TRAMA);
 	creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 3);
 	write (nFdSocket, sTrama, MAX_TRAMA);
-	printf ("Trama enviada: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 	writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
 
 	return 0;
@@ -341,7 +342,8 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 
 	memset(sTrama, '\0', MAX_TRAMA);
 	read (nFdIn, sTrama, MAX_TRAMA);
-	printf ("trama rebuda: %s\n", sTrama);
+	write (1, sTrama, strlen (sTrama));
+	write (1, "\n ", strlen ("\n "));
 	writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 
 	memset(sSpecialPath, '\0', MAX);
@@ -375,7 +377,8 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 				memset(sDataTrama, '\0', 101);
 
 				read (nFdIn, sTrama, MAX_TRAMA);
-				printf ("trama rebuda: %s\n", sTrama);
+				write (1, sTrama, strlen (sTrama));
+				write (1, "\n ", strlen ("\n "));
 				writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 				bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 				sDataTrama[strlen(sDataTrama)] = '\0';
@@ -386,7 +389,8 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 					memset(sDataTrama, '\0', 101);
 					memset(sTrama, '\0', MAX_TRAMA);
 					read (nFdIn, sTrama, MAX_TRAMA);
-					printf ("trama rebuda: %s\n", sTrama);
+					write (1, sTrama, strlen (sTrama));
+					write (1, "\n ", strlen ("\n "));
 					writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 					bCopiant = checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 					sDataTrama[strlen(sDataTrama)] = '\0';
@@ -408,21 +412,15 @@ void receiveContent (int nFdIn, char sDirPath[MAX], struct node *LinkedList, str
 			break;
 			case 2: //trama	'R' remove
 				memset(sName, '\0', 24);
-				//memset(sDataTrama, '\0', 101);
 			
 				ParserNameTx(sDataTrama, sName);
-				printf("abans de cridar el remove, sDirPath: %s\n", sSpecialPath);
-				printf("sName: %s\n", sName);
 				
 				removeFile (sSpecialPath, sName);
 
-				//sem_wait(semLL);
-				//delnode(sName, LinkedList);
-				//sem_post(semLL);
-
 				memset(sTrama, '\0', MAX_TRAMA);
 				read (nFdIn, sTrama, MAX_TRAMA);
-				printf ("trama rebuda: %s\n", sTrama);
+				write (1, sTrama, strlen (sTrama));
+				write (1, "\n ", strlen ("\n "));
 				writeLog (sMyLog, "transfer.c", "Trama Rebuda", sTrama, 1);
 				nTipusTrama	= checkTramaTx (sTrama, sLoginOrigen, sLoginDesti, sDataTrama);
 
