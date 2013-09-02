@@ -119,6 +119,13 @@ int receiveServerSincro (int nFdIn, char sLoginOrigen[7], char sDirPath[MAX], st
 
 	//Comprovem si realment el server ens ha confirmat sincro
 	nBytesRead = read (nFdIn, sTrama, MAX_TRAMA);
+	if (nBytesRead == 0) {
+		writeLog ("LSBox_cli.log.html","sincroClient.c","Socket caigut", "Procedim a desconnexió", 0);
+		write (1, "Socket per part del server caigut, Procedim a desconnexió", 57); 
+		close (nFdIn);
+		exit (-1);
+		return -1;
+	}
 	if (nBytesRead <= 4) return 0;
 
 	printf("trama rebuda:  %s\n", sTrama);
