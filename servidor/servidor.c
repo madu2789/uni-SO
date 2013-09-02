@@ -125,14 +125,7 @@ void * ServerDedicat (void *arg){
 				alarm(15);
 
 		} else {
-			memset(sCheck, '\0', 6);
-			nBytesRead = read (nFdSocketClient, sCheck, 4);
-			if ( 0 != nBytesRead ) {
 				write (nFdSocketClient, "init", 4);
-			} else {
-				close (nFdSocketClient);
-				pthread_exit(NULL);
-			}
 		}
 	}
 
