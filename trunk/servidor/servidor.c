@@ -89,6 +89,9 @@ void * ServerDedicat (void *arg){
 	int bSincroPetition = 0;
 	pthread_t thread_id;
 	int nEstatThread;
+
+	char sCheck[6];
+	int nBytesRead = 0;
 	
 	int nIdMyClient = (int ) arg;
 	int nFdSocketClient = nFdSockClient[nIdMyClient];
@@ -122,7 +125,14 @@ void * ServerDedicat (void *arg){
 				alarm(15);
 
 		} else {
-			write (nFdSocketClient, "init", 4);
+			memset(sCheck, '\0', 6);
+			nBytesRead = read (nFdSocketClient, sCheck, 4);
+			if ( 0 != nBytesRead ) {
+				write (nFdSocketClient, "init", 4);
+			} else {
+				close (nFdSocketClient);
+				pthread_exit(NULL);
+			}
 		}
 	}
 
@@ -200,7 +210,6 @@ int main () {
 	int bAuth = 0;
 	struct sockaddr_in stDireccionCliente;
 	char *psServer;
-
 
 	int nSocketFD = 0;
 	int gnSocketFD = 0;

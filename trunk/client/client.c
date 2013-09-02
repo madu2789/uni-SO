@@ -207,7 +207,6 @@ int main () {
 			alarm(5);
 
 			printf("em acabat de tx!! \n");
-
 			bTransfer = 0;
 		}	
 	}
