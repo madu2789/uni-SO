@@ -282,7 +282,9 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 	for (i = 1; i < nNumberOfElements+1; i++) {
 		memset(sName, '\0', 24);
 		showNode(sName, sDataLL, i, LinkedListToTx);
-		setEstatByName (sName, 6, LinkedListToTx);
+		if ( 3 != getEstatByName (sName, LinkedListToTx) ){
+			setEstatByName (sName, 6, LinkedListToTx);
+		}
 	}
 
    printf("llistaTx:\n");
@@ -307,6 +309,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 				//no trobat, client ma d'enviar el fitxer
 				printf("SERVER_ADD: que me lenvii!\n");
 				addToLLTx (sName, sDataTrama, nSize, 4, LinkedListToTx);
+
 			}
 		} else {
 			
