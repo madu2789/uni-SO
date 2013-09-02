@@ -278,6 +278,17 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 		if (nEstat == nEstatPerEnviar1 || nEstat == nEstatPerEnviar2) {
 			bFi = 1;
 			nFdFitxer = openFile (sDirPath, sName, sMyLog);
+			printf("nFdFitxer: %d\n", nFdFitxer );
+			if ( 0 ==  nFdFitxer ) {
+				//creem i enviem trama 'X'
+				memset(sTrama, '\0', MAX_TRAMA);
+				creaTramaTx (sTrama, sUser, sName, sInfo, nSize, 3);
+				write (nFdSocket, sTrama, MAX_TRAMA);
+				printf ("Trama enviada: %s\n", sTrama);
+				writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);		
+
+				pthread_exit(NULL);
+			}
 
 			//Creo la 1a trama 'M' amb info basica del fitxer
 			memset(sTrama, '\0', MAX_TRAMA);
@@ -308,9 +319,6 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 	write (nFdSocket, sTrama, MAX_TRAMA);
 	printf ("Trama enviada: %s\n", sTrama);
 	writeLog (sMyLog, "transfer.c", "Trama Enviada", sTrama, 1);
-
-	//Buidem lo que ja hem transmes, i les altres???
-	//buidaLL (LinkedListToTx);
 
 	return 0;
 }
