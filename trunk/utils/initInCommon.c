@@ -216,6 +216,7 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 			if( bUpdate != 1 ) {
 				sem_wait(semLL);
 				addToLL(sDirPath, arxius[i]->d_name, (int)arxius[i]->d_type, LinkedList, LinkedListToTx, sMyLog);
+				setEstatByName (arxius[i]->d_name, 1, LinkedListToTx);
 				sem_post(semLL);
 				bSincro = 1;
 			}

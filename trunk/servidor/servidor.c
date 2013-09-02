@@ -65,7 +65,11 @@ void * ThreadTx (void *arg){
  	 //Transmissio de dades
    transferContent (nSocketCliente, sDirPath, sLoginDesti[nIdMyClient], LinkedListToTx, sMyLog[nIdMyClient], &semLL);
 	 receiveContent(nSocketCliente, sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient], &semLL);
-	 
+	
+	  buidaLL(LinkedList);
+		buidaLL(LinkedListToTx);
+		initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog[nIdMyClient]);
+
 	 //Tancar socket
 	 close (nSocketFD);
 	 printf("Mort thread TX!\n");

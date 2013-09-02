@@ -80,6 +80,10 @@ void * ThreadTx (void *arg){
 	receiveContent (nSocketFDTx, sDirPath, LinkedList, LinkedListToTx, sMyLog, &semLL);
 	transferContent (nSocketFDTx, sDirPath, sLogin, LinkedListToTx, sMyLog, &semLL);
 	
+	buidaLL(LinkedList);
+	buidaLL(LinkedListToTx);
+	initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
+
 	//Tancar socket
 	close (nSocketFDTx);
 	printf("Mort thread!\n");
