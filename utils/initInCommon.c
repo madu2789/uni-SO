@@ -281,6 +281,17 @@ int checkRootFiles (char sDirPath[MAX], struct node *LinkedList, struct node *Li
 
 	} else if (nTotalFiles < nLLTotalFiles) {
 		write(2, "cal borrar un arxiu\n", 25);
+
+		//cas específic
+		if (nTotalFiles == 0 && nLLTotalFiles == 1) {
+			sem_wait(semLL);
+			buidaLL(LinkedList);
+			sem_post(semLL);
+			//buidaLL(LinkedListToTx);
+			free (arxius);
+			return 1;
+		}
+
 		sem_wait(semLL);
 		removeToLL(nTotalFiles, arxius, LinkedList, LinkedListToTx, sMyLog, sDirPath);
 		sem_post(semLL);
