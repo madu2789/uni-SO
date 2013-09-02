@@ -121,8 +121,12 @@ int receiveClientSincro (int nFdIn) {
 
 	//Comprovem si realment el server ens ha confirmat sincro
 	nBytesRead = read (nFdIn, sTrama, MAX_TRAMA);
+	if (nBytesRead == 0) {
+		close (nFdIn);
+		pthread_exit(NULL);
+	  return -1;
+	}
 	if (nBytesRead <= 4) return 0;
-
 	return 1;
 }
 
