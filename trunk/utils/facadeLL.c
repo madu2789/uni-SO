@@ -140,16 +140,15 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 	nLLTotalFiles = count(LinkedList);
 
-	for (i = 1; i < nLLTotalFiles+1; i++) {
+	for (i = 1; i < nLLTotalFiles; i++) {
 		memset(sNameToRemove, '\0', 30);
 		nSize = showNode(sNameToRemove, sDateLL, i, LinkedList);
 
 		for (j = 0; j < nTotalFiles; j++){
 
-			printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
-
+			//printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
-				printf("NO hem de borrar : %s\n", arxius[j]->d_name);
+				//printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
 			}
 		}
@@ -168,8 +167,8 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 			//Codi nomes pel servidor, no borrem de la LL, canviem el nEstat per saber qui TX o RX
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
 				printf("CLI_RM: %s", sNameToRemove);
-				//addToLLTx(sNameToRemove, "fake", 1, 3, LinkedListToTx);
-				setEstatByName (sNameToRemove, 3, LinkedListToTx);
+				addToLLTx(sNameToRemove, "fake", 1, 3, LinkedListToTx);
+				//setEstatByName (sNameToRemove, 3, LinkedListToTx);
 			}
 		}
 		bToRemove = 1;

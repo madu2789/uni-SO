@@ -253,6 +253,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 
 	sem_wait(semLL);
 	nTotalFiles = count (LinkedListToTx);
+	display(LinkedListToTx);
 	sem_post(semLL);
 	
 	for (i = 1; i < nTotalFiles+1; i++) {
@@ -262,6 +263,7 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 		sem_wait(semLL);
 		nSize = showNode (sName, sData, i, LinkedListToTx);
 		nEstat = getEstatByName (sName, LinkedListToTx);
+		printf("nEstat: %d\n", nEstat);
 		sem_post(semLL);
 
 		//Aixo es arriscat i TREPITXEROOOOO!!!!!
