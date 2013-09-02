@@ -278,7 +278,6 @@ int transferContent (int nFdSocket, char sDirPath[MAX], char sUser[8], struct no
 		if (nEstat == nEstatPerEnviar1 || nEstat == nEstatPerEnviar2) {
 			bFi = 1;
 			nFdFitxer = openFile (sDirPath, sName, sMyLog);
-			printf("nFdFitxer: %d\n", nFdFitxer );
 			if ( 0 ==  nFdFitxer ) {
 				//creem i enviem trama 'X'
 				memset(sTrama, '\0', MAX_TRAMA);

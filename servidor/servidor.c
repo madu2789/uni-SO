@@ -45,7 +45,8 @@ void * ThreadTx (void *arg){
 
 	while (nSocketCliente == 0) {
 
-		printf("esperant client...\n");
+		sprintf (sFrase,"esperant client...\n");
+		write (1, sFrase, strlen (sFrase));
 
 		//Obtenim un socket al client que es conecti
 		socklen_t c_len = sizeof (stDireccionCliente);
@@ -72,7 +73,8 @@ void * ThreadTx (void *arg){
 
 	 //Tancar socket
 	 close (nSocketFD);
-	 printf("Mort thread TX!\n");
+	 sprintf (sFrase,"\nMort thread TX!\n");
+	 write (1, sFrase, strlen (sFrase));
 	}
 	return NULL;
 }
@@ -89,10 +91,8 @@ void * ServerDedicat (void *arg){
 	int bSincroPetition = 0;
 	pthread_t thread_id;
 	int nEstatThread;
-
-	char sCheck[6];
 	int nBytesRead = 0;
-	
+	char sFrase[MAX];
 	int nIdMyClient = (int ) arg;
 	int nFdSocketClient = nFdSockClient[nIdMyClient];
 
@@ -101,7 +101,9 @@ void * ServerDedicat (void *arg){
 		bSincroPetition = 0;
 		bSincroPetition = receiveClientSincro (nFdSocketClient);
 
-		printf("server dedicat de: %s\n", sLoginDesti[nIdMyClient]);
+		sprintf (sFrase,"server dedicat de: ");
+	  write (1, sFrase, strlen (sFrase));
+		write (1, sLoginDesti[nIdMyClient], strlen (sLoginDesti[nIdMyClient]));
 
 			if ( 	bSincro[nIdMyClient] || bSincroPetition) {
 				//Sincronitzacio
@@ -116,9 +118,9 @@ void * ServerDedicat (void *arg){
 				alarm(0);
 				//Crear Thread enviament
 				nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, (void *)nIdMyClient);
-				if (nEstatThread != 0) printf("fail al fill!\n");
+				if (nEstatThread != 0)  write (1, "Error Thread", 12);
 				nEstatThread = pthread_join(thread_id, NULL);
-				if (nEstatThread != 0) 	printf("fail al fill!\n");
+				if (nEstatThread != 0) 	write (1, "Error Thread", 12);
 				writeLog (sMyLog[nIdMyClient], "servidor.c","Nou Thread","crea ThreadTx", 1);
 
 				bSincro[nIdMyClient] = 0;
@@ -179,7 +181,7 @@ void creaServidorDedicat (int nIdClient) {
 	  int nEstatThread = 0;
 
 		nEstatThread = pthread_create (&thread_id, NULL, ServerDedicat, (void *)nIdClient);
-		if (nEstatThread != 0) printf("fail al fill dedicat!\n");
+		if (nEstatThread != 0) write (1, "Error Thread", 12);
 
 		//Crear/Obrir fitxer de Log
 		strcpy (sMyLog[nIdClient], sLoginDesti[nIdClient]);
@@ -203,7 +205,7 @@ int main () {
 	int bAuth = 0;
 	struct sockaddr_in stDireccionCliente;
 	char *psServer;
-
+	char sFrase[MAX];
 	int nSocketFD = 0;
 	int gnSocketFD = 0;
 
@@ -264,7 +266,8 @@ int main () {
 		nFdSockClient[nIdClient] = 0;
 		nFdSockClient[nIdClient] = accept (gnSocketFD, (void *) &stDireccionCliente, &c_len);
 		if (nFdSockClient[nIdClient] > 0){
-			printf("client nou!!\n");
+			sprintf (sFrase,"\nClient conectat\n");
+			write (1, sFrase, strlen (sFrase));
 	  	bAuth = autentificacioClient (nFdSockClient[nIdClient], sLoginDesti[nIdClient], sLoginOrigen);	
 	  	if ( bAuth ){
 				creaServidorDedicat(nIdClient);

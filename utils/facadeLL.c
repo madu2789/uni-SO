@@ -89,8 +89,6 @@ void addToLLTx (char sName[30], char sDate[24], int nSize, int nEstat, struct no
 
 	//afegir a la cua el nou element: ->LinkedList
 	append(sName, sAdaptedTipus, sDate, nSize, nEstat, LinkedList);
-	//writeLog (sMyLog, "facadeLL.c", "Nou element afegit a LLTx", sName, 1);
-
 }
 
 
@@ -117,7 +115,6 @@ void updateToLL (char sDirPath[MAX], char sLLDate[30], char sName[30], struct no
 	}
 	if (strcmp(sLLDate, sDate) != 0 ) {
 		setDateByName(sName, sDate, nSize, LinkedList);
-	 	printf("updated: %s\n", sName);
 	 	writeLog (sMyLog, "facadeLL.c", "Element modificat", sName, 1);
 	}
 
@@ -146,29 +143,21 @@ void removeToLL (int nTotalFiles, struct dirent **arxius, struct node *LinkedLis
 
 		for (j = 0; j < nTotalFiles; j++){
 
-			//printf("mirem: %s si es: %s \n", sNameToRemove, arxius[j]->d_name );
 			if (strcmp (sNameToRemove, arxius[j]->d_name ) == 0 ) {
-				//printf("NO hem de borrar : %s\n", arxius[j]->d_name);
 				bToRemove = 0;
 			}
 		}
 
 		if (bToRemove == 1) {
 
-	printf("sNameToRemove a la LL : %s\n", sNameToRemove);
-
 			buidaLL(LinkedList);
 			buidaLL(LinkedListToTx);
 			initLinkedList (sDirPath, LinkedList, LinkedListToTx, sMyLog);
-			//delnode(sNameToRemove, LinkedList);
-		
-			//display(LinkedList);
 			
 			//Codi nomes pel servidor, no borrem de la LL, canviem el nEstat per saber qui TX o RX
 			if ( strcmp(sMyLog, "LSBox_svr.log.html") == 0) {
 				printf("CLI_RM: %s", sNameToRemove);
 				addToLLTx(sNameToRemove, "fake", 1, 3, LinkedListToTx);
-				//setEstatByName (sNameToRemove, 3, LinkedListToTx);
 			}
 		}
 		bToRemove = 1;

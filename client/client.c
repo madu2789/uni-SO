@@ -67,7 +67,7 @@ void loginUser (char sLogin[7], char sPswd[32]) {
 
 
 void * ThreadTx (void *arg){
-	
+	char sFrase[MAX];
 	char sTrama[MAX_TRAMA];
 	memset (sTrama, '\0', MAX_TRAMA);
 
@@ -87,7 +87,8 @@ void * ThreadTx (void *arg){
 
 	//Tancar socket
 	close (nSocketFDTx);
-	printf("Mort thread!\n");
+	printf (sFrase,"\nMort thread TX!\n");
+	write (1, sFrase, strlen (sFrase));
 
 	return NULL;
 }
@@ -200,13 +201,11 @@ int main () {
 			alarm(0);
 			//creem el Thread enviament
 			nEstatThread = pthread_create (&thread_id, NULL, ThreadTx, (void *)nPortTx);
-			if (nEstatThread != 0) 	printf("fail al fill!\n");
+			if (nEstatThread != 0) 	 write (1, "Error Thread", 12);
 			nEstatThread = pthread_join(thread_id, NULL);
-			if (nEstatThread != 0) 	printf("fail al fill!\n");
+			if (nEstatThread != 0) 	 write (1, "Error Thread", 12);
 			
 			alarm(5);
-
-			printf("em acabat de tx!! \n");
 			bTransfer = 0;
 		}	
 	}
