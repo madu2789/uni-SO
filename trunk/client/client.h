@@ -37,6 +37,7 @@
 #define ERROR -1
 #define OK 0
 #define MAX 64
+#define MAX_LONG 128
 
 
 // Definicion de tipos propios

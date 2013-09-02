@@ -5,31 +5,86 @@
 #include "initInCommon.h"
 
 
+/**
+ * Llegeix un enter al fitxer
+ * @param nFichero File descriptor del fitxer
+ */
+int readInt (int nFichero){
+	char cAux = '0';
+	int nInt = 0;
+	
+	//AtoI mientras no haya salto de linea
+	while (cAux != '\n'){
+		read (nFichero,&cAux,1);
+		if (cAux != '\n'){
+			nInt = nInt*10 + cAux - '0';
+		}
+	}
+
+	return nInt;
+}
+
+
+
+
+/**
+ * Llegeix un string al fitxer
+ * @param nFdIn		File descriptor del fitxer
+ * @param ppsString Variable on guardar el string
+ */
+void readString (int nFdIn, char **ppsString){
+	int i = 0;
+	char cAux = '0';
+	char sAux[MAX];
+	
+	//Leemos caracter a caracter mientras no haya salto de linea
+	while (cAux != '\n'){
+		read (nFdIn,&cAux,1);
+		if (cAux != '\n'){
+			sAux[i] = cAux;
+		}else{
+			sAux[i] = '\0';
+		}
+		i++;
+	}
+	//Pedimos memoria para la cadena
+	*ppsString = malloc ((strlen (sAux)+1)*sizeof (char));
+	strcpy ((*ppsString),sAux);
+}
+
+
+
 
 /**
  * Carrega el fitxer config.dat
  */
-int getConfigInfo (char sServer[11], char sDirPath[MAX]) {
+int getConfigInfo (char **psServer, char sDirPath[MAX_LONG]) {
+	char cAux = '0';
+	int i = 0;
+	int nBytes = 1;
 	int nFdIn = 0;
 	int nPort = 0;
-	char sPort[5];
 
 	nFdIn = open("config.dat", O_RDONLY);
 	if (-1 == nFdIn) {
 		write(2,"[Error] Error al obrir el fitxer 'config.dat'.\n",47);
 		exit(ERROR);
 	} else {
-		read(nFdIn, sServer, 12);
-		read(nFdIn, sPort, 5);
-		read(nFdIn, sDirPath, MAX-1);
+
+		readString(nFdIn, psServer);
+		nPort = readInt (nFdIn);
+
+		while ((cAux != '\n') && (0 != nBytes)){
+			nBytes = read (nFdIn,&cAux,1);
+			if ((cAux != '\n') && (0 != nBytes)){
+				sDirPath[i] = cAux;
+			}else{
+				sDirPath[i] = '\0';
+			}
+			i++;
+		}
+
 		close(nFdIn);
-
-		sServer[strlen(sServer)] = '\0';
-		sPort[strlen(sPort)] = '\0';
-		sDirPath[strlen(sDirPath)] = '\0';
-
-		//Convertim el nombre del port a Integer
-		nPort = atoi(sPort);
 	}
 	return nPort;
 }

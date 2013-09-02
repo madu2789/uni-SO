@@ -8,7 +8,7 @@
 	struct node *LinkedList;
 	struct node *LinkedListToTx;
 	sem_t semLL;
-	char sDirPath[MAX];
+	char sDirPath[MAX_LONG];
 	char sLoginOrigen[8];
 
 	// Estructura Molongui (a la [0] guarda info del pare)
@@ -199,7 +199,7 @@ int main () {
 	int nSocketCliente = 0 ;
 	int bAuth = 0;
 	struct sockaddr_in stDireccionCliente;
-	char sServer[11];
+	char *psServer;
 
 
 	int nSocketFD = 0;
@@ -225,8 +225,7 @@ int main () {
 	sem_init(&semLL, 0, 1);
 
 	//Inits strings
-	memset(sServer, '\0', 11);
-	memset(sDirPath, '\0', MAX);
+	memset(sDirPath, '\0', MAX_LONG);
 
 	//Crear/Obrir fitxer de Log
 	strcpy (sMyLog[0], "LSBox_svr.log.html");
@@ -234,7 +233,7 @@ int main () {
 	createLog (sMyLog[0]);
 
 	//Llegir "config.dat"
-	nPortTx[0] = getConfigInfo (sServer, sDirPath);
+	nPortTx[0] = getConfigInfo (&psServer, sDirPath);
 
 	//Socket peticio connexio
 	gnSocketFD = socketConnectionServidor (nPortTx[0]);
