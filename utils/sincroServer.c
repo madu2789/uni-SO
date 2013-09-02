@@ -334,14 +334,16 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 				if ( nWhoUpdate > 0 ) {
 					printf("SER_UPDATE2: %s Client envia a Servidor\n", sName);
 					setEstatByName (sName, 5, LinkedListToTx);
+					
 				} else if ( nWhoUpdate < 0 ) {
 					printf("CLI_UPDATE: %s Servidor envia a client\n", sName);
 					setEstatByName (sName, 2, LinkedListToTx);
 				}
 			}
+			printf("surto?\n");
 		}
 	}
-
+printf("anem a borrar\n");
 	nNumberOfElements = count (LinkedListToTx);
 	for (i = 1; i < nNumberOfElements+1; i++) {
 		memset(sName, '\0', 24);
@@ -352,6 +354,7 @@ void getSincroInfo (int nFdIn, char sLoginUser[8], struct node *LinkedList, stru
 		}
 	}
 
+printf("enviem tames g?\n");
 
 	//Trames G que envia el servidor al client pk sapigui quins fitxers enviar
 	sendTramesG(nFdIn, sLoginUser, LinkedListToTx, nIdMyClient);
